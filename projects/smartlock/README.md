@@ -11,7 +11,7 @@ Access control panel for a physical smart lock system. Admin-only web interface 
 ## Stack
 - **Flask Blueprint** — modular routing under /smartlock/
 - **SQLite** (smartlock.db) — stores users, sessions, login logs, tokens
-- **Resend** — sends magic link emails from no-reply@friedutch.plus
+- **Resend** — sends magic link emails from magiclink@email.friedutch.plus
 - **Flask-WTF** — CSRF protection
 - **Bleach** — input sanitization
 
