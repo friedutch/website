@@ -294,7 +294,7 @@ def deploy():
     if not hmac.compare_digest(sig, expected):
         return jsonify({"error": "unauthorized"}), 401
     subprocess.Popen(
-        ["/bin/bash", "/Users/administrator/Sites/friedutch-app/deploy.sh"],
+        ["/bin/bash", "/Users/administrator/Sites/friedutchplus/deploy.sh"],
         stdout=open("/tmp/deploy.log", "w"),
         stderr=subprocess.STDOUT
     )
