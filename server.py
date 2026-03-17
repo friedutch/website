@@ -1596,14 +1596,6 @@ tick();const iv=setInterval(tick,1000);
 </body>
 </html>"""
 
-if __name__ == "__main__":
-    init_db()
-    app.run(host="127.0.0.1", port=5001)
-# ── Footprint ─────────────────────────────────────────────────────────────────
-
-import sqlite3 as _sqlite3
-import requests as _requests
-import asyncio as _asyncio
 import aiohttp as _aiohttp
 import re as _re
 import bleach as _bleach
@@ -2085,3 +2077,8 @@ def footprint_scan():
     db.close()
     return jsonify({"breaches": all_breaches, "probes": all_probes, "addresses": all_addresses,
                     "scanned_at": datetime.datetime.utcnow().strftime("%d %b %Y, %H:%M UTC")})
+
+if __name__ == "__main__":
+    init_db()
+    _init_footprint_db()
+    app.run(host="127.0.0.1", port=5001)
