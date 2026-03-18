@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/email_pending.css') }}">
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
 <div class="wrap">
   <div class="hero">
     <div class="app-icon">📬</div>
@@ -30,22 +30,16 @@
   {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
   <p class="cd-row">Resend available in <span id="timer">5:00</span></p>
   <div class="actions">
-    <a id="resend-btn" class="sm-btn sm-ghost" href="#" style="pointer-events:none;opacity:0.4;">🔄 Resend</a>
+    <a id="resend-btn" class="sm-btn sm-ghost resend-btn-disabled" href="#">🔄 Resend</a>
     <a class="sm-btn sm-ghost" href="/smartlock/change-email/cancel">❌ Wrong email?</a>
   </div>
   <div class="back-link"><a href="/smartlock/admin">← Back to panel</a></div>
 </div>
-<script>
-const sentAt=new Date("{{ sent_at }}Z");
-const INTERVAL=5*60*1000;
-const btn=document.getElementById("resend-btn");
-const timer=document.getElementById("timer");
-function tick(){const rem=INTERVAL-(Date.now()-sentAt);if(rem<=0){timer.textContent="now";btn.style.pointerEvents="auto";btn.style.opacity="1";btn.href="/smartlock/change-email/resend";clearInterval(iv);return;}const m=Math.floor(rem/60000),s=String(Math.floor((rem%60000)/1000)).padStart(2,"0");timer.textContent=m+":"+s;}
-tick();const iv=setInterval(tick,1000);
-</script>
 {% include "_debug_footer.html" %}
 
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/smartlock/email_pending.js') }}"
+        data-sent-at="{{ sent_at }}"></script>
 
 </body>
 </html>

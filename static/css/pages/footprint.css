@@ -19,6 +19,7 @@ h1 { font-size:36px;font-weight:900;margin-bottom:8px; }
 .metric-val.info   { font-size:13px;color:var(--cyan);padding-top:7px;font-weight:800; }
 .scan-zone-title { font-size:12px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:14px; }
 .scan-row { display:flex;gap:10px; }
+.scan-btn-primary { background:linear-gradient(135deg,var(--purple),var(--blue));color:white;box-shadow:0 4px 16px rgba(120,75,160,0.35); }
 .scan-hint { font-size:12px;font-weight:600;color:var(--text3);margin-top:10px; }
 .scan-hint span { color:var(--cyan); }
 .tabs { display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap; }
@@ -28,6 +29,10 @@ h1 { font-size:36px;font-weight:900;margin-bottom:8px; }
 .tab-btn.active .tab-count { background:linear-gradient(135deg,rgba(255,60,172,0.2),rgba(120,75,160,0.2));color:var(--pink); }
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
+.zone-red-soft { background:linear-gradient(135deg,rgba(255,68,68,0.07),rgba(255,107,53,0.04));border-color:rgba(255,68,68,0.2); }
+.zone-cyan-soft { background:linear-gradient(135deg,rgba(0,210,255,0.07),rgba(43,134,197,0.05));border-color:rgba(0,210,255,0.15); }
+.chip-row { display:flex;gap:6px;flex-wrap:wrap; }
+.zone-title-note { font-size:11px;font-weight:700;color:var(--text3); }
 .filter-row { display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center; }
 .filter-chip { font-size:12px;font-weight:800;padding:6px 14px;border-radius:50px;border:2px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all 0.2s; }
 .filter-chip.active { border-color:rgba(120,75,160,0.5);color:var(--purple);background:rgba(120,75,160,0.1); }
@@ -73,6 +78,10 @@ h1 { font-size:36px;font-weight:900;margin-bottom:8px; }
 .legend { display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap; }
 .legend-item { display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--text3); }
 .legend-dot  { width:10px;height:10px;border-radius:50%; }
+.legend-dot-red { background:var(--red); }
+.legend-dot-orange { background:var(--orange); }
+.legend-dot-yellow { background:var(--yellow); }
+.addr-icon { font-size:20px; }
 .empty { text-align:center;padding:32px 0; }
 .empty-icon { font-size:40px;margin-bottom:12px; }
 .empty-text { font-size:14px;font-weight:600;color:var(--text3); }

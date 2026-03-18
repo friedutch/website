@@ -19,5 +19,14 @@ body { max-width:720px; margin:0 auto; padding:56px 24px 100px; }
 .number-hint { font-size:12px;color:var(--text2);font-weight:600; }
 .cd-note { font-size:13px;font-weight:700;color:var(--text3);margin-top:12px; }
 .cd-note span { color:var(--pink); }
+.msg-err-spaced { margin-top:12px; }
+.login-success-message {
+  font-family:'Nunito',sans-serif;
+  text-align:center;
+  margin-top:40vh;
+  font-size:16px;
+  font-weight:800;
+  color:var(--pink);
+}
 .back-link { margin-top:24px; }
 .back-link a { font-size:13px;font-weight:700;color:var(--text3); }

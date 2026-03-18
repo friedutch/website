@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/add_session.css') }}">
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
 <div class="wrap">
   <div class="hero">
     <div class="app-icon">📲</div>
@@ -24,20 +24,15 @@
   <div class="url-card">
     <div class="url-label">🔗 Link for other device</div>
     <div class="url-box">{{ join_url }}</div>
-    <button class="sm-btn sm-cyan" onclick="navigator.clipboard.writeText('{{ join_url }}');this.textContent='✅ Copied!'">📋 Copy link</button>
+    <button class="sm-btn sm-cyan copy-join-url-btn" type="button" data-copy-text="{{ join_url }}">📋 Copy link</button>
   </div>
-  <p class="cd-note">Link expires in <span id="exp-timer">5:00</span></p>
+  <p class="cd-note">Link expires in <span id="exp-timer" data-remaining="300">5:00</span></p>
   <div class="back-link"><a href="/smartlock/admin">← Back to panel</a></div>
 </div>
-<script>
-let r=300;
-const el=document.getElementById("exp-timer");
-function tick(){if(r<=0){el.textContent="expired";clearInterval(iv);return;}el.textContent=Math.floor(r/60)+":"+String(r%60).padStart(2,"0");r--;}
-tick();const iv=setInterval(tick,1000);
-</script>
 {% include "_debug_footer.html" %}
 
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/smartlock/add_session.js') }}"></script>
 
 </body>
 </html>

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_user_detail.css') }}">
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
 <a class="back-link" href="/smartlock/admin">← Back to panel</a>
 <div class="detail-header">
   <div class="detail-avatar">👤</div>
@@ -63,9 +63,8 @@
   </form>
 </div>
 
-<a class="big-btn" href="/smartlock/users/delete/{{ user['id'] }}"
-   onclick="return confirm('Delete {{ user[\'name\'] }} permanently?')"
-   style="background:linear-gradient(135deg,var(--orange),#FF4444);color:white;box-shadow:0 6px 24px rgba(255,107,53,0.4);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+<a class="big-btn delete-user-btn" href="/smartlock/users/delete/{{ user['id'] }}"
+   data-confirm="Delete {{ user['name'] }} permanently?">
   🗑️ Delete {{ user['name'] }}
 </a>
 

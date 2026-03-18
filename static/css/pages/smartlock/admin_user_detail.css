@@ -16,3 +16,10 @@ body { max-width:520px; margin:0 auto; padding:48px 24px 100px; }
 .code-big { font-size:24px;font-weight:800;color:var(--text2);letter-spacing:0.08em;margin-bottom:6px; }
 .method-desc { font-size:12px;color:var(--text3);font-weight:600;margin-bottom:12px; }
 .current-id { font-size:13px;color:var(--text2);font-weight:700;margin-bottom:10px; }
+.delete-user-btn {
+  background:linear-gradient(135deg,var(--orange),#FF4444);
+  color:white;
+  box-shadow:0 6px 24px rgba(255,107,53,0.4);
+  margin-top:8px;
+  text-decoration:none;
+}

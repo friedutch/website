@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/number_match.css') }}">
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
 <div class="wrap">
   <div class="hero">
     <div class="app-icon">🎯</div>
@@ -18,7 +18,7 @@
   </div>
   <div class="num-grid">
   {% for opt in options %}
-  <form method="POST" action="{{ '/smartlock/verify-email-number' if mode == 'email_change' else '/smartlock/join-verify' if mode == 'join' else '/smartlock/verify-number' }}" style="display:contents;">
+  <form class="contents-form" method="POST" action="{{ '/smartlock/verify-email-number' if mode == 'email_change' else '/smartlock/join-verify' if mode == 'join' else '/smartlock/verify-number' }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="token" value="{{ token }}">
     <input type="hidden" name="number" value="{{ opt }}">
