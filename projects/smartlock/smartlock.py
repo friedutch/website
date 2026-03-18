@@ -8,9 +8,10 @@ import datetime
 import uuid
 import bleach
 from collections import defaultdict
-from flask import request, redirect, url_for, session, render_template, g, jsonify
+from flask import request, redirect, url_for, session, g, jsonify
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_wtf.csrf import generate_csrf
+from app.rendering import render_page
 
 resend.api_key = os.getenv("RESEND_API_KEY")
 MAIL_FROM_ADDRESS = os.getenv("MAIL_FROM")
@@ -333,20 +334,20 @@ def init_smartlock(app):
         match_number = session.get("admin_match_number")
         if request.method == "POST":
             if remaining > 0:
-                return render_template("smartlock/admin_login.html", admin_sent=bool(match_number),
+                return render_page("smartlock/admin_login.html", admin_sent=bool(match_number),
                                               link_cooldown=remaining, match_number=match_number)
             match_number = str(random.randint(10, 99))
             session["admin_match_number"] = match_number
             send_admin_magic_link(get_admin_email(), match_number)
             set_setting("admin_link_cooldown", datetime.datetime.utcnow().isoformat())
-            return render_template("smartlock/admin_login.html", admin_sent=True,
+            return render_page("smartlock/admin_login.html", admin_sent=True,
                                           link_cooldown=300, match_number=match_number)
         if remaining == 0 and match_number:
             session.pop("admin_match_number", None)
             match_number = None
         if is_admin():
             return redirect(url_for("smartlock_admin"))
-        return render_template("smartlock/admin_login.html", admin_sent=bool(match_number),
+        return render_page("smartlock/admin_login.html", admin_sent=bool(match_number),
                                       link_cooldown=remaining, match_number=match_number)
     
     @app.route("/smartlock/poll-status")
@@ -360,14 +361,14 @@ def init_smartlock(app):
         try:
             serializer.loads(token, salt="admin-magic-login", max_age=300)
         except SignatureExpired:
-            return render_template("smartlock/admin_login.html", message="Link expired ⏱️",
+            return render_page("smartlock/admin_login.html", message="Link expired ⏱️",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         except BadSignature:
-            return render_template("smartlock/admin_login.html", message="Invalid link 🚫",
+            return render_page("smartlock/admin_login.html", message="Invalid link 🚫",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         db = get_db()
         if db.execute("SELECT 1 FROM used_tokens WHERE token = ?", (token,)).fetchone():
-            return render_template("smartlock/admin_login.html", message="Link already used 🚫",
+            return render_page("smartlock/admin_login.html", message="Link already used 🚫",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         token_hash = hashlib.sha256(token.encode()).hexdigest()
         db2 = sqlite3.connect(DB_PATH)
@@ -376,14 +377,14 @@ def init_smartlock(app):
         db2.close()
         correct = row["number"] if row else None
         if not correct:
-            return render_template("smartlock/admin_login.html", message="Session expired 💨",
+            return render_page("smartlock/admin_login.html", message="Session expired 💨",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         options = {correct}
         while len(options) < 3:
             options.add(str(random.randint(10, 99)))
         options = list(options)
         random.shuffle(options)
-        return render_template("smartlock/number_match.html", token=token, options=options,
+        return render_page("smartlock/number_match.html", token=token, options=options,
                                       error=None, mode="login")
     
     @app.route('/smartlock/verify-number', methods=['GET', 'POST'])
@@ -402,11 +403,11 @@ def init_smartlock(app):
             db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
             db3.commit()
             db3.close()
-            return render_template("smartlock/admin_login.html", message="Wrong number. Request a new link. 🚫",
+            return render_page("smartlock/admin_login.html", message="Wrong number. Request a new link. 🚫",
                                           admin_sent=False, link_cooldown=1, match_number=None)
         db = get_db()
         if db.execute("SELECT 1 FROM used_tokens WHERE token = ?", (token,)).fetchone():
-            return render_template("smartlock/admin_login.html", message="Link already used 🚫",
+            return render_page("smartlock/admin_login.html", message="Link already used 🚫",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         db.execute("INSERT INTO used_tokens (token) VALUES (?)", (token,))
         db.commit()
@@ -432,7 +433,7 @@ def init_smartlock(app):
         db.execute("INSERT OR REPLACE INTO join_tokens (token, number) VALUES (?, ?)", (token, number))
         db.commit()
         join_url = url_for("smartlock_join", token=token, _external=True)
-        return render_template("smartlock/add_session.html", number=number, token=token, join_url=join_url)
+        return render_page("smartlock/add_session.html", number=number, token=token, join_url=join_url)
     
     @app.route("/smartlock/join/<token>")
     def smartlock_join(token):
@@ -441,7 +442,7 @@ def init_smartlock(app):
         row = db.execute("SELECT * FROM join_tokens WHERE token = ?", (token,)).fetchone()
         db.close()
         if not row:
-            return render_template("smartlock/admin_login.html", message="Join link expired or invalid 🚫",
+            return render_page("smartlock/admin_login.html", message="Join link expired or invalid 🚫",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         created = datetime.datetime.fromisoformat(row["created_at"])
         if (datetime.datetime.utcnow() - created).total_seconds() > 300:
@@ -449,7 +450,7 @@ def init_smartlock(app):
             db2.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
             db2.commit()
             db2.close()
-            return render_template("smartlock/admin_login.html", message="Join link expired ⏱️",
+            return render_page("smartlock/admin_login.html", message="Join link expired ⏱️",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         correct = row["number"]
         options = {correct}
@@ -457,7 +458,7 @@ def init_smartlock(app):
             options.add(str(random.randint(10, 99)))
         options = list(options)
         random.shuffle(options)
-        return render_template("smartlock/number_match.html", token=token, options=options,
+        return render_page("smartlock/number_match.html", token=token, options=options,
                                       error=None, mode="join")
     
     @app.route("/smartlock/join-verify", methods=["POST"])
@@ -469,11 +470,11 @@ def init_smartlock(app):
         row = db.execute("SELECT * FROM join_tokens WHERE token = ?", (token,)).fetchone()
         db.close()
         if not row:
-            return render_template("smartlock/admin_login.html", message="Join link expired 🚫",
+            return render_page("smartlock/admin_login.html", message="Join link expired 🚫",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         created = datetime.datetime.fromisoformat(row["created_at"])
         if (datetime.datetime.utcnow() - created).total_seconds() > 300:
-            return render_template("smartlock/admin_login.html", message="Join link expired ⏱️",
+            return render_page("smartlock/admin_login.html", message="Join link expired ⏱️",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         if chosen != row["number"]:
             log_attempt("join_session", method_id="number_match", success=False)
@@ -481,7 +482,7 @@ def init_smartlock(app):
             db3.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
             db3.commit()
             db3.close()
-            return render_template("smartlock/admin_login.html", message="Wrong number. Request a new link. 🚫",
+            return render_page("smartlock/admin_login.html", message="Wrong number. Request a new link. 🚫",
                                           admin_sent=False, link_cooldown=0, match_number=None)
         db2 = sqlite3.connect(DB_PATH)
         db2.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
@@ -559,7 +560,7 @@ def init_smartlock(app):
         sent_at = get_pending_sent_at()
         if not pending: return redirect(url_for("smartlock_admin"))
         match_number = session.get("email_change_match_number")
-        return render_template("smartlock/email_pending.html", pending_email=pending,
+        return render_page("smartlock/email_pending.html", pending_email=pending,
                                       sent_at=sent_at, error=None, match_number=match_number)
     
     @app.route("/smartlock/verify-email-change")
@@ -568,10 +569,10 @@ def init_smartlock(app):
         try:
             new_email = serializer.loads(token, salt="admin-email-change", max_age=300)
         except SignatureExpired:
-            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+            return render_page("smartlock/email_pending.html", pending_email=get_pending_email(),
                                           sent_at=get_pending_sent_at(), error="Link expired ⏱️", match_number=None)
         except BadSignature:
-            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+            return render_page("smartlock/email_pending.html", pending_email=get_pending_email(),
                                           sent_at=get_pending_sent_at(), error="Invalid link 🚫", match_number=None)
         pending = get_pending_email()
         if not pending or pending != new_email: return redirect(url_for("smartlock_admin"))
@@ -582,14 +583,14 @@ def init_smartlock(app):
         db2.close()
         correct = row["number"] if row else None
         if not correct:
-            return render_template("smartlock/email_pending.html", pending_email=pending,
+            return render_page("smartlock/email_pending.html", pending_email=pending,
                                           sent_at=get_pending_sent_at(), error="Session expired 💨", match_number=None)
         options = {correct}
         while len(options) < 3:
             options.add(str(random.randint(10, 99)))
         options = list(options)
         random.shuffle(options)
-        return render_template("smartlock/number_match.html", token=token, options=options,
+        return render_page("smartlock/number_match.html", token=token, options=options,
                                       error=None, mode="email_change")
     
     @app.route("/smartlock/verify-email-number", methods=["POST"])
@@ -607,12 +608,12 @@ def init_smartlock(app):
             db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
             db3.commit()
             db3.close()
-            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+            return render_page("smartlock/email_pending.html", pending_email=get_pending_email(),
                                           sent_at=get_pending_sent_at(), error="Wrong number. Request a new link. 🚫", match_number=None)
         try:
             new_email = serializer.loads(token, salt="admin-email-change", max_age=300)
         except:
-            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+            return render_page("smartlock/email_pending.html", pending_email=get_pending_email(),
                                           sent_at=get_pending_sent_at(), error="Link expired ⏱️", match_number=None)
         db = get_db()
         pending = get_pending_email()
@@ -641,7 +642,7 @@ def init_smartlock(app):
         sessions = get_active_sessions()
         current_token = session.get("session_token", "")
         current_remaining = next((s["remaining"] for s in sessions if s["session_token"] == current_token), 0)
-        return render_template("smartlock/admin_panel.html", users=users, admin_email=admin_email,
+        return render_page("smartlock/admin_panel.html", users=users, admin_email=admin_email,
                                       pending=pending, cooldown_remaining=email_cd,
                                       logs=logs, sessions=sessions, current_token=current_token,
                                       current_remaining=current_remaining)
@@ -667,7 +668,7 @@ def init_smartlock(app):
     def smartlock_user_detail(user_id):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         user = get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
-        return render_template("smartlock/admin_user_detail.html", user=user)
+        return render_page("smartlock/admin_user_detail.html", user=user)
     
     @app.route("/smartlock/user/<int:user_id>/toggle/<method>")
     def smartlock_toggle_method(user_id, method):

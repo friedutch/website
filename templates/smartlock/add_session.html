@@ -35,6 +35,8 @@ const el=document.getElementById("exp-timer");
 function tick(){if(r<=0){el.textContent="expired";clearInterval(iv);return;}el.textContent=Math.floor(r/60)+":"+String(r%60).padStart(2,"0");r--;}
 tick();const iv=setInterval(tick,1000);
 </script>
+{% include "_debug_footer.html" %}
+
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 
 </body>

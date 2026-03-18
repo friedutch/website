@@ -43,6 +43,8 @@ const timer=document.getElementById("timer");
 function tick(){const rem=INTERVAL-(Date.now()-sentAt);if(rem<=0){timer.textContent="now";btn.style.pointerEvents="auto";btn.style.opacity="1";btn.href="/smartlock/change-email/resend";clearInterval(iv);return;}const m=Math.floor(rem/60000),s=String(Math.floor((rem%60000)/1000)).padStart(2,"0");timer.textContent=m+":"+s;}
 tick();const iv=setInterval(tick,1000);
 </script>
+{% include "_debug_footer.html" %}
+
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 
 </body>

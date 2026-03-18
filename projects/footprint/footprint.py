@@ -6,7 +6,8 @@ import aiohttp as _aiohttp
 import re as _re
 import requests as _requests
 import bleach as _bleach
-from flask import request, render_template, jsonify
+from flask import request, jsonify
+from app.rendering import render_page
 
 from projects.smartlock.smartlock import is_admin
 
@@ -257,7 +258,7 @@ def _hibp_addresses(domain):
 def init_footprint(app, csrf):
     @app.route("/footprint/")
     def footprint_index():
-        return render_template("footprint.html")
+        return render_page("footprint.html")
 
     @app.route("/footprint/scan", methods=["POST"])
     @csrf.exempt

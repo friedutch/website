@@ -1,20 +1,28 @@
 import os
 import hmac
 import subprocess
+from datetime import datetime
 from dotenv import load_dotenv
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 
+from app.rendering import render_page
 from projects.smartlock import init_smartlock, init_db
 from projects.footprint import init_footprint, init_footprint_db
 
 
 def create_app():
     load_dotenv()
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    flask_app = Flask(__name__)
+    flask_app = Flask(
+        __name__,
+        template_folder=os.path.join(project_root, "templates"),
+        static_folder=os.path.join(project_root, "static"),
+    )
     flask_app.secret_key = os.getenv("SECRET_KEY")
     csrf = CSRFProtect(flask_app)
+    flask_app.config["LAST_DEPLOYMENT"] = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
 
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,
@@ -35,7 +43,7 @@ def create_app():
         if not hmac.compare_digest(sig, expected):
             return jsonify({"error": "unauthorized"}), 401
         subprocess.Popen(
-            ["/bin/bash", "/Users/administrator/Sites/friedutch-app/deploy.sh"],
+            ["/bin/bash", os.path.join(project_root, "deploy.sh")],
             stdout=open("/tmp/deploy.log", "w"),
             stderr=subprocess.STDOUT,
         )
@@ -43,7 +51,7 @@ def create_app():
 
     @flask_app.route("/")
     def home():
-        return render_template("home.html")
+        return render_page("home.html")
 
     return flask_app
 

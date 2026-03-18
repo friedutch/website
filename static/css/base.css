@@ -191,3 +191,17 @@ a { text-decoration: none; color: inherit; }
 
 .sm-purple { background: linear-gradient(135deg, var(--purple), var(--blue)); color: white; box-shadow: 0 4px 16px rgba(120,75,160,0.35); }
 .zone-purple { background: linear-gradient(135deg, rgba(120,75,160,0.08), rgba(43,134,197,0.05)); border-color: rgba(120,75,160,0.18); }
+
+
+.debug-footer {
+  margin: 28px auto 0;
+  padding: 14px 16px;
+  max-width: min(100%, 960px);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.5;
+  word-break: break-word;
+}
