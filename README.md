@@ -16,7 +16,6 @@
 
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
-- [`server.py`](/Users/administrator/Sites/friedutchplus/server.py): compatibility shim kept so older references do not break. Do not build new behavior around it.
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): Flask app factory, homepage route, deploy webhook, and project registration.
 
 ### Runtime model
@@ -42,7 +41,7 @@
   - CSS in `static/css/`
   - JavaScript in `static/js/`
 - Do not move frontend code back into embedded Python strings.
-- Prefer updating [`run.py`](/Users/administrator/Sites/friedutchplus/run.py) and the app factory rather than relying on [`server.py`](/Users/administrator/Sites/friedutchplus/server.py).
+- Prefer updating [`run.py`](/Users/administrator/Sites/friedutchplus/run.py) and the app factory.
 - Treat LaunchAgent changes as operational changes, not normal app-code changes.
 - If changing deploy/restart behavior, preserve the current “kickstart if present, bootstrap if absent” pattern unless there is a deliberate replacement plan.
 
