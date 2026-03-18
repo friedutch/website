@@ -45,3 +45,8 @@ Access control panel for a physical smart lock system. Admin-only web interface 
 - `join_tokens` — cross-device session tokens
 - `used_tokens` — consumed magic links (prevent replay)
 - `settings` — admin email, cooldowns, pending changes
+
+## Database ownership
+- [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py) is the owning module for [`smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db).
+- Other app modules should not open `smartlock.db` directly.
+- If another part of the app needs Smart Lock data or behavior, it should go through functions/routes in [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py).
