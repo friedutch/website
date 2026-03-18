@@ -1,52 +1,140 @@
 # Smart Lock
 
-Access control panel for a physical smart lock system. Admin-only web interface hosted at friedutch.plus/smartlock/.
+## Human Summary
+- Smart Lock is the admin panel for managing people and access methods for a real smart lock setup.
+- The admin signs in using a magic link plus a captcha-like confirmation step.
+- It also supports adding sessions on another device and changing the admin email with the same verification pattern.
+- Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
 
-## What it does
-- Manages users and their access methods
-- Supports three authentication methods per user: Passcode, RFID badge, Fingerprint
-- Admin authenticates via magic link + number matching (MFA)
-- Cross-device sessions via "Add session" QR/link flow
+## AI Copilot
 
-## Stack
-- **Flask Blueprint** — modular routing under /smartlock/
-- **SQLite** (smartlock.db) — stores users, sessions, login logs, tokens
-- **Resend** — sends magic link emails from magiclink@email.friedutch.plus
-- **Flask-WTF** — CSRF protection
-- **Bleach** — input sanitization
+### Purpose
+- Admin-only access-control web interface under `/smartlock/`.
+- Supports physical smart-lock administration concepts:
+  - users
+  - passcodes
+  - RFID badges
+  - fingerprints
+  - admin sessions
 
-## Security
-- Magic link login (5 min expiry, single use)
-- Number matching MFA (1 attempt, token destroyed on failure)
-- Brute force lockout (5 attempts → 5 min ban)
-- Session expiry (1 hour fixed from login)
-- CSRF tokens on all forms
-- Secure, HttpOnly, Lax cookies
-- Cloudflare WAF + Bot Fight Mode
-- Security headers via Caddy (X-Frame-Options, HSTS, etc.)
+### Module ownership
+- Owning backend module:
+  - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
+- Owning database:
+  - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
+- Owning templates:
+  - [`templates/smartlock/`](/Users/administrator/Sites/friedutchplus/templates/smartlock)
+- Owning CSS:
+  - `static/css/pages/smartlock/*`
+- Owning JS:
+  - `static/js/pages/smartlock/*`
 
-## Routes
-| Route | Description |
-|-------|-------------|
-| /smartlock/ | Hub, redirects to login or admin |
-| /smartlock/login | Admin magic link login |
-| /smartlock/admin | Admin control room |
-| /smartlock/user/<id> | User detail & method config |
-| /smartlock/add-session | Cross-device login |
-| /smartlock/verify | Magic link verification |
-| /smartlock/verify-number | Number match verification |
-| /deploy | GitHub webhook (auto-deploy) |
-
-## Database tables
-- `users` — name, passcode, RFID/fingerprint IDs and enabled flags
-- `active_sessions` — live sessions with IP and device icon
-- `login_logs` — all login attempts (success/fail, IP, device, timestamp)
-- `match_numbers` — pending number match tokens
-- `join_tokens` — cross-device session tokens
-- `used_tokens` — consumed magic links (prevent replay)
-- `settings` — admin email, cooldowns, pending changes
-
-## Database ownership
-- [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py) is the owning module for [`smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db).
+### Boundary rule
 - Other app modules should not open `smartlock.db` directly.
-- If another part of the app needs Smart Lock data or behavior, it should go through functions/routes in [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py).
+- If another part of the app needs Smart Lock behavior or data, route it through functions or routes in [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py).
+
+### Registration model
+- This feature is not a Flask `Blueprint`.
+- It is registered by calling `init_smartlock(app)` from [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py).
+- Route definitions live directly inside `init_smartlock(app)`.
+
+### Authentication model
+- Admin login flow:
+  - request magic link
+  - open magic link
+  - solve captcha challenge
+  - receive admin session
+- Cross-device session flow:
+  - create add-session link
+  - open on other device
+  - solve captcha challenge
+  - create admin session on that device
+- Admin email-change flow:
+  - submit new email
+  - receive verification link
+  - solve captcha challenge
+  - commit new admin email
+
+### Important implementation details
+- Email sending uses Resend.
+- Smart Lock reads `RESEND_API_KEY` and `MAIL_FROM` dynamically at runtime.
+- Email failures should not 500 the page; they should render a normal page error.
+- Admin session state is stored in the `active_sessions` table plus Flask session cookies.
+- Session expiry is fixed-duration from login.
+- Cooldowns are stored in the `settings` table.
+- The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
+
+### Routes
+- Main:
+  - `/smartlock/`
+  - `/smartlock/login`
+  - `/smartlock/poll-status`
+  - `/smartlock/verify`
+  - `/smartlock/verify-captcha`
+- Cross-device session:
+  - `/smartlock/add-session`
+  - `/smartlock/join/<token>`
+  - `/smartlock/join-captcha`
+- Email change:
+  - `/smartlock/change-email`
+  - `/smartlock/change-email/resend`
+  - `/smartlock/change-email/cancel`
+  - `/smartlock/change-email/pending`
+  - `/smartlock/verify-email-change`
+  - `/smartlock/verify-email-captcha`
+- Admin/session management:
+  - `/smartlock/admin`
+  - `/smartlock/session/logout/<session_token>`
+  - `/smartlock/session/logout-all`
+  - `/smartlock/logout`
+- User management:
+  - `/smartlock/users/add`
+  - `/smartlock/users/delete/<int:user_id>`
+  - `/smartlock/user/<int:user_id>`
+  - `/smartlock/user/<int:user_id>/toggle/<method>`
+  - `/smartlock/user/<int:user_id>/set/<method>`
+
+### Database tables
+- `users`
+  - smart-lock users and their passcode/RFID/fingerprint configuration
+- `used_tokens`
+  - consumed magic links
+- `match_numbers`
+  - pending captcha tokens
+  - legacy table name; do not rename casually without a migration plan
+- `login_logs`
+  - admin and session-related attempts
+- `settings`
+  - admin email, pending admin email, cooldown timestamps
+- `active_sessions`
+  - active admin sessions
+- `join_tokens`
+  - cross-device login tokens
+- `number_attempts`
+  - currently present in schema; treat as reserved/internal
+
+### External dependencies / services
+- Resend email API:
+  - requires `RESEND_API_KEY`
+  - requires `MAIL_FROM`
+  - initial admin email defaults from `MAIL_TO`
+- Flask-WTF for CSRF
+- Bleach for sanitization
+
+### Security notes
+- Magic links expire after 5 minutes.
+- Captcha challenge is single-attempt and destructive on failure.
+- Brute-force lockout exists for repeated attempts.
+- Cookies are `Secure`, `HttpOnly`, `SameSite=Lax`.
+- Smart Lock should be treated as sensitive/admin-only functionality.
+
+### Known pitfalls for future changes
+- Do not rename `match_numbers` at the DB layer without an explicit migration.
+- Do not reintroduce inline HTML/CSS/JS into Python.
+- If changing login flow names, update:
+  - route names
+  - template form actions
+  - session keys
+  - log labels
+  - README docs
+- `verify-captcha` must remain POST-only to avoid follow-up GET crashes.

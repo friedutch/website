@@ -19,11 +19,11 @@
   <span class="project-icon">🔐</span>
   <div class="project-name">Smart Lock</div>
   <div class="project-desc">Access control panel · magic link login</div>
-  {% if match_number %}
+  {% if captcha_code %}
   <div class="number-box">
-    <div class="number-label">✨ Your verification number</div>
-    <div class="number-display">{{ match_number }}</div>
-    <div class="number-hint">Select this when prompted in the email 👆</div>
+    <div class="number-label">✨ Your captcha code</div>
+    <div class="number-display">{{ captcha_code }}</div>
+    <div class="number-hint">Select this captcha in the email flow 👆</div>
   </div>
   {% endif %}
   {% if not admin_sent %}
@@ -46,7 +46,7 @@
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 <script id="admin-login-script" src="{{ url_for('static', filename='js/pages/smartlock/admin_login.js') }}"
         data-link-cooldown="{{ link_cooldown }}"
-        data-poll-login="{{ 'true' if match_number else 'false' }}"></script>
+        data-poll-login="{{ 'true' if captcha_code else 'false' }}"></script>
 
 </body>
 </html>

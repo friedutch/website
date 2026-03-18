@@ -20,11 +20,11 @@
     <div class="email-label">📧 Email address</div>
     <div class="email-val">{{ pending_email }}</div>
   </div>
-  {% if match_number %}
+  {% if captcha_code %}
   <div class="number-box">
-    <div class="number-label">✨ Your verification number</div>
-    <div class="number-display">{{ match_number }}</div>
-    <div class="number-hint">Select this when prompted in the email 👆</div>
+    <div class="number-label">✨ Your captcha code</div>
+    <div class="number-display">{{ captcha_code }}</div>
+    <div class="number-hint">Select this captcha in the email flow 👆</div>
   </div>
   {% endif %}
   {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
