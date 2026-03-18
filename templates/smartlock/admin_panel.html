@@ -47,6 +47,7 @@
     <input class="app-input" type="email" name="new_email" placeholder="New email address" {% if cooldown_remaining > 0 %}disabled{% endif %}>
     <button class="sm-btn sm-pink" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>✉️ Save</button>
   </form>
+  {% if email_error %}<p class="msg-err">{{ email_error }}</p>{% endif %}
   {% if cooldown_remaining > 0 %}
   <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
   {% endif %}

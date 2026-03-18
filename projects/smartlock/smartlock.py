@@ -8,7 +8,7 @@ import datetime
 import uuid
 import bleach
 from collections import defaultdict
-from flask import request, redirect, url_for, session, g, jsonify
+from flask import request, redirect, url_for, session, g, jsonify, current_app
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_wtf.csrf import generate_csrf
 from app.rendering import render_page
@@ -272,12 +272,7 @@ def check_session():
 def send_admin_magic_link(email, match_number):
     token = serializer.dumps(email, salt="admin-magic-login")
     link = url_for("smartlock_verify", token=token, _external=True)
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
-    db = sqlite3.connect(DB_PATH)
-    db.execute("INSERT OR REPLACE INTO match_numbers (token_hash, number) VALUES (?, ?)", (token_hash, match_number))
-    db.commit()
-    db.close()
-    resend.Emails.send(
+    error = send_smartlock_email(
         {
             "from": MAIL_FROM_ADDRESS,
             "to": email,
@@ -285,17 +280,20 @@ def send_admin_magic_link(email, match_number):
             "html": f"<p>Click to access the admin panel. Expires in 5 minutes, single use.</p><p><a href='{link}'>{link}</a></p>",
         }
     )
-
-
-def send_verification_link(new_email, match_number):
-    token = serializer.dumps(new_email, salt="admin-email-change")
-    link = url_for("smartlock_verify_email_change", token=token, _external=True)
+    if error:
+        return error
     token_hash = hashlib.sha256(token.encode()).hexdigest()
     db = sqlite3.connect(DB_PATH)
     db.execute("INSERT OR REPLACE INTO match_numbers (token_hash, number) VALUES (?, ?)", (token_hash, match_number))
     db.commit()
     db.close()
-    resend.Emails.send(
+    return None
+
+
+def send_verification_link(new_email, match_number):
+    token = serializer.dumps(new_email, salt="admin-email-change")
+    link = url_for("smartlock_verify_email_change", token=token, _external=True)
+    error = send_smartlock_email(
         {
             "from": MAIL_FROM_ADDRESS,
             "to": new_email,
@@ -303,6 +301,31 @@ def send_verification_link(new_email, match_number):
             "html": f"<p>Click to verify. Expires in 5 minutes.</p><p><a href='{link}'>{link}</a></p>",
         }
     )
+    if error:
+        return error
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    db = sqlite3.connect(DB_PATH)
+    db.execute("INSERT OR REPLACE INTO match_numbers (token_hash, number) VALUES (?, ?)", (token_hash, match_number))
+    db.commit()
+    db.close()
+    return None
+
+
+def send_smartlock_email(payload):
+    if not payload.get("to"):
+        return "Email sending failed: no destination email is configured."
+    if not MAIL_FROM_ADDRESS:
+        return "Email sending failed: MAIL_FROM is missing."
+    if not resend.api_key:
+        return "Email sending failed: RESEND_API_KEY is missing."
+    try:
+        resend.Emails.send(payload)
+        return None
+    except Exception as exc:
+        current_app.logger.exception("Failed to send smart lock email")
+        if "API key is invalid" in str(exc):
+            return "Email sending failed: RESEND_API_KEY is invalid."
+        return "Email sending failed. Check the mail configuration and try again."
 
 
 
@@ -337,8 +360,12 @@ def init_smartlock(app):
                 return render_page("smartlock/admin_login.html", admin_sent=bool(match_number),
                                               link_cooldown=remaining, match_number=match_number)
             match_number = str(random.randint(10, 99))
+            error = send_admin_magic_link(get_admin_email(), match_number)
+            if error:
+                session.pop("admin_match_number", None)
+                return render_page("smartlock/admin_login.html", admin_sent=False,
+                                              link_cooldown=0, match_number=None, message=error)
             session["admin_match_number"] = match_number
-            send_admin_magic_link(get_admin_email(), match_number)
             set_setting("admin_link_cooldown", datetime.datetime.utcnow().isoformat())
             return render_page("smartlock/admin_login.html", admin_sent=True,
                                           link_cooldown=300, match_number=match_number)
@@ -523,13 +550,22 @@ def init_smartlock(app):
         if not new_email: return redirect(url_for("smartlock_admin"))
         now = datetime.datetime.utcnow().isoformat()
         match_number = str(random.randint(10, 99))
+        error = send_verification_link(new_email, match_number)
+        if error:
+            session.pop("email_change_match_number", None)
+            return render_page("smartlock/admin_panel.html", users=get_db().execute("SELECT * FROM users ORDER BY created_at DESC").fetchall(),
+                                          admin_email=get_admin_email(), pending=get_pending_email(),
+                                          cooldown_remaining=cooldown_remaining("admin_email_change_cooldown"),
+                                          logs=get_db().execute("SELECT * FROM login_logs ORDER BY created_at DESC LIMIT 100").fetchall(),
+                                          sessions=get_active_sessions(), current_token=session.get("session_token", ""),
+                                          current_remaining=next((s["remaining"] for s in get_active_sessions() if s["session_token"] == session.get("session_token", "")), 0),
+                                          email_error=error)
         session["email_change_match_number"] = match_number
         db = get_db()
         db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('pending_admin_email', ?)", (new_email,))
         db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('pending_admin_email_sent_at', ?)", (now,))
         db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('admin_email_change_cooldown', ?)", (now,))
         db.commit()
-        send_verification_link(new_email, match_number)
         return redirect(url_for("smartlock_email_pending"))
     
     @app.route("/smartlock/change-email/resend")
@@ -539,9 +575,13 @@ def init_smartlock(app):
         if not pending: return redirect(url_for("smartlock_admin"))
         now = datetime.datetime.utcnow().isoformat()
         match_number = str(random.randint(10, 99))
+        error = send_verification_link(pending, match_number)
+        if error:
+            return render_page("smartlock/email_pending.html", pending_email=pending,
+                                          sent_at=get_pending_sent_at(), error=error,
+                                          match_number=session.get("email_change_match_number"))
         session["email_change_match_number"] = match_number
         set_setting("pending_admin_email_sent_at", now)
-        send_verification_link(pending, match_number)
         return redirect(url_for("smartlock_email_pending"))
     
     @app.route("/smartlock/change-email/cancel")
