@@ -13,8 +13,6 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_wtf.csrf import generate_csrf
 from app.rendering import render_page
 
-resend.api_key = os.getenv("RESEND_API_KEY")
-MAIL_FROM_ADDRESS = os.getenv("MAIL_FROM")
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smartlock.db")
 SESSION_TIMEOUT = 3600
 _login_attempts = defaultdict(lambda: {"attempts": 0, "locked_until": None})
@@ -24,6 +22,15 @@ serializer = None
 def init_smartlock_config(secret_key):
     global serializer
     serializer = URLSafeTimedSerializer(secret_key)
+    resend.api_key = get_resend_api_key()
+
+
+def get_resend_api_key():
+    return os.getenv("RESEND_API_KEY", "").strip()
+
+
+def get_mail_from_address():
+    return os.getenv("MAIL_FROM", "").strip()
 
 
 def get_db():
@@ -274,7 +281,7 @@ def send_admin_magic_link(email, match_number):
     link = url_for("smartlock_verify", token=token, _external=True)
     error = send_smartlock_email(
         {
-            "from": MAIL_FROM_ADDRESS,
+            "from": get_mail_from_address(),
             "to": email,
             "subject": "Smart Lock — Admin Access 🔐",
             "html": f"<p>Click to access the admin panel. Expires in 5 minutes, single use.</p><p><a href='{link}'>{link}</a></p>",
@@ -295,7 +302,7 @@ def send_verification_link(new_email, match_number):
     link = url_for("smartlock_verify_email_change", token=token, _external=True)
     error = send_smartlock_email(
         {
-            "from": MAIL_FROM_ADDRESS,
+            "from": get_mail_from_address(),
             "to": new_email,
             "subject": "Smart Lock — Verify new admin email ✉️",
             "html": f"<p>Click to verify. Expires in 5 minutes.</p><p><a href='{link}'>{link}</a></p>",
@@ -312,9 +319,10 @@ def send_verification_link(new_email, match_number):
 
 
 def send_smartlock_email(payload):
+    resend.api_key = get_resend_api_key()
     if not payload.get("to"):
         return "Email sending failed: no destination email is configured."
-    if not MAIL_FROM_ADDRESS:
+    if not payload.get("from"):
         return "Email sending failed: MAIL_FROM is missing."
     if not resend.api_key:
         return "Email sending failed: RESEND_API_KEY is missing."

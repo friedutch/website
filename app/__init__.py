@@ -7,13 +7,15 @@ from flask import Flask, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 
 from app.rendering import render_page
-from projects.smartlock import init_smartlock, init_db
-from projects.footprint import init_footprint, init_footprint_db
+
+
+load_dotenv()
 
 
 def create_app():
-    load_dotenv()
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    from projects.smartlock import init_smartlock
+    from projects.footprint import init_footprint
 
     flask_app = Flask(
         __name__,
@@ -57,5 +59,8 @@ def create_app():
 
 
 def init_project_dbs():
+    from projects.smartlock import init_db
+    from projects.footprint import init_footprint_db
+
     init_db()
     init_footprint_db()
