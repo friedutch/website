@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>Smart Lock — Control Room ⚙️</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_panel.css') }}">
+</head>
+<body>
+
+<div class="top-bar-unified">
+  <div class="app-brand">
+    <div class="brand-icon">🔐</div>
+    <div>
+      <div class="brand-name">Smart Lock</div>
+      <div class="brand-sub">friedutch.plus</div>
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <a class="top-icon-btn" href="/smartlock/logout" onclick="return confirm('Log out from this session?')">👋</a>
+    <div class="sess-chip ok" id="sess-notif-top" style="display:none;">
+      <span id="notif-icon-top">🟢</span>
+      <span id="notif-timer-top">--:--</span>
+    </div>
+    <button class="top-icon-btn" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+  </div>
+</div>
+
+<h1>⚙️ Control Room</h1>
+
+<div class="zone zone-pink">
+  <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> Settings</div></div>
+  <p class="setting-label">📧 Admin Email</p>
+  <p class="setting-val">{{ admin_email }}</p>
+  {% if pending %}
+  <div class="pending-tag">⏳ Awaiting verification</div>
+  <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;">Sent to <strong>{{ pending }}</strong></p>
+  <div class="pending-actions">
+    <a class="sm-btn sm-pink" href="/smartlock/change-email/pending">View status</a>
+    <a class="sm-btn sm-ghost" href="/smartlock/change-email/cancel" style="border-color:rgba(255,60,172,0.3);color:var(--pink);">Cancel</a>
+  </div>
+  {% else %}
+  <form class="field-row" method="POST" action="/smartlock/change-email" id="chg-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input class="app-input" type="email" name="new_email" placeholder="New email address" {% if cooldown_remaining > 0 %}disabled{% endif %}>
+    <button class="sm-btn sm-pink" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>✉️ Save</button>
+  </form>
+  {% if cooldown_remaining > 0 %}
+  <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
+  <script>
+  let cr={{ cooldown_remaining }};
+  const ct=document.getElementById("chg-t"),cb=document.getElementById("chg-btn"),ci=document.querySelector("#chg-form input[type=email]");
+  function tickC(){if(cr<=0){cb.disabled=false;ci.disabled=false;document.getElementById("chg-cd").style.display="none";clearInterval(civ);return;}ct.textContent=Math.floor(cr/60)+":"+String(cr%60).padStart(2,"0");cr--;}
+  tickC();const civ=setInterval(tickC,1000);
+  </script>
+  {% endif %}
+  {% endif %}
+</div>
+
+<div class="zone zone-cyan">
+  <div class="zone-title"><div class="zone-title-left"><span>👥</span> People</div></div>
+  <form class="field-row" method="POST" action="/smartlock/users/add">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input class="app-input" type="text" name="name" placeholder="New user name" required>
+    <button class="sm-btn sm-cyan" type="submit">➕ Add</button>
+  </form>
+  {% if users %}
+  {% for user in users %}
+  <div class="user-card">
+    <div class="user-avatar">👤</div>
+    <div class="user-info">
+      <div class="user-name">{{ user['name'] }}</div>
+      <div class="user-code">{{ user['passcode'] }}</div>
+      <div class="method-chips">
+        <span class="chip {{ 'chip-on' if user['rfid_enabled'] else 'chip-off' }}">💳 RFID</span>
+        <span class="chip {{ 'chip-on' if user['fingerprint_enabled'] else 'chip-off' }}">🖐️ FP</span>
+      </div>
+    </div>
+    <a class="icon-btn edit" href="/smartlock/user/{{ user['id'] }}">✏️</a>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p class="no-items">No users yet 👆 Add one above</p>
+  {% endif %}
+</div>
+
+<div class="zone zone-green">
+  <div class="zone-title">
+    <div class="zone-title-left"><span>📡</span> Sessions Log</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+      <a class="sm-btn sm-green" href="/smartlock/add-session">📲 Add</a>
+      <a class="sm-btn sm-ghost" href="/smartlock/session/logout-all" onclick="return confirm('Log out all other sessions?')" style="border-color:rgba(0,200,130,0.3);color:var(--green);">🚪 All out</a>
+    </div>
+  </div>
+
+  {% for s in sessions %}
+  <div class="session-card {{ 'current' if s.session_token == current_token else '' }}">
+    <div class="session-icon">{{ s.icon }}</div>
+    <div class="session-info">
+      <div class="session-ip">
+        {{ s.ip }}
+        {% if s.session_token == current_token %}<span class="current-badge">THIS DEVICE</span>{% endif %}
+      </div>
+      <div class="session-meta">{{ s.created_at }} UTC</div>
+    </div>
+    <span class="session-timer {{ 'timer-ok' if s.remaining > 600 else 'timer-warn' }}" id="stimer-{{ loop.index }}">{{ s.remaining_fmt }}</span>
+    <a class="icon-btn" href="/smartlock/session/logout/{{ s.session_token }}" onclick="return confirm('Log out this session?')" style="flex-shrink:0;">🚪</a>
+  </div>
+  <script>
+  (function(){
+    let r={{ s.remaining }};
+    const el=document.getElementById("stimer-{{ loop.index }}");
+    function tick(){if(r<=0){el.textContent="expired";el.className="session-timer timer-warn";clearInterval(iv);return;}const m=Math.floor(r/60),s=String(r%60).padStart(2,"0");el.textContent=m+":"+s;if(r<=600)el.className="session-timer timer-warn";r--;}
+    tick();const iv=setInterval(tick,1000);
+  })();
+  </script>
+  {% endfor %}
+
+  {% for log in logs %}
+  <div class="session-card {{ 'allowed' if log['success'] else 'denied' }}">
+    <div class="session-icon">{{ log['user_agent'] if log['user_agent'] else '🌐' }}</div>
+    <div class="session-info">
+      <div class="session-ip">{{ log['ip'] }}</div>
+      <div class="session-meta">{{ log['created_at'][:19].replace('T',' ') }} UTC</div>
+    </div>
+    <span class="session-timer {{ 'timer-ok' if log['success'] else 'timer-deny' }}">{{ 'Allowed' if log['success'] else 'Denied' }}</span>
+  </div>
+  {% endfor %}
+
+  {% if not sessions and not logs %}
+  <p class="no-items">No sessions yet 👀</p>
+  {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+(function(){
+  let r = {{ current_remaining }};
+  if (r <= 0) return;
+  const notif = document.getElementById("sess-notif-top");
+  const timerEl = document.getElementById("notif-timer-top");
+  const iconEl = document.getElementById("notif-icon-top");
+  notif.style.display = "flex";
+  let warned = false;
+  function tick() {
+    if (r <= 0) {
+      timerEl.textContent = "Expired";
+      notif.className = "sess-chip warn";
+      iconEl.textContent = "🔴";
+      clearInterval(iv);
+      setTimeout(() => { window.location.href = "/smartlock/logout"; }, 5000);
+      return;
+    }
+    const m = Math.floor(r/60), s = String(r%60).padStart(2,"0");
+    timerEl.textContent = m + ":" + s;
+    if (r <= 300) {
+      notif.className = "sess-chip warn";
+      iconEl.textContent = "⚠️";
+      if (!warned) {
+        warned = true;
+        notif.style.transform = "scale(1.05)";
+        setTimeout(() => notif.style.transform = "scale(1)", 400);
+      }
+    } else {
+      notif.className = "sess-chip ok";
+      iconEl.textContent = "🟢";
+    }
+    r--;
+  }
+  tick();
+  const iv = setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

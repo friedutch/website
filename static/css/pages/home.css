@@ -1,0 +1,34 @@
+body { max-width:720px; margin:0 auto; padding:56px 24px 100px; }
+.site-header { margin-bottom:56px; }
+.site-logo { font-size:36px; font-weight:900; margin-bottom:6px; }
+.site-logo span { background:linear-gradient(135deg,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.site-sub { font-size:15px; color:var(--text2); font-weight:600; }
+.projects-label { font-size:12px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:20px; }
+.projects-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.project-card {
+  border-radius:var(--radius);
+  padding:24px;
+  border:2px solid transparent;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-decoration:none;
+  display:block;
+  color:var(--text);
+}
+.project-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px var(--shadow); }
+.project-card.active { background:linear-gradient(135deg,rgba(255,60,172,0.08),rgba(43,134,197,0.06)); border-color:rgba(255,60,172,0.2); }
+.project-card.active:hover { border-color:rgba(255,60,172,0.4); }
+.project-card.placeholder { background:var(--surface); border-color:var(--border); opacity:0.5; cursor:default; }
+.project-card.placeholder:hover { transform:none; box-shadow:none; }
+.project-icon { font-size:40px; margin-bottom:16px; display:block; }
+.project-name { font-size:20px; font-weight:900; margin-bottom:6px; }
+.project-desc { font-size:13px; color:var(--text2); font-weight:600; line-height:1.5; }
+.project-tag {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:800; padding:3px 10px;
+  border-radius:50px; margin-top:12px;
+  letter-spacing:0.06em; text-transform:uppercase;
+}
+.tag-live { background:linear-gradient(135deg,rgba(0,200,130,0.15),rgba(0,210,255,0.1)); color:var(--green); border:1px solid rgba(0,200,130,0.3); }
+.tag-soon { background:var(--surface2); color:var(--text3); border:1px solid var(--border); }
+.footer { margin-top:56px; text-align:center; font-size:12px; color:var(--text3); font-weight:600; }

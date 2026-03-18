@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>{{ user['name'] }} — Friedutch</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_user_detail.css') }}">
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<a class="back-link" href="/smartlock/admin">← Back to panel</a>
+<div class="detail-header">
+  <div class="detail-avatar">👤</div>
+  <div>
+    <div class="detail-name">{{ user['name'] }}</div>
+    <div class="detail-sub">Access profile</div>
+  </div>
+</div>
+
+<div class="method-zone">
+  <div class="method-head">
+    <span class="method-emoji">🔢</span>
+    <span class="method-label">Passcode</span>
+    <span class="method-toggle locked">Default ✓</span>
+  </div>
+  <div class="code-big">{{ user['passcode'] }}</div>
+  <div class="method-desc">Personal 6-digit code · not editable</div>
+</div>
+
+<div class="method-zone">
+  <div class="method-head">
+    <span class="method-emoji">💳</span>
+    <span class="method-label">RFID Badge</span>
+    <a class="method-toggle {{ 'on' if user['rfid_enabled'] else 'off' }}" href="/smartlock/user/{{ user['id'] }}/toggle/rfid">
+      {{ 'Enabled ✓' if user['rfid_enabled'] else 'Disabled' }}
+    </a>
+  </div>
+  {% if user['rfid_id'] %}<div class="current-id">Current: {{ user['rfid_id'] }}</div>{% endif %}
+  <div class="method-desc">Set the badge identifier accepted for this user</div>
+  <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+    <button class="sm-btn sm-cyan" type="submit">💾 Save</button>
+  </form>
+</div>
+
+<div class="method-zone">
+  <div class="method-head">
+    <span class="method-emoji">🖐️</span>
+    <span class="method-label">Fingerprint</span>
+    <a class="method-toggle {{ 'on' if user['fingerprint_enabled'] else 'off' }}" href="/smartlock/user/{{ user['id'] }}/toggle/fingerprint">
+      {{ 'Enabled ✓' if user['fingerprint_enabled'] else 'Disabled' }}
+    </a>
+  </div>
+  {% if user['fingerprint_id'] %}<div class="current-id">Current: {{ user['fingerprint_id'] }}</div>{% endif %}
+  <div class="method-desc">Set the fingerprint identifier for biometric recognition</div>
+  <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/fingerprint">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input class="app-input" type="text" name="id_value" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
+    <button class="sm-btn sm-green" type="submit">💾 Save</button>
+  </form>
+</div>
+
+<a class="big-btn" href="/smartlock/users/delete/{{ user['id'] }}"
+   onclick="return confirm('Delete {{ user[\'name\'] }} permanently?')"
+   style="background:linear-gradient(135deg,var(--orange),#FF4444);color:white;box-shadow:0 6px 24px rgba(255,107,53,0.4);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+  🗑️ Delete {{ user['name'] }}
+</a>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>Friedutch+</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/home.css') }}">
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<div class="site-header">
+  <div class="site-logo">🏠 <span>Friedutch+</span></div>
+  <div class="site-sub">Personal projects & tools</div>
+</div>
+<p class="projects-label">Projects</p>
+<div class="projects-grid">
+  <a class="project-card active" href="/smartlock/">
+    <span class="project-icon">🔐</span>
+    <div class="project-name">Smart Lock</div>
+    <div class="project-desc">Access control panel. Manage users, RFID badges, fingerprints and passcodes.</div>
+    <span class="project-tag tag-live">✅ Live</span>
+  </a>
+  <div class="project-card placeholder">
+    <span class="project-icon">📦</span>
+    <div class="project-name">Coming soon</div>
+    <div class="project-desc">Next project placeholder.</div>
+    <span class="project-tag tag-soon">🔜 Soon</span>
+  </div>
+  <div class="project-card placeholder">
+    <span class="project-icon">📦</span>
+    <div class="project-name">Coming soon</div>
+    <div class="project-desc">Next project placeholder.</div>
+    <span class="project-tag tag-soon">🔜 Soon</span>
+  </div>
+</div>
+<div class="footer">friedutch.plus · self-hosted on macOS</div>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

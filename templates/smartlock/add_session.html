@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>Smart Lock — Add Session 📲</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/add_session.css') }}">
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<div class="wrap">
+  <div class="hero">
+    <div class="app-icon">📲</div>
+    <h1>Add a session!</h1>
+    <p>Open the link on your other device</p>
+  </div>
+  <div class="number-box">
+    <div class="number-label">✨ Your verification number</div>
+    <div class="number-display">{{ number }}</div>
+    <div class="number-hint">Select this on the other device 👆</div>
+  </div>
+  <div class="url-card">
+    <div class="url-label">🔗 Link for other device</div>
+    <div class="url-box">{{ join_url }}</div>
+    <button class="sm-btn sm-cyan" onclick="navigator.clipboard.writeText('{{ join_url }}');this.textContent='✅ Copied!'">📋 Copy link</button>
+  </div>
+  <p class="cd-note">Link expires in <span id="exp-timer">5:00</span></p>
+  <div class="back-link"><a href="/smartlock/admin">← Back to panel</a></div>
+</div>
+<script>
+let r=300;
+const el=document.getElementById("exp-timer");
+function tick(){if(r<=0){el.textContent="expired";clearInterval(iv);return;}el.textContent=Math.floor(r/60)+":"+String(r%60).padStart(2,"0");r--;}
+tick();const iv=setInterval(tick,1000);
+</script>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

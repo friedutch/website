@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>Smart Lock — Access 🔐</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css') }}">
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<div class="site-header">
+  <div class="site-logo">🏠 <span>Friedutch+</span></div>
+  <div class="site-sub">Personal projects & tools</div>
+</div>
+<p class="projects-label">Smart Lock · Admin Access</p>
+<div class="project-card">
+  <span class="project-icon">🔐</span>
+  <div class="project-name">Smart Lock</div>
+  <div class="project-desc">Access control panel · magic link login</div>
+  {% if match_number %}
+  <div class="number-box">
+    <div class="number-label">✨ Your verification number</div>
+    <div class="number-display">{{ match_number }}</div>
+    <div class="number-hint">Select this when prompted in the email 👆</div>
+  </div>
+  {% endif %}
+  {% if not admin_sent %}
+  <form method="POST" action="/smartlock/login">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="big-btn btn-primary" type="submit" {% if link_cooldown > 0 %}disabled{% endif %}>
+      📧 Send magic link
+    </button>
+  </form>
+  {% endif %}
+  {% if link_cooldown > 0 %}
+  <p class="cd-note">Resend in <span id="lk-timer"></span></p>
+  <script>
+  let r={{ link_cooldown }};
+  const el=document.getElementById("lk-timer");
+  function tick(){if(r<=0){location.reload();clearInterval(iv);return;}el.textContent=Math.floor(r/60)+":"+String(r%60).padStart(2,"0");r--;}
+  tick();const iv=setInterval(tick,1000);
+  </script>
+  {% endif %}
+  {% if message %}<p class="msg-err" style="margin-top:12px;">{{ message }}</p>{% endif %}
+</div>
+{% if match_number %}
+<script>
+function poll(){fetch("/smartlock/poll-status").then(r=>r.json()).then(d=>{if(d.status==="logged_in"){window.close();document.body.innerHTML='<div style="font-family:Nunito,sans-serif;text-align:center;margin-top:40vh;font-size:16px;font-weight:800;color:#FF3CAC;">✅ Logged in! You can close this tab.</div>';}else{setTimeout(poll,2000);}}).catch(()=>setTimeout(poll,3000));}
+setTimeout(poll,2000);
+</script>
+{% endif %}
+<div class="back-link"><a href="/">← Back to Friedutch+</a></div>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

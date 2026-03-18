@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>Smart Lock — Pick your number 🎯</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/number_match.css') }}">
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme(this)" id="theme-btn">🔄</button>
+<div class="wrap">
+  <div class="hero">
+    <div class="app-icon">🎯</div>
+    <h1>Pick your number!</h1>
+    <p>Which one is showing on your screen? 👀</p>
+  </div>
+  <div class="num-grid">
+  {% for opt in options %}
+  <form method="POST" action="{{ '/smartlock/verify-email-number' if mode == 'email_change' else '/smartlock/join-verify' if mode == 'join' else '/smartlock/verify-number' }}" style="display:contents;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="token" value="{{ token }}">
+    <input type="hidden" name="number" value="{{ opt }}">
+    <button class="num-btn" type="submit">{{ opt }}</button>
+  </form>
+  {% endfor %}
+  </div>
+  {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

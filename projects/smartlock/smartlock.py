@@ -1,0 +1,701 @@
+import os
+import sqlite3
+import random
+import string
+import resend
+import hashlib
+import datetime
+import uuid
+import bleach
+from collections import defaultdict
+from flask import request, redirect, url_for, session, render_template, g, jsonify
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from flask_wtf.csrf import generate_csrf
+
+resend.api_key = os.getenv("RESEND_API_KEY")
+MAIL_FROM_ADDRESS = os.getenv("MAIL_FROM")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smartlock.db")
+SESSION_TIMEOUT = 3600
+_login_attempts = defaultdict(lambda: {"attempts": 0, "locked_until": None})
+serializer = None
+
+
+def init_smartlock_config(secret_key):
+    global serializer
+    serializer = URLSafeTimedSerializer(secret_key)
+
+
+def get_db():
+    if "db" not in g:
+        g.db = sqlite3.connect(DB_PATH)
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+
+def close_db(e=None):
+    db = g.pop("db", None)
+    if db:
+        db.close()
+
+
+def init_db():
+    db = sqlite3.connect(DB_PATH)
+    db.execute("""CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        passcode TEXT UNIQUE NOT NULL,
+        rfid_enabled INTEGER DEFAULT 0,
+        rfid_id TEXT DEFAULT NULL,
+        fingerprint_enabled INTEGER DEFAULT 0,
+        fingerprint_id TEXT DEFAULT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS used_tokens (
+        token TEXT PRIMARY KEY,
+        used_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS match_numbers (
+        token_hash TEXT PRIMARY KEY,
+        number TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS login_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        method TEXT NOT NULL,
+        method_id TEXT,
+        success INTEGER NOT NULL,
+        user_name TEXT,
+        ip TEXT,
+        location TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        user_agent TEXT
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS active_sessions (
+        session_token TEXT PRIMARY KEY,
+        ip TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        last_active TEXT DEFAULT CURRENT_TIMESTAMP,
+        user_agent TEXT
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS join_tokens (
+        token TEXT PRIMARY KEY,
+        number TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS number_attempts (
+        token_hash TEXT PRIMARY KEY,
+        attempts INTEGER DEFAULT 0
+    )""")
+    defaults = {"admin_email": os.getenv("MAIL_TO", "")}
+    for key, val in defaults.items():
+        if not db.execute("SELECT 1 FROM settings WHERE key = ?", (key,)).fetchone():
+            db.execute("INSERT INTO settings (key, value) VALUES (?, ?)", (key, val))
+    db.commit()
+    db.close()
+
+
+def get_setting(key):
+    row = get_db().execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row else None
+
+
+def set_setting(key, value):
+    get_db().execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (key, value))
+    get_db().commit()
+
+
+def get_admin_email():
+    return get_setting("admin_email")
+
+
+def get_pending_email():
+    return get_setting("pending_admin_email")
+
+
+def get_pending_sent_at():
+    return get_setting("pending_admin_email_sent_at")
+
+
+def cooldown_remaining(key, seconds=300):
+    ts = get_setting(key)
+    if not ts:
+        return 0
+    elapsed = (datetime.datetime.utcnow() - datetime.datetime.fromisoformat(ts)).total_seconds()
+    return max(0, int(seconds - elapsed))
+
+
+def is_admin():
+    return session.get("role") == "admin"
+
+
+def get_device_icon():
+    ua = request.headers.get("User-Agent", "").lower()
+    if "iphone" in ua or "android" in ua and "mobile" in ua:
+        return "📱"
+    elif "ipad" in ua or "tablet" in ua:
+        return "📱"
+    elif "mac" in ua and "mobile" not in ua:
+        return "🖥️"
+    elif "windows" in ua:
+        return "💻"
+    elif "linux" in ua:
+        return "🖥️"
+    elif "curl" in ua or "bot" in ua:
+        return "🤖"
+    else:
+        return "🌐"
+
+
+def get_client_ip():
+    return request.headers.get("CF-Connecting-IP") or request.remote_addr
+
+
+def sanitize(value, max_length=100):
+    if not value:
+        return ""
+    return bleach.clean(value.strip(), tags=[], strip=True)[:max_length]
+
+
+def log_attempt(method, method_id=None, success=False, user_name=None):
+    ip = get_client_ip()
+    icon = get_device_icon()
+    db = sqlite3.connect(DB_PATH)
+    db.execute(
+        "INSERT INTO login_logs (method, method_id, success, user_name, ip, user_agent) VALUES (?, ?, ?, ?, ?, ?)",
+        (method, method_id, 1 if success else 0, user_name, ip, icon),
+    )
+    db.commit()
+    db.close()
+
+
+def create_admin_session():
+    token = str(uuid.uuid4())
+    ip = get_client_ip()
+    now = datetime.datetime.utcnow().isoformat()
+    icon = get_device_icon()
+    db = sqlite3.connect(DB_PATH)
+    db.execute(
+        "INSERT INTO active_sessions (session_token, ip, created_at, last_active, user_agent) VALUES (?, ?, ?, ?, ?)",
+        (token, ip, now, now, icon),
+    )
+    db.commit()
+    db.close()
+    session["role"] = "admin"
+    session["session_token"] = token
+    session["last_active"] = now
+    session.pop("admin_match_number", None)
+    cutoff = (datetime.datetime.utcnow() - datetime.timedelta(hours=1)).isoformat()
+    db2 = sqlite3.connect(DB_PATH)
+    db2.execute("DELETE FROM active_sessions WHERE created_at < ?", (cutoff,))
+    db2.execute("DELETE FROM match_numbers WHERE created_at < ?", (cutoff,))
+    db2.execute("DELETE FROM join_tokens WHERE created_at < ?", (cutoff,))
+    db2.execute("DELETE FROM used_tokens WHERE used_at < ?", (cutoff,))
+    db2.commit()
+    db2.close()
+
+
+def get_active_sessions():
+    sessions = get_db().execute("SELECT * FROM active_sessions ORDER BY created_at DESC").fetchall()
+    result = []
+    now = datetime.datetime.utcnow()
+    for s in sessions:
+        created = datetime.datetime.fromisoformat(s["created_at"])
+        elapsed = (now - created).total_seconds()
+        remaining = max(0, int(SESSION_TIMEOUT - elapsed))
+        minutes, seconds = divmod(remaining, 60)
+        result.append(
+            {
+                "session_token": s["session_token"],
+                "ip": s["ip"],
+                "created_at": s["created_at"][:19].replace("T", " "),
+                "remaining": remaining,
+                "remaining_fmt": f"{minutes}:{seconds:02d}",
+                "expired": remaining == 0,
+                "icon": s["user_agent"] if s["user_agent"] else "🌐",
+            }
+        )
+    return result
+
+
+def check_brute_force():
+    ip = get_client_ip()
+    record = _login_attempts[ip]
+    if record["locked_until"] and datetime.datetime.utcnow() < record["locked_until"]:
+        return int((record["locked_until"] - datetime.datetime.utcnow()).total_seconds())
+    if record["locked_until"]:
+        _login_attempts[ip] = {"attempts": 0, "locked_until": None}
+    return 0
+
+
+def record_failed_attempt():
+    ip = get_client_ip()
+    _login_attempts[ip]["attempts"] += 1
+    if _login_attempts[ip]["attempts"] >= 5:
+        _login_attempts[ip]["locked_until"] = datetime.datetime.utcnow() + datetime.timedelta(seconds=300)
+
+
+def reset_attempts():
+    _login_attempts[get_client_ip()] = {"attempts": 0, "locked_until": None}
+
+
+def inject_csrf():
+    return dict(csrf_token=generate_csrf)
+
+
+def check_session():
+    if session.get("role") == "admin":
+        token = session.get("session_token")
+        if token:
+            db = sqlite3.connect(DB_PATH)
+            db.row_factory = sqlite3.Row
+            row = db.execute("SELECT created_at FROM active_sessions WHERE session_token = ?", (token,)).fetchone()
+            db.close()
+            if not row:
+                session.clear()
+                return redirect(url_for("smartlock_login"))
+            last = datetime.datetime.fromisoformat(row["created_at"])
+            if (datetime.datetime.utcnow() - last).total_seconds() > SESSION_TIMEOUT:
+                db2 = sqlite3.connect(DB_PATH)
+                db2.execute("DELETE FROM active_sessions WHERE session_token = ?", (token,))
+                db2.commit()
+                db2.close()
+                session.clear()
+                return redirect(url_for("smartlock_login"))
+    return None
+
+
+def send_admin_magic_link(email, match_number):
+    token = serializer.dumps(email, salt="admin-magic-login")
+    link = url_for("smartlock_verify", token=token, _external=True)
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    db = sqlite3.connect(DB_PATH)
+    db.execute("INSERT OR REPLACE INTO match_numbers (token_hash, number) VALUES (?, ?)", (token_hash, match_number))
+    db.commit()
+    db.close()
+    resend.Emails.send(
+        {
+            "from": MAIL_FROM_ADDRESS,
+            "to": email,
+            "subject": "Smart Lock — Admin Access 🔐",
+            "html": f"<p>Click to access the admin panel. Expires in 5 minutes, single use.</p><p><a href='{link}'>{link}</a></p>",
+        }
+    )
+
+
+def send_verification_link(new_email, match_number):
+    token = serializer.dumps(new_email, salt="admin-email-change")
+    link = url_for("smartlock_verify_email_change", token=token, _external=True)
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    db = sqlite3.connect(DB_PATH)
+    db.execute("INSERT OR REPLACE INTO match_numbers (token_hash, number) VALUES (?, ?)", (token_hash, match_number))
+    db.commit()
+    db.close()
+    resend.Emails.send(
+        {
+            "from": MAIL_FROM_ADDRESS,
+            "to": new_email,
+            "subject": "Smart Lock — Verify new admin email ✉️",
+            "html": f"<p>Click to verify. Expires in 5 minutes.</p><p><a href='{link}'>{link}</a></p>",
+        }
+    )
+
+
+
+
+def generate_passcode():
+    db = sqlite3.connect(DB_PATH)
+    try:
+        while True:
+            code = str(random.randint(100000, 999999))
+            if not db.execute("SELECT 1 FROM users WHERE passcode = ?", (code,)).fetchone():
+                return code
+    finally:
+        db.close()
+
+
+def init_smartlock(app):
+    init_smartlock_config(app.secret_key)
+    app.teardown_appcontext(close_db)
+    app.context_processor(inject_csrf)
+    app.before_request(check_session)
+    @app.route("/smartlock/")
+    def smartlock_index():
+        if is_admin(): return redirect(url_for("smartlock_admin"))
+        return redirect(url_for("smartlock_login"))
+    
+    @app.route("/smartlock/login", methods=["GET", "POST"])
+    def smartlock_login():
+        remaining = cooldown_remaining("admin_link_cooldown")
+        match_number = session.get("admin_match_number")
+        if request.method == "POST":
+            if remaining > 0:
+                return render_template("smartlock/admin_login.html", admin_sent=bool(match_number),
+                                              link_cooldown=remaining, match_number=match_number)
+            match_number = str(random.randint(10, 99))
+            session["admin_match_number"] = match_number
+            send_admin_magic_link(get_admin_email(), match_number)
+            set_setting("admin_link_cooldown", datetime.datetime.utcnow().isoformat())
+            return render_template("smartlock/admin_login.html", admin_sent=True,
+                                          link_cooldown=300, match_number=match_number)
+        if remaining == 0 and match_number:
+            session.pop("admin_match_number", None)
+            match_number = None
+        if is_admin():
+            return redirect(url_for("smartlock_admin"))
+        return render_template("smartlock/admin_login.html", admin_sent=bool(match_number),
+                                      link_cooldown=remaining, match_number=match_number)
+    
+    @app.route("/smartlock/poll-status")
+    def smartlock_poll_status():
+        if is_admin(): return jsonify({"status": "logged_in"})
+        return jsonify({"status": "waiting"})
+    
+    @app.route("/smartlock/verify")
+    def smartlock_verify():
+        token = request.args.get("token")
+        try:
+            serializer.loads(token, salt="admin-magic-login", max_age=300)
+        except SignatureExpired:
+            return render_template("smartlock/admin_login.html", message="Link expired ⏱️",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        except BadSignature:
+            return render_template("smartlock/admin_login.html", message="Invalid link 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        db = get_db()
+        if db.execute("SELECT 1 FROM used_tokens WHERE token = ?", (token,)).fetchone():
+            return render_template("smartlock/admin_login.html", message="Link already used 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        db2 = sqlite3.connect(DB_PATH)
+        db2.row_factory = sqlite3.Row
+        row = db2.execute("SELECT number FROM match_numbers WHERE token_hash = ?", (token_hash,)).fetchone()
+        db2.close()
+        correct = row["number"] if row else None
+        if not correct:
+            return render_template("smartlock/admin_login.html", message="Session expired 💨",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        options = {correct}
+        while len(options) < 3:
+            options.add(str(random.randint(10, 99)))
+        options = list(options)
+        random.shuffle(options)
+        return render_template("smartlock/number_match.html", token=token, options=options,
+                                      error=None, mode="login")
+    
+    @app.route('/smartlock/verify-number', methods=['GET', 'POST'])
+    def smartlock_verify_number():
+        token = request.form.get("token")
+        chosen = request.form.get("number")
+        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        db2 = sqlite3.connect(DB_PATH)
+        db2.row_factory = sqlite3.Row
+        row = db2.execute("SELECT number FROM match_numbers WHERE token_hash = ?", (token_hash,)).fetchone()
+        db2.close()
+        correct = row["number"] if row else None
+        if not correct or chosen != correct:
+            log_attempt("admin_magic_link", method_id="number_match", success=False)
+            db3 = sqlite3.connect(DB_PATH)
+            db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
+            db3.commit()
+            db3.close()
+            return render_template("smartlock/admin_login.html", message="Wrong number. Request a new link. 🚫",
+                                          admin_sent=False, link_cooldown=1, match_number=None)
+        db = get_db()
+        if db.execute("SELECT 1 FROM used_tokens WHERE token = ?", (token,)).fetchone():
+            return render_template("smartlock/admin_login.html", message="Link already used 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        db.execute("INSERT INTO used_tokens (token) VALUES (?)", (token,))
+        db.commit()
+        log_attempt("admin_magic_link", method_id="number_match", success=True, user_name="admin")
+        session.pop("admin_match_number", None)
+        db3 = sqlite3.connect(DB_PATH)
+        db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
+        db3.commit()
+        db3.close()
+        create_admin_session()
+        return redirect(url_for("smartlock_admin"))
+    
+    # ── Add session (cross-device login) ─────────────────────────────────────────
+    
+    @app.route("/smartlock/add-session")
+    def smartlock_add_session():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        token = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        number = str(random.randint(10, 99))
+        db = get_db()
+        db.execute("DELETE FROM join_tokens WHERE created_at < ?",
+                   ((datetime.datetime.utcnow() - datetime.timedelta(minutes=5)).isoformat(),))
+        db.execute("INSERT OR REPLACE INTO join_tokens (token, number) VALUES (?, ?)", (token, number))
+        db.commit()
+        join_url = url_for("smartlock_join", token=token, _external=True)
+        return render_template("smartlock/add_session.html", number=number, token=token, join_url=join_url)
+    
+    @app.route("/smartlock/join/<token>")
+    def smartlock_join(token):
+        db = sqlite3.connect(DB_PATH)
+        db.row_factory = sqlite3.Row
+        row = db.execute("SELECT * FROM join_tokens WHERE token = ?", (token,)).fetchone()
+        db.close()
+        if not row:
+            return render_template("smartlock/admin_login.html", message="Join link expired or invalid 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        created = datetime.datetime.fromisoformat(row["created_at"])
+        if (datetime.datetime.utcnow() - created).total_seconds() > 300:
+            db2 = sqlite3.connect(DB_PATH)
+            db2.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
+            db2.commit()
+            db2.close()
+            return render_template("smartlock/admin_login.html", message="Join link expired ⏱️",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        correct = row["number"]
+        options = {correct}
+        while len(options) < 3:
+            options.add(str(random.randint(10, 99)))
+        options = list(options)
+        random.shuffle(options)
+        return render_template("smartlock/number_match.html", token=token, options=options,
+                                      error=None, mode="join")
+    
+    @app.route("/smartlock/join-verify", methods=["POST"])
+    def smartlock_join_verify():
+        token = request.form.get("token")
+        chosen = request.form.get("number")
+        db = sqlite3.connect(DB_PATH)
+        db.row_factory = sqlite3.Row
+        row = db.execute("SELECT * FROM join_tokens WHERE token = ?", (token,)).fetchone()
+        db.close()
+        if not row:
+            return render_template("smartlock/admin_login.html", message="Join link expired 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        created = datetime.datetime.fromisoformat(row["created_at"])
+        if (datetime.datetime.utcnow() - created).total_seconds() > 300:
+            return render_template("smartlock/admin_login.html", message="Join link expired ⏱️",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        if chosen != row["number"]:
+            log_attempt("join_session", method_id="number_match", success=False)
+            db3 = sqlite3.connect(DB_PATH)
+            db3.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
+            db3.commit()
+            db3.close()
+            return render_template("smartlock/admin_login.html", message="Wrong number. Request a new link. 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
+        db2 = sqlite3.connect(DB_PATH)
+        db2.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
+        db2.commit()
+        db2.close()
+        log_attempt("join_session", method_id="number_match", success=True, user_name="admin")
+        create_admin_session()
+        return redirect(url_for("smartlock_admin"))
+    
+    @app.route("/smartlock/session/logout/<session_token>")
+    def smartlock_session_logout(session_token):
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        db = get_db()
+        db.execute("DELETE FROM active_sessions WHERE session_token = ?", (session_token,))
+        db.commit()
+        if session.get("session_token") == session_token:
+            session.clear()
+            return redirect(url_for("smartlock_login"))
+        return redirect(url_for("smartlock_admin"))
+    
+    @app.route("/smartlock/session/logout-all")
+    def smartlock_session_logout_all():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        current = session.get("session_token")
+        db = get_db()
+        db.execute("DELETE FROM active_sessions WHERE session_token != ?", (current,))
+        db.commit()
+        return redirect(url_for("smartlock_admin"))
+    
+    # ── Email change ──────────────────────────────────────────────────────────────
+    
+    @app.route("/smartlock/change-email", methods=["POST"])
+    def smartlock_change_email():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        if cooldown_remaining("admin_email_change_cooldown") > 0:
+            return redirect(url_for("smartlock_admin"))
+        new_email = bleach.clean(request.form.get("new_email", "").strip().lower(), tags=[], strip=True)[:200]
+        if not new_email: return redirect(url_for("smartlock_admin"))
+        now = datetime.datetime.utcnow().isoformat()
+        match_number = str(random.randint(10, 99))
+        session["email_change_match_number"] = match_number
+        db = get_db()
+        db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('pending_admin_email', ?)", (new_email,))
+        db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('pending_admin_email_sent_at', ?)", (now,))
+        db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('admin_email_change_cooldown', ?)", (now,))
+        db.commit()
+        send_verification_link(new_email, match_number)
+        return redirect(url_for("smartlock_email_pending"))
+    
+    @app.route("/smartlock/change-email/resend")
+    def smartlock_resend_verification():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        pending = get_pending_email()
+        if not pending: return redirect(url_for("smartlock_admin"))
+        now = datetime.datetime.utcnow().isoformat()
+        match_number = str(random.randint(10, 99))
+        session["email_change_match_number"] = match_number
+        set_setting("pending_admin_email_sent_at", now)
+        send_verification_link(pending, match_number)
+        return redirect(url_for("smartlock_email_pending"))
+    
+    @app.route("/smartlock/change-email/cancel")
+    def smartlock_cancel_email_change():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        db = get_db()
+        db.execute("DELETE FROM settings WHERE key = 'pending_admin_email'")
+        db.execute("DELETE FROM settings WHERE key = 'pending_admin_email_sent_at'")
+        db.commit()
+        return redirect(url_for("smartlock_admin"))
+    
+    @app.route("/smartlock/change-email/pending")
+    def smartlock_email_pending():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        pending = get_pending_email()
+        sent_at = get_pending_sent_at()
+        if not pending: return redirect(url_for("smartlock_admin"))
+        match_number = session.get("email_change_match_number")
+        return render_template("smartlock/email_pending.html", pending_email=pending,
+                                      sent_at=sent_at, error=None, match_number=match_number)
+    
+    @app.route("/smartlock/verify-email-change")
+    def smartlock_verify_email_change():
+        token = request.args.get("token")
+        try:
+            new_email = serializer.loads(token, salt="admin-email-change", max_age=300)
+        except SignatureExpired:
+            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+                                          sent_at=get_pending_sent_at(), error="Link expired ⏱️", match_number=None)
+        except BadSignature:
+            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+                                          sent_at=get_pending_sent_at(), error="Invalid link 🚫", match_number=None)
+        pending = get_pending_email()
+        if not pending or pending != new_email: return redirect(url_for("smartlock_admin"))
+        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        db2 = sqlite3.connect(DB_PATH)
+        db2.row_factory = sqlite3.Row
+        row = db2.execute("SELECT number FROM match_numbers WHERE token_hash = ?", (token_hash,)).fetchone()
+        db2.close()
+        correct = row["number"] if row else None
+        if not correct:
+            return render_template("smartlock/email_pending.html", pending_email=pending,
+                                          sent_at=get_pending_sent_at(), error="Session expired 💨", match_number=None)
+        options = {correct}
+        while len(options) < 3:
+            options.add(str(random.randint(10, 99)))
+        options = list(options)
+        random.shuffle(options)
+        return render_template("smartlock/number_match.html", token=token, options=options,
+                                      error=None, mode="email_change")
+    
+    @app.route("/smartlock/verify-email-number", methods=["POST"])
+    def smartlock_verify_email_number():
+        token = request.form.get("token")
+        chosen = request.form.get("number")
+        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        db2 = sqlite3.connect(DB_PATH)
+        db2.row_factory = sqlite3.Row
+        row = db2.execute("SELECT number FROM match_numbers WHERE token_hash = ?", (token_hash,)).fetchone()
+        db2.close()
+        correct = row["number"] if row else None
+        if not correct or chosen != correct:
+            db3 = sqlite3.connect(DB_PATH)
+            db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
+            db3.commit()
+            db3.close()
+            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+                                          sent_at=get_pending_sent_at(), error="Wrong number. Request a new link. 🚫", match_number=None)
+        try:
+            new_email = serializer.loads(token, salt="admin-email-change", max_age=300)
+        except:
+            return render_template("smartlock/email_pending.html", pending_email=get_pending_email(),
+                                          sent_at=get_pending_sent_at(), error="Link expired ⏱️", match_number=None)
+        db = get_db()
+        pending = get_pending_email()
+        if not pending or pending != new_email: return redirect(url_for("smartlock_admin"))
+        db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('admin_email', ?)", (new_email,))
+        db.execute("DELETE FROM settings WHERE key = 'pending_admin_email'")
+        db.execute("DELETE FROM settings WHERE key = 'pending_admin_email_sent_at'")
+        db.commit()
+        session.pop("email_change_match_number", None)
+        db3 = sqlite3.connect(DB_PATH)
+        db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
+        db3.commit()
+        db3.close()
+        return redirect(url_for("smartlock_admin"))
+    
+    # ── Admin panel ───────────────────────────────────────────────────────────────
+    
+    @app.route("/smartlock/admin")
+    def smartlock_admin():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        users = get_db().execute("SELECT * FROM users ORDER BY created_at DESC").fetchall()
+        admin_email = get_admin_email()
+        pending = get_pending_email()
+        email_cd = cooldown_remaining("admin_email_change_cooldown")
+        logs = get_db().execute("SELECT * FROM login_logs ORDER BY created_at DESC LIMIT 100").fetchall()
+        sessions = get_active_sessions()
+        current_token = session.get("session_token", "")
+        current_remaining = next((s["remaining"] for s in sessions if s["session_token"] == current_token), 0)
+        return render_template("smartlock/admin_panel.html", users=users, admin_email=admin_email,
+                                      pending=pending, cooldown_remaining=email_cd,
+                                      logs=logs, sessions=sessions, current_token=current_token,
+                                      current_remaining=current_remaining)
+    
+    @app.route("/smartlock/users/add", methods=["POST"])
+    def smartlock_add_user():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        name = sanitize(request.form.get("name", ""))
+        if name:
+            if not get_db().execute("SELECT 1 FROM users WHERE name = ?", (name,)).fetchone():
+                get_db().execute("INSERT INTO users (name, passcode) VALUES (?, ?)", (name, generate_passcode()))
+                get_db().commit()
+        return redirect(url_for("smartlock_admin"))
+    
+    @app.route("/smartlock/users/delete/<int:user_id>")
+    def smartlock_delete_user(user_id):
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        get_db().execute("DELETE FROM users WHERE id = ?", (user_id,))
+        get_db().commit()
+        return redirect(url_for("smartlock_admin"))
+    
+    @app.route("/smartlock/user/<int:user_id>")
+    def smartlock_user_detail(user_id):
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        user = get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        return render_template("smartlock/admin_user_detail.html", user=user)
+    
+    @app.route("/smartlock/user/<int:user_id>/toggle/<method>")
+    def smartlock_toggle_method(user_id, method):
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        if method not in ("rfid", "fingerprint"): return redirect(url_for("smartlock_user_detail", user_id=user_id))
+        col = f"{method}_enabled"
+        db = get_db()
+        user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        db.execute(f"UPDATE users SET {col} = ? WHERE id = ?", (0 if user[col] else 1, user_id))
+        db.commit()
+        return redirect(url_for("smartlock_user_detail", user_id=user_id))
+    
+    @app.route("/smartlock/user/<int:user_id>/set/<method>", methods=["POST"])
+    def smartlock_set_method_id(user_id, method):
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        if method not in ("rfid", "fingerprint"): return redirect(url_for("smartlock_user_detail", user_id=user_id))
+        value = sanitize(request.form.get("id_value", ""))
+        get_db().execute(f"UPDATE users SET {method}_id = ? WHERE id = ?", (value or None, user_id))
+        get_db().commit()
+        return redirect(url_for("smartlock_user_detail", user_id=user_id))
+    
+    @app.route("/smartlock/logout")
+    def smartlock_logout():
+        token = session.get("session_token")
+        if token:
+            db = sqlite3.connect(DB_PATH)
+            db.execute("DELETE FROM active_sessions WHERE session_token = ?", (token,))
+            db.commit()
+            db.close()
+        session.clear()
+        return redirect(url_for("smartlock_login"))
