@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const script = document.currentScript;
+  const script = document.getElementById("admin-login-script");
   const linkCooldown = Number(script?.dataset.linkCooldown || "0");
   const shouldPollLogin = script?.dataset.pollLogin === "true";
 

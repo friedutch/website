@@ -1,7 +1,7 @@
 import os
 import hmac
 import subprocess
-from datetime import datetime
+from datetime import datetime, UTC
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_wtf.csrf import CSRFProtect
@@ -24,7 +24,7 @@ def create_app():
     )
     flask_app.secret_key = os.getenv("SECRET_KEY")
     csrf = CSRFProtect(flask_app)
-    flask_app.config["LAST_DEPLOYMENT"] = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
+    flask_app.config["LAST_DEPLOYMENT"] = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,
