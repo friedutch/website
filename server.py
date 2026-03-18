@@ -1596,6 +1596,7 @@ tick();const iv=setInterval(tick,1000);
 </body>
 </html>"""
 
+import sqlite3 as _sqlite3
 import aiohttp as _aiohttp
 import re as _re
 import bleach as _bleach
@@ -2042,7 +2043,6 @@ function renderAddresses(){
 
 @app.route("/footprint/")
 def footprint_index():
-    if not is_admin(): return redirect(url_for("smartlock_login"))
     return render_template_string(FOOTPRINT_PAGE)
 
 @app.route("/footprint/scan", methods=["POST"])
