@@ -116,6 +116,13 @@ def set_setting(key, value):
     get_db().commit()
 
 
+def pop_ui_message(key):
+    value = session.get(key)
+    if key in session:
+        session.pop(key)
+    return value
+
+
 def get_admin_email():
     return get_setting("admin_email")
 
@@ -367,10 +374,11 @@ def init_smartlock(app):
     def smartlock_login():
         remaining = cooldown_remaining("admin_link_cooldown")
         captcha_code = session.get("admin_captcha_code")
+        message = pop_ui_message("smartlock_login_message")
         if request.method == "POST":
             if remaining > 0:
                 return render_page("smartlock/admin_login.html", admin_sent=bool(captcha_code),
-                                              link_cooldown=remaining, captcha_code=captcha_code)
+                                              link_cooldown=remaining, captcha_code=captcha_code, message=message)
             captcha_code = str(random.randint(10, 99))
             error = send_admin_magic_link(get_admin_email(), captcha_code)
             if error:
@@ -387,7 +395,7 @@ def init_smartlock(app):
         if is_admin():
             return redirect(url_for("smartlock_admin"))
         return render_page("smartlock/admin_login.html", admin_sent=bool(captcha_code),
-                                      link_cooldown=remaining, captcha_code=captcha_code)
+                                      link_cooldown=remaining, captcha_code=captcha_code, message=message)
     
     @app.route("/smartlock/poll-status")
     def smartlock_poll_status():
@@ -445,8 +453,9 @@ def init_smartlock(app):
             db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
             db3.commit()
             db3.close()
-            return render_page("smartlock/admin_login.html", message="Wrong captcha. Request a new link. 🚫",
-                                          admin_sent=False, link_cooldown=1, captcha_code=None)
+            set_setting("admin_link_cooldown", datetime.datetime.utcnow().isoformat())
+            session["smartlock_login_message"] = "Wrong captcha. Request a new link. 🚫"
+            return redirect(url_for("smartlock_login"))
         db = get_db()
         if db.execute("SELECT 1 FROM used_tokens WHERE token = ?", (token,)).fetchone():
             return render_page("smartlock/admin_login.html", message="Link already used 🚫",
