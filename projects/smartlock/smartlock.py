@@ -132,7 +132,11 @@ def cooldown_remaining(key, seconds=300):
     ts = get_setting(key)
     if not ts:
         return 0
-    elapsed = (datetime.datetime.utcnow() - datetime.datetime.fromisoformat(ts)).total_seconds()
+    recorded_at = datetime.datetime.fromisoformat(ts)
+    now = datetime.datetime.utcnow()
+    if recorded_at > now + datetime.timedelta(seconds=seconds):
+        return 0
+    elapsed = (now - recorded_at).total_seconds()
     return max(0, int(seconds - elapsed))
 
 
