@@ -426,10 +426,13 @@ def init_smartlock(app):
         return render_page("smartlock/number_match.html", token=token, options=options,
                                       error=None, mode="login")
     
-    @app.route('/smartlock/verify-number', methods=['GET', 'POST'])
+    @app.route('/smartlock/verify-number', methods=['POST'])
     def smartlock_verify_number():
         token = request.form.get("token")
         chosen = request.form.get("number")
+        if not token or not chosen:
+            return render_page("smartlock/admin_login.html", message="Invalid verification request 🚫",
+                                          admin_sent=False, link_cooldown=0, match_number=None)
         token_hash = hashlib.sha256(token.encode()).hexdigest()
         db2 = sqlite3.connect(DB_PATH)
         db2.row_factory = sqlite3.Row
