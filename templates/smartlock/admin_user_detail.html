@@ -25,23 +25,21 @@
 <form method="POST" action="/smartlock/users/create">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="method-zone">
-    <div class="method-head">
+  <div class="method-head">
       <span class="method-emoji">👤</span>
       <span class="method-label">Name</span>
       <span class="method-toggle locked">One-time</span>
     </div>
-    <div class="method-desc">This name can be set during creation, then it becomes fixed from this screen.</div>
     <input class="app-input" type="text" name="name" placeholder="User name" value="{{ user['name'] or '' }}" required>
   </div>
 
   <div class="method-zone">
-    <div class="method-head">
+  <div class="method-head">
       <span class="method-emoji">🔢</span>
       <span class="method-label">Passcode</span>
       <span class="method-toggle locked">Generated</span>
     </div>
     <div class="code-big code-big-muted">Created on save</div>
-    <div class="method-desc">A fresh personal 6-digit code will be generated when you create this user.</div>
   </div>
 
   <div class="method-zone">
@@ -53,7 +51,6 @@
         <span class="method-switch-copy">Enable</span>
       </label>
     </div>
-    <div class="method-desc">Set the badge identifier accepted for this user.</div>
     <input class="app-input" type="text" name="rfid_id" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
   </div>
 
@@ -66,7 +63,6 @@
         <span class="method-switch-copy">Enable</span>
       </label>
     </div>
-    <div class="method-desc">Set the fingerprint identifier for biometric recognition.</div>
     <input class="app-input" type="text" name="fingerprint_id" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
   </div>
 
@@ -80,7 +76,6 @@
     <span class="method-toggle locked">Default ✓</span>
   </div>
   <div class="code-big">{{ user['passcode'] }}</div>
-  <div class="method-desc">Personal 6-digit code · not editable</div>
 </div>
 
 <div class="method-zone">
@@ -92,7 +87,6 @@
     </a>
   </div>
   {% if user['rfid_id'] %}<div class="current-id">Current: {{ user['rfid_id'] }}</div>{% endif %}
-  <div class="method-desc">Set the badge identifier accepted for this user</div>
   <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
@@ -109,7 +103,6 @@
     </a>
   </div>
   {% if user['fingerprint_id'] %}<div class="current-id">Current: {{ user['fingerprint_id'] }}</div>{% endif %}
-  <div class="method-desc">Set the fingerprint identifier for biometric recognition</div>
   <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/fingerprint">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input class="app-input" type="text" name="id_value" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">

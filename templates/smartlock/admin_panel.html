@@ -137,9 +137,8 @@
     </div>
     <div class="session-side">
       {% if entry['active'] %}
-      <span class="session-timer {{ 'timer-ok' if entry['remaining'] > 600 else 'timer-warn' }}" data-session-remaining="{{ entry['remaining'] }}">{{ entry['remaining_fmt'] }}</span>
       <a class="icon-btn session-action" href="/smartlock/session/logout/{{ entry['session_token'] }}" data-confirm="Log out this session?">🚪</a>
-      <span class="session-state session-state-active" data-session-state>Active</span>
+      <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active ({{ entry['remaining_fmt'] }})</span>
       {% else %}
       <span class="session-state {{ 'session-state-allowed' if entry['success'] else 'session-state-denied' }}" {% if entry['success'] %}data-session-state{% endif %}>{{ 'Allowed' if entry['success'] else 'Denied' }}</span>
       {% endif %}

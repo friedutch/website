@@ -94,21 +94,21 @@ document.addEventListener("DOMContentLoaded", function () {
     var cooldownIntervalId = setInterval(tickCooldown, 1000);
   }
 
-  document.querySelectorAll("[data-session-remaining]").forEach(function (timer) {
-    let remaining = Number(timer.dataset.sessionRemaining || "0");
-    const sessionSide = timer.closest(".session-side");
+  document.querySelectorAll("[data-session-remaining]").forEach(function (stateBadge) {
+    let remaining = Number(stateBadge.dataset.sessionRemaining || "0");
+    const sessionSide = stateBadge.closest(".session-side");
     const state = sessionSide ? sessionSide.querySelector("[data-session-state]") : null;
     const logoutAction = sessionSide ? sessionSide.querySelector(".session-action") : null;
-    const sessionCard = timer.closest(".session-card");
+    const sessionCard = stateBadge.closest(".session-card");
     const tickSession = function () {
       if (remaining <= 0) {
-        timer.remove();
         if (logoutAction) {
           logoutAction.remove();
         }
         if (state) {
           state.textContent = "Allowed";
           state.className = "session-state session-state-allowed";
+          state.removeAttribute("data-session-remaining");
         }
         if (sessionCard) {
           sessionCard.classList.remove("active");
@@ -117,9 +117,9 @@ document.addEventListener("DOMContentLoaded", function () {
         clearInterval(sessionIntervalId);
         return;
       }
-      timer.textContent = Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0");
-      if (remaining <= 600) {
-        timer.className = "session-timer timer-warn";
+      if (state) {
+        state.textContent = "Active (" + Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0") + ")";
+        state.classList.toggle("session-state-active-warn", remaining <= 600);
       }
       remaining -= 1;
     };
