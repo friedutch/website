@@ -82,7 +82,7 @@
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new`.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
 - The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed.
-- Log search also matches stored device aliases, so terms like phone, tablet, computer, browser, and common OS words can find matching entries.
+- Log search also matches stored device aliases, so terms like phone, tablet, computer, pc, and browser can find matching entries.
 - The combined log feed merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
 - Active log cards for other devices show logout followed by an `Active` badge.
 - The current device log card should not show a logout control; it should show `THIS DEVICE` immediately before the `Active` badge.
