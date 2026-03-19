@@ -74,6 +74,7 @@
 - The browser-session actor id lives in the Flask session cookie as `cooldown_actor_id`.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
+- Theme toggle and session logout live inside the Settings tab, not the top bar.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
@@ -81,7 +82,9 @@
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
 - The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed.
 - The combined log feed merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
-- Active log cards show logout followed by an `Active` badge; when the session reaches its limit in the current page view, the card should flip to `Allowed` without removing the `THIS DEVICE` badge.
+- Active log cards for other devices show logout followed by an `Active` badge.
+- The current device log card should not show a logout control; it should show `THIS DEVICE` immediately before the `Active` badge.
+- When an active session reaches its limit in the current page view, the card should flip to `Allowed` without removing the `THIS DEVICE` badge.
 - The add-session page includes a regenerate action that simply refreshes the page to mint a new join link.
 - Opening a join link on a device that already has an active admin session must redirect back to the admin panel without consuming the token.
 

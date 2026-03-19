@@ -24,12 +24,10 @@
       <button class="panel-tab" type="button" data-panel-tab="people" aria-selected="false">Users</button>
       <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
     </div>
-    <a class="top-icon-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋</a>
     <div class="sess-chip ok sess-chip-hidden" id="sess-notif-top" data-current-remaining="{{ current_remaining }}">
       <span id="notif-icon-top">🟢</span>
       <span id="notif-timer-top">--:--</span>
     </div>
-    <button class="top-icon-btn" data-theme-toggle id="theme-btn">🔄</button>
   </div>
 </div>
 
@@ -39,6 +37,10 @@
 <div class="panel-stack">
 <div class="zone zone-pink panel-section active" id="panel-settings" data-panel-section="settings">
   <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> Settings</div></div>
+  <div class="settings-actions">
+    <button class="sm-btn sm-ghost settings-action-btn" data-theme-toggle id="theme-btn" type="button">🔄 Theme</button>
+    <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋 Log out</a>
+  </div>
   <p class="setting-label">📧 Admin Email</p>
   <p class="setting-val">{{ admin_email }}</p>
   {% if pending %}
@@ -143,8 +145,13 @@
     </div>
     <div class="session-side">
       {% if entry['active'] %}
+      {% if entry['current'] %}
+      <span class="current-badge current-badge-inline">THIS DEVICE</span>
+      <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active</span>
+      {% else %}
       <a class="icon-btn session-action" href="/smartlock/session/logout/{{ entry['session_token'] }}" data-confirm="Log out this session?">🚪</a>
       <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active</span>
+      {% endif %}
       {% else %}
       <span class="session-state {{ 'session-state-allowed' if entry['success'] else 'session-state-denied' }}" {% if entry['success'] %}data-session-state{% endif %}>{{ 'Allowed' if entry['success'] else 'Denied' }}</span>
       {% endif %}
