@@ -6,7 +6,7 @@
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links can be regenerated from the add-session page without changing any data directly.
 - The admin panel uses top tabs for Settings, Users, and Logs.
-- The Users tab shows access cards with passcode, RFID, and fingerprint details at a glance, plus a Logs tab for sessions and attempts.
+- The Users tab shows an add-user composer with a name field and a large create card, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
 
 ## AI Copilot
@@ -76,6 +76,7 @@
 - The selected admin panel tab persists across reloads in browser local storage.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
+- The Users tab places search first, then a dedicated add-user card; clicking the large create card should submit only if the name field is filled.
 - The admin panel's Logs area includes both active sessions and historical access attempts.
 - The add-session page includes a regenerate action that simply refreshes the page to mint a new join link.
 - Opening a join link on a device that already has an active admin session must redirect back to the admin panel without consuming the token.
