@@ -275,6 +275,73 @@ def get_active_sessions():
     return result
 
 
+def build_log_entries(logs, sessions, current_token):
+    unmatched_success_logs = []
+    denied_logs = []
+    for log in logs:
+        entry = {
+            "ip": log["ip"],
+            "created_at": log["created_at"][:19].replace("T", " "),
+            "icon": log["user_agent"] if log["user_agent"] else "🌐",
+            "success": bool(log["success"]),
+            "remaining": 0,
+            "remaining_fmt": "",
+            "current": False,
+            "session_token": None,
+            "state": "allowed" if log["success"] else "denied",
+            "active": False,
+        }
+        if log["success"]:
+            unmatched_success_logs.append((log, entry))
+        else:
+            denied_logs.append((log, entry))
+
+    combined = []
+    for session_row in sessions:
+        matched_index = None
+        session_created = datetime.datetime.fromisoformat(session_row["created_at"].replace(" ", "T"))
+        for index, (log, entry) in enumerate(unmatched_success_logs):
+            if log["ip"] != session_row["ip"]:
+                continue
+            if (log["user_agent"] if log["user_agent"] else "🌐") != session_row["icon"]:
+                continue
+            log_created = datetime.datetime.fromisoformat(log["created_at"])
+            if abs((session_created - log_created).total_seconds()) <= 10:
+                matched_index = index
+                break
+        if matched_index is not None:
+            _, base_entry = unmatched_success_logs.pop(matched_index)
+        else:
+            base_entry = {
+                "ip": session_row["ip"],
+                "created_at": session_row["created_at"],
+                "icon": session_row["icon"],
+                "success": True,
+                "state": "allowed",
+            }
+        base_entry.update(
+            {
+                "remaining": session_row["remaining"],
+                "remaining_fmt": session_row["remaining_fmt"],
+                "current": session_row["session_token"] == current_token,
+                "session_token": session_row["session_token"],
+                "active": not session_row["expired"],
+                "state": "active" if not session_row["expired"] else "allowed",
+            }
+        )
+        combined.append(base_entry)
+
+    for _, entry in unmatched_success_logs:
+        combined.append(entry)
+    for _, entry in denied_logs:
+        combined.append(entry)
+
+    def sort_key(entry):
+        return entry["created_at"]
+
+    return sorted(combined, key=sort_key, reverse=True)
+
+
 def check_brute_force():
     ip = get_client_ip()
     record = _login_attempts[ip]
@@ -768,10 +835,11 @@ def init_smartlock(app):
         sessions = get_active_sessions()
         current_token = session.get("session_token", "")
         current_remaining = next((s["remaining"] for s in sessions if s["session_token"] == current_token), 0)
+        log_entries = build_log_entries(logs, sessions, current_token)
         panel_message = pop_ui_message("smartlock_admin_message")
         return render_page("smartlock/admin_panel.html", page_name="Smart Lock — Control Room", users=users, admin_email=admin_email,
                                       pending=pending, cooldown_remaining=email_cd,
-                                      logs=logs, sessions=sessions, current_token=current_token,
+                                      logs=logs, sessions=sessions, log_entries=log_entries, current_token=current_token,
                                       current_remaining=current_remaining, panel_message=panel_message)
     
     @app.route("/smartlock/users/new")

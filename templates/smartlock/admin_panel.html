@@ -64,7 +64,7 @@
 <div class="zone zone-cyan panel-section" id="panel-people" data-panel-section="people">
   <div class="zone-title"><div class="zone-title-left"><span>👥</span> Users</div></div>
   <div class="user-search-row">
-    <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search users, passcodes, RFID or fingerprint IDs">
+    <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search names, passcodes, RFID or fingerprint IDs">
   </div>
   <a class="user-create-card" href="/smartlock/users/new" aria-label="Open new user setup">
     <span class="user-create-plus">+</span>
@@ -125,33 +125,29 @@
     </div>
   </div>
 
-  {% for s in sessions %}
-  <div class="session-card {{ 'current' if s.session_token == current_token else '' }}">
-    <div class="session-icon">{{ s.icon }}</div>
+  {% for entry in log_entries %}
+  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}">
+    <div class="session-icon">{{ entry['icon'] }}</div>
     <div class="session-info">
       <div class="session-ip">
-        {{ s.ip }}
-        {% if s.session_token == current_token %}<span class="current-badge">THIS DEVICE</span>{% endif %}
+        {{ entry['ip'] }}
+        {% if entry['current'] %}<span class="current-badge">THIS DEVICE</span>{% endif %}
       </div>
-      <div class="session-meta">{{ s.created_at }} UTC</div>
+      <div class="session-meta">{{ entry['created_at'] }} UTC</div>
     </div>
-    <span class="session-timer {{ 'timer-ok' if s.remaining > 600 else 'timer-warn' }}" data-session-remaining="{{ s.remaining }}">{{ s.remaining_fmt }}</span>
-    <a class="icon-btn session-action" href="/smartlock/session/logout/{{ s.session_token }}" data-confirm="Log out this session?">🚪</a>
+    <div class="session-side">
+      {% if entry['active'] %}
+      <span class="session-timer {{ 'timer-ok' if entry['remaining'] > 600 else 'timer-warn' }}" data-session-remaining="{{ entry['remaining'] }}">{{ entry['remaining_fmt'] }}</span>
+      <a class="icon-btn session-action" href="/smartlock/session/logout/{{ entry['session_token'] }}" data-confirm="Log out this session?">🚪</a>
+      <span class="session-state session-state-active" data-session-state>Active</span>
+      {% else %}
+      <span class="session-state {{ 'session-state-allowed' if entry['success'] else 'session-state-denied' }}" {% if entry['success'] %}data-session-state{% endif %}>{{ 'Allowed' if entry['success'] else 'Denied' }}</span>
+      {% endif %}
+    </div>
   </div>
   {% endfor %}
 
-  {% for log in logs %}
-  <div class="session-card {{ 'allowed' if log['success'] else 'denied' }}">
-    <div class="session-icon">{{ log['user_agent'] if log['user_agent'] else '🌐' }}</div>
-    <div class="session-info">
-      <div class="session-ip">{{ log['ip'] }}</div>
-      <div class="session-meta">{{ log['created_at'][:19].replace('T',' ') }} UTC</div>
-    </div>
-    <span class="session-timer {{ 'timer-ok' if log['success'] else 'timer-deny' }}">{{ 'Allowed' if log['success'] else 'Denied' }}</span>
-  </div>
-  {% endfor %}
-
-  {% if not sessions and not logs %}
+  {% if not log_entries %}
   <p class="no-items">No sessions yet 👀</p>
   {% endif %}
 </div>

@@ -78,7 +78,8 @@
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new`.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
-- The admin panel's Logs area includes both active sessions and historical access attempts.
+- The admin panel's Logs area is a single combined feed that merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
+- Active log cards show remaining time, then logout, then an `Active` state badge; when the countdown reaches zero in the current page view, that card should flip to `Allowed` without removing the `THIS DEVICE` badge.
 - The add-session page includes a regenerate action that simply refreshes the page to mint a new join link.
 - Opening a join link on a device that already has an active admin session must redirect back to the admin panel without consuming the token.
 

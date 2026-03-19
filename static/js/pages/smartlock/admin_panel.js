@@ -96,10 +96,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.querySelectorAll("[data-session-remaining]").forEach(function (timer) {
     let remaining = Number(timer.dataset.sessionRemaining || "0");
+    const sessionSide = timer.closest(".session-side");
+    const state = sessionSide ? sessionSide.querySelector("[data-session-state]") : null;
+    const logoutAction = sessionSide ? sessionSide.querySelector(".session-action") : null;
+    const sessionCard = timer.closest(".session-card");
     const tickSession = function () {
       if (remaining <= 0) {
-        timer.textContent = "expired";
-        timer.className = "session-timer timer-warn";
+        timer.remove();
+        if (logoutAction) {
+          logoutAction.remove();
+        }
+        if (state) {
+          state.textContent = "Allowed";
+          state.className = "session-state session-state-allowed";
+        }
+        if (sessionCard) {
+          sessionCard.classList.remove("active");
+          sessionCard.classList.add("allowed");
+        }
         clearInterval(sessionIntervalId);
         return;
       }

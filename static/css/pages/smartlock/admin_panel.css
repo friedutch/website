@@ -184,6 +184,7 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
 }
 [data-theme="light"] .session-card { background: rgba(255,255,255,0.76); }
 .session-card.current { border-color:rgba(0,200,130,0.3); background:linear-gradient(135deg,rgba(0,200,130,0.05),rgba(0,210,255,0.03)); }
+.session-card.active { border-color:rgba(0,200,130,0.22); }
 .session-card.allowed { border-color:rgba(0,200,130,0.15); opacity:0.7; }
 .session-card.denied  { border-color:rgba(255,107,53,0.2); background:rgba(255,107,53,0.03); opacity:0.85; }
 .timer-deny { background:rgba(255,107,53,0.1); color:var(--orange); font-size:13px; font-weight:800; padding:4px 10px; border-radius:50px; }
@@ -192,6 +193,26 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
 .session-ip { font-size:14px;font-weight:800;margin-bottom:2px; }
 .session-meta { font-size:12px;color:var(--text3);font-weight:600; }
 .session-timer { font-size:13px;font-weight:800;padding:4px 10px;border-radius:50px; }
+.session-side { display:flex; align-items:center; gap:10px; margin-left:auto; flex-wrap:wrap; justify-content:flex-end; }
+.session-state {
+  font-size:13px;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:50px;
+}
+.session-state-active {
+  background: rgba(255,255,255,0.06);
+  color: var(--text2);
+  border: 2px solid var(--border);
+}
+.session-state-allowed {
+  background:linear-gradient(135deg,rgba(0,200,130,0.15),rgba(0,210,255,0.1));
+  color:var(--green);
+}
+.session-state-denied {
+  background:rgba(255,107,53,0.1);
+  color:var(--orange);
+}
 .timer-ok { background:linear-gradient(135deg,rgba(0,200,130,0.15),rgba(0,210,255,0.1));color:var(--green); }
 .timer-warn { background:rgba(255,107,53,0.1);color:var(--orange); }
 .current-badge { font-size:10px;font-weight:800;padding:2px 8px;border-radius:50px;background:linear-gradient(135deg,rgba(0,200,130,0.15),rgba(0,210,255,0.1));color:var(--green);letter-spacing:0.06em;margin-left:6px; }
@@ -235,4 +256,6 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
   .zone-title { flex-direction: column; }
   .zone-title-actions { width: 100%; }
   .user-method-grid { grid-template-columns:1fr; }
+  .session-card { align-items:flex-start; flex-wrap:wrap; }
+  .session-side { width:100%; margin-left:0; }
 }
