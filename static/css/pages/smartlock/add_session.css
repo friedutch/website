@@ -1,5 +1,16 @@
-body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:40px 24px; }
-.wrap { width:100%; max-width:420px; animation:rise 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+}
+.wrap {
+  width: 100%;
+  max-width: 420px;
+  margin: auto 0 0;
+  animation: rise 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
 @keyframes rise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 .hero { text-align:center; margin-bottom:28px; }
 .app-icon { width:80px;height:80px;border-radius:26px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,210,255,0.4); }
@@ -11,8 +22,20 @@ body { display:flex; align-items:center; justify-content:center; min-height:100v
 .number-hint { font-size:13px;color:var(--text2);font-weight:600; }
 .url-card { background:var(--card);border:2px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px; }
 .url-label { font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px; }
-.url-box { background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-xs);padding:10px 14px;font-size:12px;font-weight:700;color:var(--cyan);word-break:break-all;margin-bottom:10px; }
+.url-box {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cyan);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  margin-bottom: 10px;
+}
 .cd-note { text-align:center;font-size:13px;font-weight:700;color:var(--text3);margin-bottom:14px; }
 .cd-note span { color:var(--cyan); }
 .back-link { text-align:center; }
 .back-link a { font-size:13px;font-weight:700;color:var(--text3); }
+.debug-footer { width: 100%; margin-top: 24px; }
