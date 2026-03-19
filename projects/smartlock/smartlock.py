@@ -177,10 +177,12 @@ def get_client_ip():
 
 
 def get_request_actor_id():
-    ip = get_client_ip() or "unknown-ip"
-    user_agent = request.headers.get("User-Agent", "").strip() or "unknown-ua"
-    actor_input = f"{ip}|{user_agent[:200]}"
-    return hashlib.sha256(actor_input.encode()).hexdigest()[:16]
+    actor_id = session.get("cooldown_actor_id")
+    if actor_id:
+        return actor_id
+    actor_id = uuid.uuid4().hex
+    session["cooldown_actor_id"] = actor_id
+    return actor_id
 
 
 def actor_cooldown_key(base_key):

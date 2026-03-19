@@ -61,8 +61,9 @@
 - Email failures should not 500 the page; they should render a normal page error.
 - Admin session state is stored in the `active_sessions` table plus Flask session cookies.
 - Session expiry is fixed-duration from login.
-- Login cooldowns are stored in the `settings` table with actor-scoped keys derived from request IP plus user agent.
-- Login cooldowns are intentionally not global; one device/browser should not block another person's login request.
+- Login cooldowns are stored in the `settings` table with browser-session-scoped keys.
+- Login cooldowns are intentionally not global; one browser session should not block another person's login request.
+- The browser-session actor id lives in the Flask session cookie as `cooldown_actor_id`.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 
 ### Routes
