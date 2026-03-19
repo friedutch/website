@@ -41,6 +41,7 @@ def create_app():
     flask_app.config["LAST_DEPLOYMENT"] = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
     flask_app.config["GITHUB_REPO_URL"] = get_git_output(project_root, "remote", "get-url", "origin")
     flask_app.config["GITHUB_BRANCH"] = get_git_output(project_root, "rev-parse", "--abbrev-ref", "HEAD") or "main"
+    flask_app.config["ASSET_VERSION"] = get_git_output(project_root, "rev-parse", "--short", "HEAD") or flask_app.config["LAST_DEPLOYMENT"]
 
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,

@@ -99,6 +99,7 @@
   - local template path
   - GitHub file URL for the active route's Python file
   - `Last Commit` timestamp in UTC
+- Static CSS/JS URLs include an asset-version query string so browsers pick up new frontend files after deploys.
 - Deploy output is written to:
   - `/tmp/deploy.log`
 - LaunchAgent stdout/stderr logs are outside the repo:

@@ -41,5 +41,6 @@ def render_page(template_name, **context):
         template_local_path=template_local_path,
         github_file_path=github_file_path,
         last_deployment=current_app.config.get("LAST_DEPLOYMENT", "unknown"),
+        asset_version=current_app.config.get("ASSET_VERSION", "dev"),
         **context,
     )
