@@ -4,6 +4,7 @@
 - Smart Lock is the admin panel for managing people and access methods for a real smart lock setup.
 - The admin signs in using a magic link plus a captcha-like confirmation step.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
+- The admin panel shows people as access cards with passcode, RFID, and fingerprint details at a glance, plus an access log for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
 
 ## AI Copilot
@@ -69,6 +70,8 @@
 - Login cooldowns are intentionally not global; one browser session should not block another person's login request.
 - The browser-session actor id lives in the Flask session cookie as `cooldown_actor_id`.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
+- The admin panel's People section is card-based and should keep the edit link pointing to the existing user detail page.
+- The admin panel's log area is labeled `Access Log` and includes both active sessions and historical access attempts.
 
 ### Routes
 - Main:

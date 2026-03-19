@@ -64,16 +64,41 @@
   {% if users %}
   {% for user in users %}
   <div class="user-card">
-    <div class="user-avatar">👤</div>
-    <div class="user-info">
-      <div class="user-name">{{ user['name'] }}</div>
-      <div class="user-code">{{ user['passcode'] }}</div>
-      <div class="method-chips">
-        <span class="chip {{ 'chip-on' if user['rfid_enabled'] else 'chip-off' }}">💳 RFID</span>
-        <span class="chip {{ 'chip-on' if user['fingerprint_enabled'] else 'chip-off' }}">🖐️ FP</span>
+    <div class="user-card-top">
+      <div class="user-avatar">👤</div>
+      <div class="user-info">
+        <div class="user-name">{{ user['name'] }}</div>
+        <div class="user-sub">Access profile summary</div>
+      </div>
+      <a class="icon-btn edit" href="/smartlock/user/{{ user['id'] }}">✏️</a>
+    </div>
+    <div class="user-method-grid">
+      <div class="user-method-card">
+        <div class="user-method-head">
+          <span class="user-method-label">Passcode</span>
+          <span class="user-method-state chip chip-on">Active</span>
+        </div>
+        <div class="user-method-id">{{ user['passcode'] }}</div>
+      </div>
+      <div class="user-method-card">
+        <div class="user-method-head">
+          <span class="user-method-label">RFID</span>
+          <span class="user-method-state chip {{ 'chip-on' if user['rfid_enabled'] else 'chip-off' }}">
+            {{ 'Enabled' if user['rfid_enabled'] else 'Disabled' }}
+          </span>
+        </div>
+        <div class="user-method-id {{ 'user-method-id-empty' if not user['rfid_id'] }}">{{ user['rfid_id'] or 'No badge ID set' }}</div>
+      </div>
+      <div class="user-method-card">
+        <div class="user-method-head">
+          <span class="user-method-label">Fingerprint</span>
+          <span class="user-method-state chip {{ 'chip-on' if user['fingerprint_enabled'] else 'chip-off' }}">
+            {{ 'Enabled' if user['fingerprint_enabled'] else 'Disabled' }}
+          </span>
+        </div>
+        <div class="user-method-id {{ 'user-method-id-empty' if not user['fingerprint_id'] }}">{{ user['fingerprint_id'] or 'No fingerprint ID set' }}</div>
       </div>
     </div>
-    <a class="icon-btn edit" href="/smartlock/user/{{ user['id'] }}">✏️</a>
   </div>
   {% endfor %}
   {% else %}
@@ -83,7 +108,7 @@
 
 <div class="zone zone-green">
   <div class="zone-title">
-    <div class="zone-title-left"><span>📡</span> Sessions Log</div>
+    <div class="zone-title-left"><span>📡</span> Access Log</div>
     <div class="zone-title-actions">
       <a class="sm-btn sm-green" href="/smartlock/add-session">📲 Add</a>
       <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log out all other sessions?">🚪 All out</a>
