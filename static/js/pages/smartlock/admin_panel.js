@@ -1,6 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
   const script = document.getElementById("admin-panel-script");
   const cooldownRemaining = Number(script?.dataset.cooldownRemaining || "0");
+  const tabs = Array.from(document.querySelectorAll("[data-panel-tab]"));
+  const sections = Array.from(document.querySelectorAll("[data-panel-section]"));
+
+  const activateTab = function (name) {
+    tabs.forEach(function (tab) {
+      const isActive = tab.dataset.panelTab === name;
+      tab.classList.toggle("active", isActive);
+      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+    sections.forEach(function (section) {
+      section.classList.toggle("active", section.dataset.panelSection === name);
+    });
+  };
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      activateTab(tab.dataset.panelTab);
+    });
+  });
+
+  if (tabs.length && sections.length) {
+    activateTab("settings");
+  }
 
   if (cooldownRemaining > 0) {
     const timer = document.getElementById("chg-t");
