@@ -4,6 +4,7 @@
 - Footprint is a private scanning tool for checking where an email or domain appears across breaches and account-recovery flows.
 - It stores results in its own SQLite database and is meant for internal/admin use.
 - The page shows breach lists, account-probe results, and discovered addresses from one scan target.
+- Another AI should read [`/Users/administrator/Sites/friedutchplus/AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) before changing this feature.
 
 ## AI Copilot
 

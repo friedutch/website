@@ -5,6 +5,7 @@
 - `run.py` starts the site, `app/__init__.py` wires everything together, and each feature lives in its own project folder.
 - The site is self-hosted on macOS and restarted through a LaunchAgent when deployments happen.
 - If the site goes down, the most likely cause is the LaunchAgent-managed process not running.
+- Another AI copilot should start with [`AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md), then this file.
 
 ## AI Copilot
 
@@ -17,6 +18,7 @@
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): Flask app factory, homepage route, deploy webhook, and project registration.
+- [`AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md): repo operating guide for another AI coding agent.
 
 ### Runtime model
 - The app is a single Flask process running on `127.0.0.1:5001`.
@@ -91,6 +93,7 @@
   - `MAIL_TO`
   - `HIBP_API_KEY`
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
+- [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 
 ### Observability / debugging conventions
 - Every page includes a footer showing:
@@ -113,7 +116,8 @@
 - A site-wide “Bad Gateway” usually means the LaunchAgent-managed process is not running, not necessarily that app code is broken.
 
 ### Recommended workflow for another AI copilot
-- Read this file first.
+- Read [`AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) first.
+- Then read this file.
 - Then read:
   - [`projects/smartlock/README.md`](/Users/administrator/Sites/friedutchplus/projects/smartlock/README.md)
   - [`projects/footprint/README.md`](/Users/administrator/Sites/friedutchplus/projects/footprint/README.md)

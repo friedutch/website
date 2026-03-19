@@ -8,6 +8,7 @@
 - The admin panel uses top tabs for Settings, Users, and Logs.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
+- Another AI should read [`/Users/administrator/Sites/friedutchplus/AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) before changing this feature.
 
 ## AI Copilot
 
