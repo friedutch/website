@@ -35,7 +35,7 @@ function getStorage(){
 }
 function getSystemTheme(){return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t==='system'?getSystemTheme():t);}
-function themeIcon(t){return t==='dark'?'☀️':t==='light'?'🌙':'🔄';}
+function themeIcon(t){return t==='dark'?'🌙':t==='light'?'☀️':'🔄';}
 function toggleTheme(btn){
   const storage=getStorage();
   const themes=['dark','light','system'];
