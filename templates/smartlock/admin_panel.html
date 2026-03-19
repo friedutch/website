@@ -29,6 +29,7 @@
 </div>
 
 <h1>⚙️ Control Room</h1>
+<p class="panel-sub">Manage access methods, live sessions, & recent entry activity from one place.</p>
 
 <div class="zone zone-pink">
   <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> Settings</div></div>
@@ -56,6 +57,7 @@
 
 <div class="zone zone-cyan">
   <div class="zone-title"><div class="zone-title-left"><span>👥</span> People</div></div>
+  <p class="zone-copy">Each card shows the full access profile at a glance. Use edit to open the dedicated detail page.</p>
   <form class="field-row" method="POST" action="/smartlock/users/add">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input class="app-input" type="text" name="name" placeholder="New user name" required>
@@ -114,6 +116,7 @@
       <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log out all other sessions?">🚪 All out</a>
     </div>
   </div>
+  <p class="zone-copy">Active sessions stay at the top, followed by recent allowed & denied access attempts.</p>
 
   {% for s in sessions %}
   <div class="session-card {{ 'current' if s.session_token == current_token else '' }}">
