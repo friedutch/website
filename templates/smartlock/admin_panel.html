@@ -141,10 +141,7 @@
   <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">
     <div class="session-icon">{{ entry['icon'] }}</div>
     <div class="session-info">
-      <div class="session-ip">
-        {{ entry['ip'] }}
-        {% if entry['current'] %}<span class="current-badge">THIS DEVICE</span>{% endif %}
-      </div>
+      <div class="session-ip">{{ entry['ip'] }}</div>
       <div class="session-meta">{{ entry['created_at'] }} UTC</div>
     </div>
     <div class="session-side">
