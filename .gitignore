@@ -4,3 +4,7 @@ shopping.db
 __pycache__/
 *.pyc
 *.pyo
+projects/smartlock/smartlock.db
+projects/footprint/footprint.db
+*.db-shm
+*.db-wal
