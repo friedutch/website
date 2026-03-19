@@ -1,45 +1,47 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
-<title>{{ page_name or 'Friedutch+' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/home.css') }}">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px '.Apple Color Emoji UI'; color: #000000; color: rgba(0, 0, 0, 0.85); -webkit-text-stroke: rgba(0, 0, 0, 0.85)}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p3 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Apple Color Emoji'; color: #0000e9; -webkit-text-stroke: #0000e9}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #0000e9; -webkit-text-stroke: #0000e9}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Apple Color Emoji'; -webkit-text-stroke: #000000}
+    span.s1 {font-kerning: none; background-color: #b3b3b3}
+    span.s2 {font: 12.0px 'Apple Color Emoji'; font-kerning: none}
+    span.s3 {font-kerning: none}
+    span.s4 {text-decoration: underline ; font-kerning: none}
+    span.s5 {font: 12.0px Times; text-decoration: underline ; font-kerning: none}
+    span.s6 {font: 12.0px 'Apple Color Emoji'; text-decoration: underline ; font-kerning: none}
+  </style>
 </head>
 <body>
-<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
-<div class="site-header">
-  <div class="site-logo">🏠 <span>Friedutch+</span></div>
-  <div class="site-sub">Personal projects & tools</div>
-</div>
-<p class="projects-label">Projects</p>
-<div class="projects-grid">
-  <a class="project-card active" href="/smartlock/">
-    <span class="project-icon">🔐</span>
-    <div class="project-name">Smart Lock</div>
-    <div class="project-desc">Access control panel. Manage users, RFID badges, fingerprints and passcodes.</div>
-    <span class="project-tag tag-live">✅ Live</span>
-  </a>
-  <div class="project-card placeholder">
-    <span class="project-icon">📦</span>
-    <div class="project-name">Coming soon</div>
-    <div class="project-desc">Next project placeholder.</div>
-    <span class="project-tag tag-soon">🔜 Soon</span>
-  </div>
-  <div class="project-card placeholder">
-    <span class="project-icon">📦</span>
-    <div class="project-name">Coming soon</div>
-    <div class="project-desc">Next project placeholder.</div>
-    <span class="project-tag tag-soon">🔜 Soon</span>
-  </div>
-</div>
-<div class="footer">friedutch.plus · self-hosted on macOS</div>
-
-{% include "_debug_footer.html" %}
-
-<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
-
+<p class="p1"><span class="s1">🔄</span></p>
+<p class="p2"><span class="s2">🏠</span><span class="s3"> Friedutch+</span></p>
+<p class="p2"><span class="s3">Personal projects &amp; tools</span></p>
+<p class="p3"><span class="s3">Projects</span></p>
+<p class="p4"><span class="s4"><a href="file:///smartlock/">🔐</a></span></p>
+<p class="p5"><span class="s4"><a href="file:///smartlock/">Smart Lock<span class="s5"></span></a></span></p>
+<p class="p5"><span class="s4"><a href="file:///smartlock/">Access control panel. Manage users, RFID badges, fingerprints and passcodes.<span class="s5"></span></a></span></p>
+<p class="p5"><span class="s6"><a href="file:///smartlock/">✅<span class="s5"> Live</span></a></span></p>
+<p class="p6"><span class="s3">📦</span></p>
+<p class="p2"><span class="s3">Coming soon</span></p>
+<p class="p2"><span class="s3">Next project placeholder.</span></p>
+<p class="p2"><span class="s2">🔜</span><span class="s3"> Soon</span></p>
+<p class="p6"><span class="s3">📦</span></p>
+<p class="p2"><span class="s3">Coming soon</span></p>
+<p class="p2"><span class="s3">Next project placeholder.</span></p>
+<p class="p2"><span class="s2">🔜</span><span class="s3"> Soon</span></p>
+<p class="p6"><span class="s3">📦</span></p>
+<p class="p2"><span class="s3">Coming soon</span></p>
+<p class="p2"><span class="s3">Next project placeholder.</span></p>
+<p class="p2"><span class="s2">🔜</span><span class="s3"> Soon</span></p>
+<p class="p2"><span class="s3">{% include "_debug_footer.html" %}</span></p>
 </body>
 </html>
