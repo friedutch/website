@@ -139,7 +139,10 @@ def cooldown_remaining(key, seconds=300):
     ts = get_setting(key)
     if not ts:
         return 0
-    recorded_at = datetime.datetime.fromisoformat(ts)
+    try:
+        recorded_at = datetime.datetime.fromisoformat(ts)
+    except ValueError:
+        return 0
     now = datetime.datetime.utcnow()
     if recorded_at > now + datetime.timedelta(seconds=seconds):
         return 0
@@ -171,6 +174,17 @@ def get_device_icon():
 
 def get_client_ip():
     return request.headers.get("CF-Connecting-IP") or request.remote_addr
+
+
+def get_request_actor_id():
+    ip = get_client_ip() or "unknown-ip"
+    user_agent = request.headers.get("User-Agent", "").strip() or "unknown-ua"
+    actor_input = f"{ip}|{user_agent[:200]}"
+    return hashlib.sha256(actor_input.encode()).hexdigest()[:16]
+
+
+def actor_cooldown_key(base_key):
+    return f"{base_key}:{get_request_actor_id()}"
 
 
 def sanitize(value, max_length=100):
@@ -372,7 +386,8 @@ def init_smartlock(app):
     
     @app.route("/smartlock/login", methods=["GET", "POST"])
     def smartlock_login():
-        remaining = cooldown_remaining("admin_link_cooldown")
+        cooldown_key = actor_cooldown_key("admin_link_cooldown")
+        remaining = cooldown_remaining(cooldown_key)
         captcha_code = session.get("admin_captcha_code")
         message = pop_ui_message("smartlock_login_message")
         if request.method == "POST":
@@ -386,7 +401,7 @@ def init_smartlock(app):
                 return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access 🔐", admin_sent=False,
                                               link_cooldown=0, captcha_code=None, message=error)
             session["admin_captcha_code"] = captcha_code
-            set_setting("admin_link_cooldown", datetime.datetime.utcnow().isoformat())
+            set_setting(cooldown_key, datetime.datetime.utcnow().isoformat())
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access 🔐", admin_sent=True,
                                           link_cooldown=300, captcha_code=captcha_code)
         if remaining == 0 and captcha_code:
@@ -453,7 +468,7 @@ def init_smartlock(app):
             db3.execute("DELETE FROM match_numbers WHERE token_hash = ?", (token_hash,))
             db3.commit()
             db3.close()
-            set_setting("admin_link_cooldown", datetime.datetime.utcnow().isoformat())
+            set_setting(actor_cooldown_key("admin_link_cooldown"), datetime.datetime.utcnow().isoformat())
             session["smartlock_login_message"] = "Wrong captcha. Request a new link. 🚫"
             return redirect(url_for("smartlock_login"))
         db = get_db()

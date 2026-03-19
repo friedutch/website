@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const script = document.currentScript;
+  const script = document.getElementById("admin-panel-script");
   const cooldownRemaining = Number(script?.dataset.cooldownRemaining || "0");
 
   if (cooldownRemaining > 0) {

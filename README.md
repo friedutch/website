@@ -66,6 +66,9 @@
   - [`templates/footprint.html`](/Users/administrator/Sites/friedutchplus/templates/footprint.html)
   - [`static/css/pages/footprint.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/footprint.css)
   - [`static/js/pages/footprint.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/footprint.js)
+- Smart Lock login cooldowns are actor-scoped, not global:
+  - one browser/device should not block another from requesting its own magic link
+  - the current actor fingerprint is derived from request IP plus user agent and stored only as a hashed settings key suffix
 
 ### Databases
 - Smart Lock database:
