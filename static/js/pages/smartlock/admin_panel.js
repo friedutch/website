@@ -39,6 +39,29 @@ document.addEventListener("DOMContentLoaded", function () {
     activateTab(initialTab);
   }
 
+  const userSearchInput = document.getElementById("user-search");
+  const userCards = Array.from(document.querySelectorAll("[data-user-card]"));
+  const userSearchEmpty = document.getElementById("user-search-empty");
+  if (userSearchInput && userCards.length) {
+    const filterUsers = function () {
+      const query = userSearchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+      userCards.forEach(function (card) {
+        const haystack = card.dataset.userSearch || "";
+        const visible = !query || haystack.includes(query);
+        card.style.display = visible ? "" : "none";
+        if (visible) {
+          visibleCount += 1;
+        }
+      });
+      if (userSearchEmpty) {
+        userSearchEmpty.classList.toggle("user-search-empty-hidden", visibleCount > 0);
+      }
+    };
+    userSearchInput.addEventListener("input", filterUsers);
+    filterUsers();
+  }
+
   if (cooldownRemaining > 0) {
     const timer = document.getElementById("chg-t");
     const button = document.getElementById("chg-btn");

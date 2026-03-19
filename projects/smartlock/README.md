@@ -74,6 +74,7 @@
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
 - The selected admin panel tab persists across reloads in browser local storage.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
+- The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The admin panel's Logs area includes both active sessions and historical access attempts.
 
 ### Routes

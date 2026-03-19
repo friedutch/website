@@ -68,8 +68,13 @@
     <button class="sm-btn sm-cyan" type="submit">➕ Add</button>
   </form>
   {% if users %}
+  <div class="user-search-row">
+    <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search users, passcodes, RFID or fingerprint IDs">
+  </div>
+  {% endif %}
+  {% if users %}
   {% for user in users %}
-  <div class="user-card">
+  <div class="user-card" data-user-card data-user-search="{{ (user['name'] ~ ' ' ~ user['passcode'] ~ ' ' ~ (user['rfid_id'] or '') ~ ' ' ~ (user['fingerprint_id'] or ''))|lower }}">
     <div class="user-card-top">
       <div class="user-avatar">👤</div>
       <div class="user-info">
@@ -107,6 +112,7 @@
     </div>
   </div>
   {% endfor %}
+  <p class="no-items user-search-empty user-search-empty-hidden" id="user-search-empty">No users match this search.</p>
   {% else %}
   <p class="no-items">No users yet 👆 Add one above</p>
   {% endif %}
