@@ -175,10 +175,10 @@ def get_device_icon():
 
 def get_device_search_terms(icon):
     aliases = {
-        "📱": "phone mobile smartphone iphone android tablet ipad",
-        "💻": "computer laptop desktop pc windows",
-        "🖥️": "computer desktop pc mac macos linux workstation",
-        "🤖": "bot curl automation script",
+        "📱": "phone mobile smartphone tablet",
+        "💻": "computer laptop pc",
+        "🖥️": "computer desktop pc workstation",
+        "🤖": "bot curl automation script cli",
         "🌐": "browser web internet",
     }
     return aliases.get(icon, "browser web device")
