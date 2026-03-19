@@ -53,7 +53,7 @@ def create_app():
 
     @flask_app.route("/")
     def home():
-        return render_page("home.html")
+        return render_page("home.html", page_name="Friedutch+")
 
     return flask_app
 

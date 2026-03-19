@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
-<title>{{ user['name'] }} — Friedutch</title>
+<title>{{ page_name or (user['name'] ~ ' — Friedutch') }}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_user_detail.css') }}">
 </head>

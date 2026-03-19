@@ -87,8 +87,10 @@
 
 ### Observability / debugging conventions
 - Every page includes a footer showing:
-  - the local template path
-  - `Last deployment` timestamp in UTC
+  - page title
+  - request URL
+  - local template path
+  - `Last Deployment` timestamp in UTC
 - Deploy output is written to:
   - `/tmp/deploy.log`
 - LaunchAgent stdout/stderr logs are outside the repo:
