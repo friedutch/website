@@ -3,16 +3,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const cooldownRemaining = Number(script?.dataset.cooldownRemaining || "0");
   const tabs = Array.from(document.querySelectorAll("[data-panel-tab]"));
   const sections = Array.from(document.querySelectorAll("[data-panel-section]"));
+  const tabStorageKey = "smartlock-admin-active-tab";
 
   const activateTab = function (name) {
+    const tabExists = tabs.some(function (tab) { return tab.dataset.panelTab === name; });
+    const nextTab = tabExists ? name : "settings";
     tabs.forEach(function (tab) {
-      const isActive = tab.dataset.panelTab === name;
+      const isActive = tab.dataset.panelTab === nextTab;
       tab.classList.toggle("active", isActive);
       tab.setAttribute("aria-selected", isActive ? "true" : "false");
     });
     sections.forEach(function (section) {
-      section.classList.toggle("active", section.dataset.panelSection === name);
+      section.classList.toggle("active", section.dataset.panelSection === nextTab);
     });
+    try {
+      window.localStorage.setItem(tabStorageKey, nextTab);
+    } catch (error) {
+      // Ignore storage failures and keep the UI working.
+    }
   };
 
   tabs.forEach(function (tab) {
@@ -22,7 +30,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   if (tabs.length && sections.length) {
-    activateTab("settings");
+    let initialTab = "settings";
+    try {
+      initialTab = window.localStorage.getItem(tabStorageKey) || "settings";
+    } catch (error) {
+      initialTab = "settings";
+    }
+    activateTab(initialTab);
   }
 
   if (cooldownRemaining > 0) {

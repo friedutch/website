@@ -21,8 +21,8 @@
   <div class="top-bar-right">
     <div class="panel-tabs" role="tablist" aria-label="Admin sections">
       <button class="panel-tab active" type="button" data-panel-tab="settings" aria-selected="true">Settings</button>
-      <button class="panel-tab" type="button" data-panel-tab="people" aria-selected="false">People</button>
-      <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Access Log</button>
+      <button class="panel-tab" type="button" data-panel-tab="people" aria-selected="false">Users</button>
+      <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
     </div>
     <a class="top-icon-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋</a>
     <div class="sess-chip ok sess-chip-hidden" id="sess-notif-top" data-current-remaining="{{ current_remaining }}">
@@ -61,7 +61,7 @@
 </div>
 
 <div class="zone zone-cyan panel-section" id="panel-people" data-panel-section="people">
-  <div class="zone-title"><div class="zone-title-left"><span>👥</span> People</div></div>
+  <div class="zone-title"><div class="zone-title-left"><span>👥</span> Users</div></div>
   <form class="field-row" method="POST" action="/smartlock/users/add">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input class="app-input" type="text" name="name" placeholder="New user name" required>
@@ -114,7 +114,7 @@
 
 <div class="zone zone-green panel-section" id="panel-access" data-panel-section="access">
   <div class="zone-title">
-    <div class="zone-title-left"><span>📡</span> Access Log</div>
+    <div class="zone-title-left"><span>📡</span> Logs</div>
     <div class="zone-title-actions">
       <a class="sm-btn sm-green" href="/smartlock/add-session">📲 Add</a>
       <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log out all other sessions?">🚪 All out</a>

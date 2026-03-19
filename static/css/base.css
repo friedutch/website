@@ -205,3 +205,17 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.5;
   word-break: break-word;
 }
+.debug-footer a {
+  color: #5da9ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.debug-footer a:hover {
+  color: #8bc2ff;
+}
+[data-theme="light"] .debug-footer a {
+  color: #1e5dff;
+}
+[data-theme="light"] .debug-footer a:hover {
+  color: #1447c7;
+}
