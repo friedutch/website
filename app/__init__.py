@@ -4,7 +4,7 @@ import subprocess
 from datetime import datetime, UTC
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, CSRFError
 
 from app.rendering import render_page
 
@@ -34,6 +34,14 @@ def create_app():
 
     init_smartlock(flask_app)
     init_footprint(flask_app, csrf)
+
+    @flask_app.errorhandler(CSRFError)
+    def handle_csrf_error(error):
+        if request.path.startswith("/smartlock"):
+            from projects.smartlock.smartlock import render_cookies_required
+
+            return render_cookies_required(), 400
+        return jsonify({"error": "bad request", "reason": error.description}), 400
 
     @flask_app.route("/deploy", methods=["POST"])
     @csrf.exempt

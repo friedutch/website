@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js') }}"></script>
+<title>{{ page_name or 'Smart Lock — Cookies Required' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+</head>
+<body>
+<main class="simple-page">
+  <h1>Enable cookies to use Smart Lock.</h1>
+  <p>Smart Lock needs session cookies for login, captcha verification, and CSRF protection.</p>
+  <div class="back-link"><a href="/">← Home</a></div>
+</main>
+
+{% include "_debug_footer.html" %}
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

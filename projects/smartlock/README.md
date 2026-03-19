@@ -60,6 +60,10 @@
 - Smart Lock reads `RESEND_API_KEY` and `MAIL_FROM` dynamically at runtime.
 - Email failures should not 500 the page; they should render a normal page error.
 - Admin session state is stored in the `active_sessions` table plus Flask session cookies.
+- Smart Lock requires session cookies even before login:
+  - a cookie probe runs on Smart Lock requests
+  - browsers with cookies disabled should only see the cookies-required page, the Home link, and the debug footer
+  - CSRF failures on Smart Lock routes should also fall back to that cookies-required page
 - Session expiry is fixed-duration from login.
 - Login cooldowns are stored in the `settings` table with browser-session-scoped keys.
 - Login cooldowns are intentionally not global; one browser session should not block another person's login request.

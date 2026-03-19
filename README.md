@@ -44,6 +44,9 @@
 - Prefer updating [`run.py`](/Users/administrator/Sites/friedutchplus/run.py) and the app factory.
 - Treat LaunchAgent changes as operational changes, not normal app-code changes.
 - If changing deploy/restart behavior, preserve the current “kickstart if present, bootstrap if absent” pattern unless there is a deliberate replacement plan.
+- Smart Lock requires session cookies:
+  - no-cookie browsers should be shown the minimal cookies-required page instead of login/admin UI
+  - Smart Lock POST failures from missing CSRF session state should render that same cookies-required page
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/deploy`
