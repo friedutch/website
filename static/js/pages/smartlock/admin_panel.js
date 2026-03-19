@@ -4,6 +4,22 @@ document.addEventListener("DOMContentLoaded", function () {
   const tabs = Array.from(document.querySelectorAll("[data-panel-tab]"));
   const sections = Array.from(document.querySelectorAll("[data-panel-section]"));
   const tabStorageKey = "smartlock-admin-active-tab";
+  const storage = window.friedutchStorage || {
+    get: function (key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (error) {
+        return null;
+      }
+    },
+    set: function (key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch (error) {
+        // Ignore storage failures and keep the UI working.
+      }
+    }
+  };
 
   const activateTab = function (name) {
     const tabExists = tabs.some(function (tab) { return tab.dataset.panelTab === name; });
@@ -16,11 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     sections.forEach(function (section) {
       section.classList.toggle("active", section.dataset.panelSection === nextTab);
     });
-    try {
-      window.localStorage.setItem(tabStorageKey, nextTab);
-    } catch (error) {
-      // Ignore storage failures and keep the UI working.
-    }
+    storage.set(tabStorageKey, nextTab);
   };
 
   tabs.forEach(function (tab) {
@@ -30,12 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   if (tabs.length && sections.length) {
-    let initialTab = "settings";
-    try {
-      initialTab = window.localStorage.getItem(tabStorageKey) || "settings";
-    } catch (error) {
-      initialTab = "settings";
-    }
+    let initialTab = storage.get(tabStorageKey) || "settings";
     activateTab(initialTab);
   }
 

@@ -73,7 +73,7 @@
 - The browser-session actor id lives in the Flask session cookie as `cooldown_actor_id`.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
-- The selected admin panel tab persists across reloads in browser local storage.
+- The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new`.
