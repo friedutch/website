@@ -69,6 +69,29 @@ document.addEventListener("DOMContentLoaded", function () {
     filterUsers();
   }
 
+  const logSearchInput = document.getElementById("log-search");
+  const logCards = Array.from(document.querySelectorAll("[data-log-card]"));
+  const logSearchEmpty = document.getElementById("log-search-empty");
+  if (logSearchInput && logCards.length) {
+    const filterLogs = function () {
+      const query = logSearchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+      logCards.forEach(function (card) {
+        const haystack = card.dataset.logSearch || "";
+        const visible = !query || haystack.includes(query);
+        card.style.display = visible ? "" : "none";
+        if (visible) {
+          visibleCount += 1;
+        }
+      });
+      if (logSearchEmpty) {
+        logSearchEmpty.classList.toggle("user-search-empty-hidden", visibleCount > 0);
+      }
+    };
+    logSearchInput.addEventListener("input", filterLogs);
+    filterLogs();
+  }
+
   if (cooldownRemaining > 0) {
     const timer = document.getElementById("chg-t");
     const button = document.getElementById("chg-btn");
@@ -103,7 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.querySelectorAll("[data-session-remaining]").forEach(function (stateBadge) {
     let remaining = Number(stateBadge.dataset.sessionRemaining || "0");
-    let elapsed = Number(stateBadge.dataset.sessionElapsed || "0");
     const sessionSide = stateBadge.closest(".session-side");
     const state = sessionSide ? sessionSide.querySelector("[data-session-state]") : null;
     const logoutAction = sessionSide ? sessionSide.querySelector(".session-action") : null;
@@ -126,10 +148,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
       if (state) {
-        state.textContent = "Active (" + Math.floor(elapsed / 60) + ":" + String(elapsed % 60).padStart(2, "0") + ")";
+        state.textContent = "Active";
         state.classList.toggle("session-state-active-warn", remaining <= 600);
       }
-      elapsed += 1;
       remaining -= 1;
     };
     tickSession();

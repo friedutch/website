@@ -120,13 +120,19 @@
   <div class="zone-title">
     <div class="zone-title-left"><span>📡</span> Logs</div>
     <div class="zone-title-actions">
-      <a class="sm-btn sm-green" href="/smartlock/add-session">📲 Add</a>
       <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log out all other sessions?">🚪 All out</a>
     </div>
   </div>
+  <div class="log-search-row">
+    <input class="app-input log-search-input" type="search" id="log-search" placeholder="Search IPs, states, devices or times">
+  </div>
+  <a class="log-create-card" href="/smartlock/add-session" aria-label="Open add session">
+    <span class="log-create-plus">+</span>
+    <span class="log-create-copy">Add session</span>
+  </a>
 
   {% for entry in log_entries %}
-  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}">
+  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">
     <div class="session-icon">{{ entry['icon'] }}</div>
     <div class="session-info">
       <div class="session-ip">
@@ -138,13 +144,14 @@
     <div class="session-side">
       {% if entry['active'] %}
       <a class="icon-btn session-action" href="/smartlock/session/logout/{{ entry['session_token'] }}" data-confirm="Log out this session?">🚪</a>
-      <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}" data-session-elapsed="{{ entry['elapsed'] }}">Active ({{ entry['elapsed_fmt'] }})</span>
+      <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active</span>
       {% else %}
       <span class="session-state {{ 'session-state-allowed' if entry['success'] else 'session-state-denied' }}" {% if entry['success'] %}data-session-state{% endif %}>{{ 'Allowed' if entry['success'] else 'Denied' }}</span>
       {% endif %}
     </div>
   </div>
   {% endfor %}
+  <p class="no-items log-search-empty user-search-empty-hidden" id="log-search-empty">No logs match this search.</p>
 
   {% if not log_entries %}
   <p class="no-items">No sessions yet 👀</p>

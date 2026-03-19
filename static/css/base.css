@@ -63,7 +63,7 @@ a.back-link {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: min(100%, 420px);
+  width: 100%;
   padding: 16px 20px;
   border-radius: var(--radius-sm);
   border: 2px solid var(--border);
