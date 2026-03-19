@@ -5,6 +5,7 @@ body { max-width:520px; margin:0 auto; padding:48px 24px 100px; }
 .detail-avatar { width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 6px 24px rgba(255,60,172,0.35); }
 .detail-name { font-size:26px;font-weight:900; }
 .detail-sub { font-size:13px;color:var(--text2);font-weight:600; }
+.detail-error { margin-bottom: 18px; }
 .method-zone { background:var(--card);border:2px solid var(--border);border-radius:var(--radius-sm);padding:18px;margin-bottom:12px; }
 .method-head { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
 .method-emoji { font-size:24px; }
@@ -13,9 +14,30 @@ body { max-width:520px; margin:0 auto; padding:48px 24px 100px; }
 .method-toggle.on { background:linear-gradient(135deg,rgba(0,200,130,0.15),rgba(0,210,255,0.1));color:var(--green);border-color:rgba(0,200,130,0.3); }
 .method-toggle.off { background:var(--surface2);color:var(--text3);border-color:var(--border); }
 .method-toggle.locked { background:linear-gradient(135deg,rgba(0,200,130,0.15),rgba(0,210,255,0.1));color:var(--green);border-color:rgba(0,200,130,0.3);pointer-events:none; }
+.method-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text2);
+}
+.method-switch input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--cyan);
+}
+.method-switch-copy { user-select: none; }
 .code-big { font-size:24px;font-weight:800;color:var(--text2);letter-spacing:0.08em;margin-bottom:6px; }
+.code-big-muted { color: var(--text3); letter-spacing: 0.02em; }
 .method-desc { font-size:12px;color:var(--text3);font-weight:600;margin-bottom:12px; }
 .current-id { font-size:13px;color:var(--text2);font-weight:700;margin-bottom:10px; }
+.create-user-btn {
+  width: 100%;
+  margin-top: 8px;
+  border: none;
+  cursor: pointer;
+}
 .delete-user-btn {
   background:linear-gradient(135deg,var(--orange),#FF4444);
   color:white;

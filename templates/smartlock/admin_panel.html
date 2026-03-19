@@ -66,14 +66,10 @@
   <div class="user-search-row">
     <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search users, passcodes, RFID or fingerprint IDs">
   </div>
-  <form class="user-create-card" method="POST" action="/smartlock/users/add">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input class="app-input user-create-input" type="text" name="name" placeholder="User name" required>
-    <button class="user-create-button" type="submit" aria-label="Create user">
-      <span class="user-create-plus">+</span>
-      <span class="user-create-copy">Create user</span>
-    </button>
-  </form>
+  <a class="user-create-card" href="/smartlock/users/new" aria-label="Open new user setup">
+    <span class="user-create-plus">+</span>
+    <span class="user-create-copy">Create user</span>
+  </a>
   {% if users %}
   {% for user in users %}
   <div class="user-card" data-user-card data-user-search="{{ (user['name'] ~ ' ' ~ user['passcode'] ~ ' ' ~ (user['rfid_id'] or '') ~ ' ' ~ (user['fingerprint_id'] or ''))|lower }}">

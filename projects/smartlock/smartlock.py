@@ -774,15 +774,58 @@ def init_smartlock(app):
                                       logs=logs, sessions=sessions, current_token=current_token,
                                       current_remaining=current_remaining, panel_message=panel_message)
     
+    @app.route("/smartlock/users/new")
+    def smartlock_new_user():
+        if not is_admin(): return redirect(url_for("smartlock_login"))
+        draft_user = {
+            "id": None,
+            "name": "",
+            "passcode": None,
+            "rfid_enabled": 0,
+            "rfid_id": "",
+            "fingerprint_enabled": 0,
+            "fingerprint_id": "",
+        }
+        return render_page("smartlock/admin_user_detail.html", page_name="New User — Friedutch Plus",
+                                      user=draft_user, is_new_user=True, error=None)
+
     @app.route("/smartlock/users/add", methods=["POST"])
     def smartlock_add_user():
+        return redirect(url_for("smartlock_new_user"))
+
+    @app.route("/smartlock/users/create", methods=["POST"])
+    def smartlock_create_user():
         if not is_admin(): return redirect(url_for("smartlock_login"))
         name = sanitize(request.form.get("name", ""))
-        if name:
-            if not get_db().execute("SELECT 1 FROM users WHERE name = ?", (name,)).fetchone():
-                get_db().execute("INSERT INTO users (name, passcode) VALUES (?, ?)", (name, generate_passcode()))
-                get_db().commit()
-        return redirect(url_for("smartlock_admin"))
+        rfid_enabled = 1 if request.form.get("rfid_enabled") == "on" else 0
+        fingerprint_enabled = 1 if request.form.get("fingerprint_enabled") == "on" else 0
+        rfid_id = sanitize(request.form.get("rfid_id", ""))
+        fingerprint_id = sanitize(request.form.get("fingerprint_id", ""))
+        draft_user = {
+            "id": None,
+            "name": name,
+            "passcode": None,
+            "rfid_enabled": rfid_enabled,
+            "rfid_id": rfid_id,
+            "fingerprint_enabled": fingerprint_enabled,
+            "fingerprint_id": fingerprint_id,
+        }
+        if not name:
+            return render_page("smartlock/admin_user_detail.html", page_name="New User — Friedutch Plus",
+                                          user=draft_user, is_new_user=True, error="Enter a user name before creating this profile.")
+        db = get_db()
+        if db.execute("SELECT 1 FROM users WHERE name = ?", (name,)).fetchone():
+            return render_page("smartlock/admin_user_detail.html", page_name="New User — Friedutch Plus",
+                                          user=draft_user, is_new_user=True, error="A user with that name already exists.")
+        cursor = db.execute(
+            """
+            INSERT INTO users (name, passcode, rfid_enabled, rfid_id, fingerprint_enabled, fingerprint_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (name, generate_passcode(), rfid_enabled, rfid_id or None, fingerprint_enabled, fingerprint_id or None),
+        )
+        db.commit()
+        return redirect(url_for("smartlock_user_detail", user_id=cursor.lastrowid))
     
     @app.route("/smartlock/users/delete/<int:user_id>")
     def smartlock_delete_user(user_id):
@@ -795,7 +838,8 @@ def init_smartlock(app):
     def smartlock_user_detail(user_id):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         user = get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
-        return render_page("smartlock/admin_user_detail.html", page_name=f"{user['name']} — Friedutch Plus", user=user)
+        return render_page("smartlock/admin_user_detail.html", page_name=f"{user['name']} — Friedutch Plus", user=user,
+                                      is_new_user=False, error=None)
     
     @app.route("/smartlock/user/<int:user_id>/toggle/<method>")
     def smartlock_toggle_method(user_id, method):

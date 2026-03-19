@@ -14,11 +14,65 @@
 <div class="detail-header">
   <div class="detail-avatar">👤</div>
   <div>
-    <div class="detail-name">{{ user['name'] }}</div>
-    <div class="detail-sub">Access profile</div>
+    <div class="detail-name">{{ "New user" if is_new_user else user['name'] }}</div>
+    <div class="detail-sub">{{ "Create access profile" if is_new_user else "Access profile" }}</div>
   </div>
 </div>
 
+{% if error %}<p class="msg-err detail-error">{{ error }}</p>{% endif %}
+
+{% if is_new_user %}
+<form method="POST" action="/smartlock/users/create">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="method-zone">
+    <div class="method-head">
+      <span class="method-emoji">👤</span>
+      <span class="method-label">Name</span>
+      <span class="method-toggle locked">One-time</span>
+    </div>
+    <div class="method-desc">This name can be set during creation, then it becomes fixed from this screen.</div>
+    <input class="app-input" type="text" name="name" placeholder="User name" value="{{ user['name'] or '' }}" required>
+  </div>
+
+  <div class="method-zone">
+    <div class="method-head">
+      <span class="method-emoji">🔢</span>
+      <span class="method-label">Passcode</span>
+      <span class="method-toggle locked">Generated</span>
+    </div>
+    <div class="code-big code-big-muted">Created on save</div>
+    <div class="method-desc">A fresh personal 6-digit code will be generated when you create this user.</div>
+  </div>
+
+  <div class="method-zone">
+    <div class="method-head">
+      <span class="method-emoji">💳</span>
+      <span class="method-label">RFID Badge</span>
+      <label class="method-switch">
+        <input type="checkbox" name="rfid_enabled" {% if user['rfid_enabled'] %}checked{% endif %}>
+        <span class="method-switch-copy">Enable</span>
+      </label>
+    </div>
+    <div class="method-desc">Set the badge identifier accepted for this user.</div>
+    <input class="app-input" type="text" name="rfid_id" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+  </div>
+
+  <div class="method-zone">
+    <div class="method-head">
+      <span class="method-emoji">🖐️</span>
+      <span class="method-label">Fingerprint</span>
+      <label class="method-switch">
+        <input type="checkbox" name="fingerprint_enabled" {% if user['fingerprint_enabled'] %}checked{% endif %}>
+        <span class="method-switch-copy">Enable</span>
+      </label>
+    </div>
+    <div class="method-desc">Set the fingerprint identifier for biometric recognition.</div>
+    <input class="app-input" type="text" name="fingerprint_id" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
+  </div>
+
+  <button class="big-btn create-user-btn" type="submit">Create user</button>
+</form>
+{% else %}
 <div class="method-zone">
   <div class="method-head">
     <span class="method-emoji">🔢</span>
@@ -67,6 +121,7 @@
    data-confirm="Delete {{ user['name'] }} permanently?">
   🗑️ Delete {{ user['name'] }}
 </a>
+{% endif %}
 
 {% include "_debug_footer.html" %}
 
