@@ -258,14 +258,17 @@ def get_active_sessions():
     now = datetime.datetime.utcnow()
     for s in sessions:
         created = datetime.datetime.fromisoformat(s["created_at"])
-        elapsed = (now - created).total_seconds()
+        elapsed = max(0, int((now - created).total_seconds()))
         remaining = max(0, int(SESSION_TIMEOUT - elapsed))
+        elapsed_minutes, elapsed_seconds = divmod(min(elapsed, SESSION_TIMEOUT), 60)
         minutes, seconds = divmod(remaining, 60)
         result.append(
             {
                 "session_token": s["session_token"],
                 "ip": s["ip"],
                 "created_at": s["created_at"][:19].replace("T", " "),
+                "elapsed": min(elapsed, SESSION_TIMEOUT),
+                "elapsed_fmt": f"{elapsed_minutes}:{elapsed_seconds:02d}",
                 "remaining": remaining,
                 "remaining_fmt": f"{minutes}:{seconds:02d}",
                 "expired": remaining == 0,
@@ -284,6 +287,8 @@ def build_log_entries(logs, sessions, current_token):
             "created_at": log["created_at"][:19].replace("T", " "),
             "icon": log["user_agent"] if log["user_agent"] else "🌐",
             "success": bool(log["success"]),
+            "elapsed": 0,
+            "elapsed_fmt": "",
             "remaining": 0,
             "remaining_fmt": "",
             "current": False,
@@ -321,6 +326,8 @@ def build_log_entries(logs, sessions, current_token):
             }
         base_entry.update(
             {
+                "elapsed": session_row["elapsed"],
+                "elapsed_fmt": session_row["elapsed_fmt"],
                 "remaining": session_row["remaining"],
                 "remaining_fmt": session_row["remaining_fmt"],
                 "current": session_row["session_token"] == current_token,

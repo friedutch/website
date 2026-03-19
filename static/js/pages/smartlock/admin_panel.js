@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.querySelectorAll("[data-session-remaining]").forEach(function (stateBadge) {
     let remaining = Number(stateBadge.dataset.sessionRemaining || "0");
+    let elapsed = Number(stateBadge.dataset.sessionElapsed || "0");
     const sessionSide = stateBadge.closest(".session-side");
     const state = sessionSide ? sessionSide.querySelector("[data-session-state]") : null;
     const logoutAction = sessionSide ? sessionSide.querySelector(".session-action") : null;
@@ -118,9 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
       if (state) {
-        state.textContent = "Active (" + Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0") + ")";
+        state.textContent = "Active (" + Math.floor(elapsed / 60) + ":" + String(elapsed % 60).padStart(2, "0") + ")";
         state.classList.toggle("session-state-active-warn", remaining <= 600);
       }
+      elapsed += 1;
       remaining -= 1;
     };
     tickSession();
