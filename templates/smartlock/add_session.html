@@ -24,7 +24,10 @@
   <div class="url-card">
     <div class="url-label">🔗 Link for other device</div>
     <div class="url-box">{{ join_url }}</div>
-    <button class="sm-btn sm-cyan copy-join-url-btn" type="button" data-copy-text="{{ join_url }}">📋 Copy link</button>
+    <div class="url-actions">
+      <button class="sm-btn sm-cyan copy-join-url-btn" type="button" data-copy-text="{{ join_url }}">📋 Copy link</button>
+      <a class="sm-btn sm-ghost" href="/smartlock/add-session">↻ Regenerate</a>
+    </div>
   </div>
   <p class="cd-note">Link expires in <span id="exp-timer" data-remaining="300">5:00</span></p>
   <div class="back-link"><a href="/smartlock/admin">← Back to panel</a></div>

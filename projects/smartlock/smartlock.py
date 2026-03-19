@@ -544,6 +544,9 @@ def init_smartlock(app):
     
     @app.route("/smartlock/join/<token>")
     def smartlock_join(token):
+        if is_admin():
+            session["smartlock_admin_message"] = "This device already has an active session. Use another device or regenerate the link."
+            return redirect(url_for("smartlock_admin"))
         db = sqlite3.connect(DB_PATH)
         db.row_factory = sqlite3.Row
         row = db.execute("SELECT * FROM join_tokens WHERE token = ?", (token,)).fetchone()
@@ -570,6 +573,9 @@ def init_smartlock(app):
     
     @app.route("/smartlock/join-captcha", methods=["POST"])
     def smartlock_join_captcha():
+        if is_admin():
+            session["smartlock_admin_message"] = "This device already has an active session. Use another device or regenerate the link."
+            return redirect(url_for("smartlock_admin"))
         token = request.form.get("token")
         chosen = request.form.get("captcha_code")
         db = sqlite3.connect(DB_PATH)
@@ -762,10 +768,11 @@ def init_smartlock(app):
         sessions = get_active_sessions()
         current_token = session.get("session_token", "")
         current_remaining = next((s["remaining"] for s in sessions if s["session_token"] == current_token), 0)
+        panel_message = pop_ui_message("smartlock_admin_message")
         return render_page("smartlock/admin_panel.html", page_name="Smart Lock — Control Room", users=users, admin_email=admin_email,
                                       pending=pending, cooldown_remaining=email_cd,
                                       logs=logs, sessions=sessions, current_token=current_token,
-                                      current_remaining=current_remaining)
+                                      current_remaining=current_remaining, panel_message=panel_message)
     
     @app.route("/smartlock/users/add", methods=["POST"])
     def smartlock_add_user():

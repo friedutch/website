@@ -34,6 +34,7 @@
 </div>
 
 <h1>⚙️ Control Room</h1>
+{% if panel_message %}<p class="msg-err panel-message">{{ panel_message }}</p>{% endif %}
 
 <div class="panel-stack">
 <div class="zone zone-pink panel-section active" id="panel-settings" data-panel-section="settings">

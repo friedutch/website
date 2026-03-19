@@ -4,6 +4,7 @@
 - Smart Lock is the admin panel for managing people and access methods for a real smart lock setup.
 - The admin signs in using a magic link plus a captcha-like confirmation step.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
+- Add-session links can be regenerated from the add-session page without changing any data directly.
 - The admin panel uses top tabs for Settings, Users, and Logs.
 - The Users tab shows access cards with passcode, RFID, and fingerprint details at a glance, plus a Logs tab for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
@@ -76,6 +77,8 @@
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The admin panel's Logs area includes both active sessions and historical access attempts.
+- The add-session page includes a regenerate action that simply refreshes the page to mint a new join link.
+- Opening a join link on a device that already has an active admin session must redirect back to the admin panel without consuming the token.
 
 ### Routes
 - Main:
@@ -137,6 +140,7 @@
 ### Security notes
 - Magic links expire after 5 minutes.
 - Captcha challenge is single-attempt and destructive on failure.
+- Join links should only be consumed when a new device actually completes the join flow.
 - Brute-force lockout exists for repeated attempts.
 - Cookies are `Secure`, `HttpOnly`, `SameSite=Lax`.
 - Smart Lock should be treated as sensitive/admin-only functionality.
