@@ -75,6 +75,7 @@
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
 - Theme toggle and session logout live inside the Settings tab, not the top bar.
+- The Settings tab currently also mirrors the current session's remaining time so the placement can be evaluated against the top session chip.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.

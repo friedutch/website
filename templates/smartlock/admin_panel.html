@@ -41,6 +41,10 @@
     <button class="sm-btn sm-ghost settings-action-btn" data-theme-toggle id="theme-btn" type="button">🔄 Theme</button>
     <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋 Log out</a>
   </div>
+  <div class="settings-session-card">
+    <div class="setting-label">🕒 My Session Remaining Time</div>
+    <div class="settings-session-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</div>
+  </div>
   <p class="setting-label">📧 Admin Email</p>
   <p class="setting-val">{{ admin_email }}</p>
   {% if pending %}

@@ -158,6 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const sessionNotice = document.getElementById("sess-notif-top");
+  const settingsSessionRemaining = document.getElementById("settings-session-remaining");
   if (!sessionNotice) {
     return;
   }
@@ -173,6 +174,11 @@ document.addEventListener("DOMContentLoaded", function () {
   sessionNotice.classList.remove("sess-chip-hidden");
 
   const tickNotice = function () {
+    if (settingsSessionRemaining) {
+      settingsSessionRemaining.textContent = remaining > 0
+        ? Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0")
+        : "Expired";
+    }
     if (remaining <= 0) {
       if (timer) {
         timer.textContent = "Expired";

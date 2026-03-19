@@ -78,6 +78,22 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
   min-width: 160px;
   justify-content: center;
 }
+.settings-session-card {
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.04);
+}
+[data-theme="light"] .settings-session-card {
+  background: rgba(255,255,255,0.82);
+  border-color: rgba(0,0,0,0.06);
+}
+.settings-session-value {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+}
 .zone-title { margin-bottom: 10px; }
 .user-card {
   background: linear-gradient(135deg, rgba(255,60,172,0.1), rgba(43,134,197,0.08));
