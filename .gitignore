@@ -1,10 +1,9 @@
-.env
-shopping.db
-.DS_Store
 __pycache__/
+.env
+.DS_Store
 *.pyc
 *.pyo
-projects/smartlock/smartlock.db
-projects/footprint/footprint.db
 *.db-shm
 *.db-wal
+projects/smartlock/smartlock.db
+projects/footprint/footprint.db
