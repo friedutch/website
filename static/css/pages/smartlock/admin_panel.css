@@ -53,11 +53,6 @@ body {
   background: linear-gradient(135deg, var(--pink), var(--purple));
   box-shadow: 0 8px 24px rgba(255, 60, 172, 0.26);
 }
-.sess-chip-hidden { display:none; }
-.sess-chip { display:flex;align-items:center;gap:5px;font-size:13px;font-weight:800;padding:6px 12px;border-radius:50px;border:2px solid transparent; }
-.sess-chip.ok   { background:var(--surface); border-color:rgba(0,200,130,0.4); color:var(--green); }
-.sess-chip.warn { background:var(--surface); border-color:rgba(255,107,53,0.6); color:var(--orange); animation:pulse-warn 2s ease-in-out infinite; }
-@keyframes pulse-warn { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,53,0.2);}50%{box-shadow:0 0 0 6px rgba(255,107,53,0);} }
 h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em; }
 .panel-message { margin-bottom: 18px; text-align: left; }
 .panel-stack { position: relative; }
@@ -75,7 +70,7 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
   margin-bottom: 16px;
 }
 .settings-action-btn {
-  min-width: 160px;
+  width: 100%;
   justify-content: center;
 }
 .settings-session-card {
@@ -93,6 +88,9 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
   font-size: 24px;
   font-weight: 900;
   color: var(--text);
+}
+.settings-logout-btn {
+  margin-top: 16px;
 }
 .zone-title { margin-bottom: 10px; }
 .user-card {
@@ -320,8 +318,6 @@ h1 { font-size:42px; font-weight:900; margin-bottom:8px; letter-spacing:-0.03em;
   .top-bar-unified { margin-bottom: 26px; align-items: flex-start; }
   .top-bar-right { width: 100%; flex-wrap: wrap; justify-content: flex-end; }
   .panel-tabs { order: 3; width: 100%; margin: 6px 0 0; }
-  .settings-actions { flex-direction: column; }
-  .settings-action-btn { width: 100%; }
   .field-row { flex-direction: column; }
   .zone-title,
   .zone-title-actions { align-items: flex-start; }

@@ -157,63 +157,27 @@ document.addEventListener("DOMContentLoaded", function () {
     var sessionIntervalId = setInterval(tickSession, 1000);
   });
 
-  const sessionNotice = document.getElementById("sess-notif-top");
   const settingsSessionRemaining = document.getElementById("settings-session-remaining");
-  if (!sessionNotice) {
+  if (!settingsSessionRemaining) {
     return;
   }
 
-  let remaining = Number(sessionNotice.dataset.currentRemaining || "0");
+  let remaining = Number(settingsSessionRemaining.dataset.currentRemaining || "0");
   if (remaining <= 0) {
+    settingsSessionRemaining.textContent = "Expired";
     return;
   }
-
-  const timer = document.getElementById("notif-timer-top");
-  const icon = document.getElementById("notif-icon-top");
-  let warned = false;
-  sessionNotice.classList.remove("sess-chip-hidden");
 
   const tickNotice = function () {
-    if (settingsSessionRemaining) {
-      settingsSessionRemaining.textContent = remaining > 0
-        ? Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0")
-        : "Expired";
-    }
+    settingsSessionRemaining.textContent = remaining > 0
+      ? Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0")
+      : "Expired";
     if (remaining <= 0) {
-      if (timer) {
-        timer.textContent = "Expired";
-      }
-      sessionNotice.className = "sess-chip warn";
-      if (icon) {
-        icon.textContent = "🔴";
-      }
       clearInterval(noticeIntervalId);
       setTimeout(function () {
         window.location.href = "/smartlock/logout";
       }, 5000);
       return;
-    }
-
-    if (timer) {
-      timer.textContent = Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0");
-    }
-    if (remaining <= 300) {
-      sessionNotice.className = "sess-chip warn";
-      if (icon) {
-        icon.textContent = "⚠️";
-      }
-      if (!warned) {
-        warned = true;
-        sessionNotice.style.transform = "scale(1.05)";
-        setTimeout(function () {
-          sessionNotice.style.transform = "scale(1)";
-        }, 400);
-      }
-    } else {
-      sessionNotice.className = "sess-chip ok";
-      if (icon) {
-        icon.textContent = "🟢";
-      }
     }
 
     remaining -= 1;

@@ -173,6 +173,17 @@ def get_device_icon():
         return "🌐"
 
 
+def get_device_search_terms(icon):
+    aliases = {
+        "📱": "phone mobile smartphone iphone android tablet ipad",
+        "💻": "computer laptop desktop pc windows",
+        "🖥️": "computer desktop mac macos linux workstation",
+        "🤖": "bot curl automation script",
+        "🌐": "browser web internet",
+    }
+    return aliases.get(icon, "browser web device")
+
+
 def get_client_ip():
     return request.headers.get("CF-Connecting-IP") or request.remote_addr
 
@@ -283,6 +294,7 @@ def build_log_entries(logs, sessions, current_token):
             "ip": log["ip"],
             "created_at": log["created_at"][:19].replace("T", " "),
             "icon": log["user_agent"] if log["user_agent"] else "🌐",
+            "device_search_terms": get_device_search_terms(log["user_agent"] if log["user_agent"] else "🌐"),
             "success": bool(log["success"]),
             "remaining": 0,
             "remaining_fmt": "",
@@ -316,6 +328,7 @@ def build_log_entries(logs, sessions, current_token):
                 "ip": session_row["ip"],
                 "created_at": session_row["created_at"],
                 "icon": session_row["icon"],
+                "device_search_terms": get_device_search_terms(session_row["icon"]),
                 "success": True,
                 "state": "allowed",
             }
@@ -327,6 +340,7 @@ def build_log_entries(logs, sessions, current_token):
                 "session_token": session_row["session_token"],
                 "active": not session_row["expired"],
                 "state": "active" if not session_row["expired"] else "allowed",
+                "device_search_terms": get_device_search_terms(session_row["icon"]),
             }
         )
         combined.append(base_entry)

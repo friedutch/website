@@ -24,10 +24,6 @@
       <button class="panel-tab" type="button" data-panel-tab="people" aria-selected="false">Users</button>
       <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
     </div>
-    <div class="sess-chip ok sess-chip-hidden" id="sess-notif-top" data-current-remaining="{{ current_remaining }}">
-      <span id="notif-icon-top">🟢</span>
-      <span id="notif-timer-top">--:--</span>
-    </div>
   </div>
 </div>
 
@@ -37,13 +33,12 @@
 <div class="panel-stack">
 <div class="zone zone-pink panel-section active" id="panel-settings" data-panel-section="settings">
   <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> Settings</div></div>
-  <div class="settings-actions">
-    <button class="sm-btn sm-ghost settings-action-btn" data-theme-toggle id="theme-btn" type="button">🔄 Theme</button>
-    <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋 Log out</a>
-  </div>
   <div class="settings-session-card">
     <div class="setting-label">🕒 My Session Remaining Time</div>
     <div class="settings-session-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</div>
+  </div>
+  <div class="settings-actions">
+    <button class="sm-btn sm-ghost settings-action-btn" data-theme-toggle id="theme-btn" type="button">🔄 Theme</button>
   </div>
   <p class="setting-label">📧 Admin Email</p>
   <p class="setting-val">{{ admin_email }}</p>
@@ -65,6 +60,7 @@
   <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
   {% endif %}
   {% endif %}
+  <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn settings-logout-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋 Log out</a>
 </div>
 
 <div class="zone zone-cyan panel-section" id="panel-people" data-panel-section="people">
@@ -138,7 +134,7 @@
   </a>
 
   {% for entry in log_entries %}
-  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">
+  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ entry['device_search_terms'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">
     <div class="session-icon">{{ entry['icon'] }}</div>
     <div class="session-info">
       <div class="session-ip">{{ entry['ip'] }}</div>
