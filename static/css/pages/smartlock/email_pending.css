@@ -17,4 +17,3 @@ body { display:flex; align-items:center; justify-content:center; min-height:100v
 .actions { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px; }
 .resend-btn-disabled { pointer-events:none; opacity:0.4; }
 .back-link { text-align:center; }
-.back-link a { font-size:13px;font-weight:700;color:var(--text3); }

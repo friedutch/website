@@ -51,6 +51,37 @@ html, body {
 
 a { text-decoration: none; color: inherit; }
 
+.back-link {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 18px auto 0;
+}
+.back-link a,
+a.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: min(100%, 420px);
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.2;
+  box-shadow: 0 10px 28px var(--shadow);
+  transition: all 0.2s;
+}
+.back-link a:hover,
+a.back-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,60,172,0.28);
+  color: var(--pink);
+}
+
 .theme-toggle {
   position: fixed;
   top: 16px; right: 16px;

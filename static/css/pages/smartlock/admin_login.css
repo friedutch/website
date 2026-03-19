@@ -29,4 +29,3 @@ body { max-width:720px; margin:0 auto; padding:56px 24px 100px; }
   color:var(--pink);
 }
 .back-link { margin-top:24px; }
-.back-link a { font-size:13px;font-weight:700;color:var(--text3); }

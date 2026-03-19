@@ -39,5 +39,4 @@ body {
 .cd-note { text-align:center;font-size:13px;font-weight:700;color:var(--text3);margin-bottom:14px; }
 .cd-note span { color:var(--cyan); }
 .back-link { text-align:center; }
-.back-link a { font-size:13px;font-weight:700;color:var(--text3); }
 .debug-footer { width: min(100%, 420px); margin-top: 24px; }
