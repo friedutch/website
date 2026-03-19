@@ -788,7 +788,7 @@ def init_smartlock(app):
     def smartlock_user_detail(user_id):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         user = get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
-        return render_page("smartlock/admin_user_detail.html", page_name=f"{user['name']} — Friedutch", user=user)
+        return render_page("smartlock/admin_user_detail.html", page_name=f"{user['name']} — Friedutch Plus", user=user)
     
     @app.route("/smartlock/user/<int:user_id>/toggle/<method>")
     def smartlock_toggle_method(user_id, method):

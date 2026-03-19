@@ -50,7 +50,7 @@
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/deploy`
-- [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the template path and last deployment timestamp
+- [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the template path and the footer timestamp
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): Smart Lock feature owner
 - [`projects/footprint/footprint.py`](/Users/administrator/Sites/friedutchplus/projects/footprint/footprint.py): Footprint feature owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates): Jinja templates
@@ -97,7 +97,8 @@
   - page title
   - request URL
   - local template path
-  - `Last Deployment` timestamp in UTC
+  - GitHub file URL for the active route's Python file
+  - `Last Commit` timestamp in UTC
 - Deploy output is written to:
   - `/tmp/deploy.log`
 - LaunchAgent stdout/stderr logs are outside the repo:

@@ -2,5 +2,6 @@
   <div><strong>Page Title:</strong> {{ page_name }}</div>
   <div><strong>Request URL:</strong> {{ request_url }}</div>
   <div><strong>Local Template Path:</strong> {{ template_local_path }}</div>
-  <div><strong>Last Deployment:</strong> {{ last_deployment }}</div>
+  <div><strong>GitHub File Path:</strong> <a href="{{ github_file_path }}" target="_blank" rel="noopener noreferrer">{{ github_file_path }}</a></div>
+  <div><strong>Last Commit:</strong> {{ last_deployment }}</div>
 </div>

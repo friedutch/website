@@ -12,6 +12,20 @@ from app.rendering import render_page
 load_dotenv()
 
 
+def get_git_output(project_root, *args):
+    try:
+        completed = subprocess.run(
+            ["git", *args],
+            cwd=project_root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return completed.stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return ""
+
+
 def create_app():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     from projects.smartlock import init_smartlock
@@ -25,6 +39,8 @@ def create_app():
     flask_app.secret_key = os.getenv("SECRET_KEY")
     csrf = CSRFProtect(flask_app)
     flask_app.config["LAST_DEPLOYMENT"] = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
+    flask_app.config["GITHUB_REPO_URL"] = get_git_output(project_root, "remote", "get-url", "origin")
+    flask_app.config["GITHUB_BRANCH"] = get_git_output(project_root, "rev-parse", "--abbrev-ref", "HEAD") or "main"
 
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,
@@ -61,7 +77,7 @@ def create_app():
 
     @flask_app.route("/")
     def home():
-        return render_page("home.html", page_name="Friedutch+")
+        return render_page("home.html", page_name="Friedutch Plus")
 
     return flask_app
 
