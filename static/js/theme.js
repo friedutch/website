@@ -36,6 +36,11 @@ function getStorage(){
 function getSystemTheme(){return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t==='system'?getSystemTheme():t);}
 function themeIcon(t){return t==='dark'?'🌙':t==='light'?'☀️':'🔄';}
+function themeButtonText(btn, theme){
+  const label = btn?.dataset?.themeLabel;
+  const icon = themeIcon(theme);
+  return label ? icon + ' ' + label : icon;
+}
 function toggleTheme(btn){
   const storage=getStorage();
   const themes=['dark','light','system'];
@@ -43,7 +48,7 @@ function toggleTheme(btn){
   const next=themes[(themes.indexOf(cur)+1)%3];
   storage.set('theme',next);
   applyTheme(next);
-  btn.textContent=themeIcon(next);
+  btn.textContent=themeButtonText(btn, next);
 }
 (function(){
   const storage=getStorage();
@@ -51,7 +56,7 @@ function toggleTheme(btn){
   applyTheme(t);
   document.addEventListener('DOMContentLoaded',function(){
     const btn=document.getElementById('theme-btn')||document.querySelector('[data-theme-toggle]');
-    if(btn)btn.textContent=themeIcon(t);
+    if(btn)btn.textContent=themeButtonText(btn, t);
     document.querySelectorAll('[data-theme-toggle]').forEach(function(toggle){
       toggle.addEventListener('click',function(){toggleTheme(toggle);});
     });
