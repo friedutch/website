@@ -53,8 +53,8 @@
     <button class="sm-btn sm-ghost sm-ghost-pink email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>📧 Change email</button>
     <form class="email-change-form{% if not email_error %} email-change-form-hidden{% endif %}" method="POST" action="/smartlock/change-email" id="chg-form" data-email-change-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input class="app-input email-change-input" type="email" name="new_email" placeholder="{{ admin_email }}" data-email-change-input {% if cooldown_remaining > 0 %}disabled{% endif %}>
       <button class="sm-btn sm-ghost sm-ghost-pink email-change-cancel" type="button" data-email-change-cancel>Cancel</button>
+      <input class="app-input email-change-input" type="email" name="new_email" placeholder="{{ admin_email }}" data-email-change-input {% if cooldown_remaining > 0 %}disabled{% endif %}>
       <button class="sm-btn sm-pink email-change-save" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>Save</button>
     </form>
   </div>

@@ -125,6 +125,9 @@ body {
   align-items: center;
   width: 100%;
 }
+.email-change-form.email-change-form-hidden {
+  display: none;
+}
 .email-change-input {
   flex: 1 1 0;
   min-width: 0;
