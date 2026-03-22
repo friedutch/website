@@ -720,7 +720,7 @@ def init_smartlock(app):
         error = send_verification_link(new_email, captcha_code)
         if error:
             session.pop("email_change_captcha_code", None)
-            return render_page("smartlock/admin_panel.html", page_name="Smart Lock — Control Room", users=get_db().execute("SELECT * FROM users ORDER BY created_at DESC").fetchall(),
+            return render_page("smartlock/admin_panel.html", page_name="Smart Lock — Admin Panel", users=get_db().execute("SELECT * FROM users ORDER BY created_at DESC").fetchall(),
                                           admin_email=get_admin_email(), pending=get_pending_email(),
                                           cooldown_remaining=cooldown_remaining("admin_email_change_cooldown"),
                                           logs=get_db().execute("SELECT * FROM login_logs ORDER BY created_at DESC LIMIT 100").fetchall(),
@@ -851,7 +851,7 @@ def init_smartlock(app):
         current_remaining = next((s["remaining"] for s in sessions if s["session_token"] == current_token), 0)
         log_entries = build_log_entries(logs, sessions, current_token)
         panel_message = pop_ui_message("smartlock_admin_message")
-        return render_page("smartlock/admin_panel.html", page_name="Smart Lock — Control Room", users=users, admin_email=admin_email,
+        return render_page("smartlock/admin_panel.html", page_name="Smart Lock — Admin Panel", users=users, admin_email=admin_email,
                                       pending=pending, cooldown_remaining=email_cd,
                                       logs=logs, sessions=sessions, log_entries=log_entries, current_token=current_token,
                                       current_remaining=current_remaining, panel_message=panel_message)

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Smart Lock — Control Room' }}</title>
+<title>{{ page_name or 'Smart Lock — Admin Panel' }}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_panel.css', v=asset_version) }}">
 </head>
@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<h1>⚙️ Control Room</h1>
+<h1>⚙️ Admin Panel</h1>
 {% if panel_message %}<p class="msg-err panel-message">{{ panel_message }}</p>{% endif %}
 
 <div class="panel-stack">
