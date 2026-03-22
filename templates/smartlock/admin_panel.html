@@ -132,6 +132,18 @@
     <span class="log-create-plus">+</span>
     <span class="log-create-copy">Add session</span>
   </a>
+  {% if join_invite %}
+  <div class="log-invite-row">
+    <button class="sm-btn sm-pink copy-join-url-btn" type="button" data-copy-text="{{ join_invite['join_url'] }}">Copy</button>
+    <input class="app-input log-invite-input" type="text" value="{{ join_invite['join_url'] }}" readonly aria-label="Join link" onclick="this.select()">
+    <div class="log-invite-code-chip" aria-label="Captcha code">
+      <span class="log-invite-code-label">Code</span>
+      <span class="log-invite-code-value">{{ join_invite['captcha_code'] }}</span>
+    </div>
+    <a class="sm-btn sm-ghost" href="/smartlock/add-session">Regenerate</a>
+  </div>
+  <p class="cd-note-sm log-invite-note">Invite expires in <span id="join-invite-timer" data-remaining="{{ join_invite['remaining'] }}">{{ (join_invite['remaining'] // 60) ~ ':' ~ '%02d'|format(join_invite['remaining'] % 60) }}</span></p>
+  {% endif %}
 
   {% for entry in log_entries %}
   <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-size-source="log" data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ entry['device_search_terms'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">

@@ -52,6 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const logSearchInput = document.getElementById("log-search");
   const logCards = Array.from(document.querySelectorAll("[data-log-card]"));
   const logSearchEmpty = document.getElementById("log-search-empty");
+  const copyJoinUrlButton = document.querySelector(".copy-join-url-btn");
+  const joinInviteTimer = document.getElementById("join-invite-timer");
   const syncCreateCardHeights = function () {
     document.querySelectorAll("[data-create-card]").forEach(function (card) {
       const group = card.dataset.createCard;
@@ -91,6 +93,28 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     logSearchInput.addEventListener("input", filterLogs);
     filterLogs();
+  }
+
+  if (copyJoinUrlButton) {
+    copyJoinUrlButton.addEventListener("click", async function () {
+      await navigator.clipboard.writeText(copyJoinUrlButton.dataset.copyText || "");
+      copyJoinUrlButton.textContent = "Copied";
+    });
+  }
+
+  if (joinInviteTimer) {
+    let remaining = Number(joinInviteTimer.dataset.remaining || "0");
+    const tickJoinInvite = function () {
+      if (remaining <= 0) {
+        joinInviteTimer.textContent = "expired";
+        clearInterval(joinInviteIntervalId);
+        return;
+      }
+      joinInviteTimer.textContent = Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0");
+      remaining -= 1;
+    };
+    tickJoinInvite();
+    var joinInviteIntervalId = setInterval(tickJoinInvite, 1000);
   }
 
   const emailChangeToggle = document.querySelector("[data-email-change-open]");

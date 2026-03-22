@@ -205,6 +205,43 @@ def get_login_sync_channel():
     return f"smartlock-login-{get_request_actor_id()}"
 
 
+def create_join_invite():
+    token = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    captcha_code = str(random.randint(10, 99))
+    db = get_db()
+    db.execute("DELETE FROM join_tokens WHERE created_at < ?",
+               ((datetime.datetime.utcnow() - datetime.timedelta(minutes=5)).isoformat(),))
+    db.execute("INSERT OR REPLACE INTO join_tokens (token, number) VALUES (?, ?)", (token, captcha_code))
+    db.commit()
+    join_url = url_for("smartlock_join", token=token, _external=True)
+    session["smartlock_join_url"] = join_url
+    session["smartlock_join_captcha"] = captcha_code
+    session["smartlock_join_created_at"] = datetime.datetime.utcnow().isoformat()
+    return {"join_url": join_url, "captcha_code": captcha_code}
+
+
+def get_active_join_invite():
+    join_url = session.get("smartlock_join_url")
+    captcha_code = session.get("smartlock_join_captcha")
+    created_at = session.get("smartlock_join_created_at")
+    if not join_url or not captcha_code or not created_at:
+        return None
+    try:
+        created = datetime.datetime.fromisoformat(created_at)
+    except ValueError:
+        session.pop("smartlock_join_url", None)
+        session.pop("smartlock_join_captcha", None)
+        session.pop("smartlock_join_created_at", None)
+        return None
+    remaining = max(0, 300 - int((datetime.datetime.utcnow() - created).total_seconds()))
+    if remaining <= 0:
+        session.pop("smartlock_join_url", None)
+        session.pop("smartlock_join_captcha", None)
+        session.pop("smartlock_join_created_at", None)
+        return None
+    return {"join_url": join_url, "captcha_code": captcha_code, "remaining": remaining}
+
+
 def build_cookie_probe_url():
     args = request.args.to_dict(flat=True)
     args["_smartlock_cookie_probe"] = "1"
@@ -624,15 +661,8 @@ def init_smartlock(app):
     @app.route("/smartlock/add-session")
     def smartlock_add_session():
         if not is_admin(): return redirect(url_for("smartlock_login"))
-        token = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        captcha_code = str(random.randint(10, 99))
-        db = get_db()
-        db.execute("DELETE FROM join_tokens WHERE created_at < ?",
-                   ((datetime.datetime.utcnow() - datetime.timedelta(minutes=5)).isoformat(),))
-        db.execute("INSERT OR REPLACE INTO join_tokens (token, number) VALUES (?, ?)", (token, captcha_code))
-        db.commit()
-        join_url = url_for("smartlock_join", token=token, _external=True)
-        return render_page("smartlock/add_session.html", page_name="Smart Lock — Add Session", captcha_code=captcha_code, token=token, join_url=join_url)
+        create_join_invite()
+        return redirect(url_for("smartlock_admin"))
     
     @app.route("/smartlock/join/<token>")
     def smartlock_join(token):
@@ -868,10 +898,12 @@ def init_smartlock(app):
         current_remaining = next((s["remaining"] for s in sessions if s["session_token"] == current_token), 0)
         log_entries = build_log_entries(logs, sessions, current_token)
         panel_message = pop_ui_message("smartlock_admin_message")
+        join_invite = get_active_join_invite()
         return render_page("smartlock/admin_panel.html", page_name="Smart Lock", users=users, admin_email=admin_email,
                                       pending=pending, cooldown_remaining=email_cd,
                                       logs=logs, sessions=sessions, log_entries=log_entries, current_token=current_token,
-                                      current_remaining=current_remaining, panel_message=panel_message)
+                                      current_remaining=current_remaining, panel_message=panel_message,
+                                      join_invite=join_invite)
     
     @app.route("/smartlock/users/new")
     def smartlock_new_user():

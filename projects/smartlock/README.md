@@ -4,7 +4,7 @@
 - Smart Lock is the admin panel for managing people and access methods for a real smart lock setup.
 - The admin signs in using a magic link plus a captcha-like confirmation step.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
-- Add-session links can be regenerated from the add-session page without changing any data directly.
+- Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
 - The admin panel uses top tabs for Settings, Users, and Logs.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
@@ -83,14 +83,14 @@
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new` and matches the visible user-card height.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
-- The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed, and that add-session card matches the visible session-card height.
+- The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed, and when used it reveals the invite row directly in the admin panel.
 - In Settings, email change starts as a single wide `Change email` button and expands inline into a single-row editable form with the email field followed by cancel/save actions.
 - Log search also matches stored device aliases, so terms like phone, tablet, computer, pc, and browser can find matching entries.
 - The combined log feed merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
 - Active log cards for other devices show logout followed by an `Active` badge.
 - The current device log card should not show a logout control; it should show `THIS DEVICE` immediately before the `Active` badge.
 - When an active session reaches its limit in the current page view, the card should flip to `Allowed` without removing the `THIS DEVICE` badge.
-- The add-session page includes a regenerate action that simply refreshes the page to mint a new join link.
+- The add-session route mints the invite and returns to the admin panel, where the inline invite row shows copy first, a fixed join-link field, the captcha code, and a regenerate action.
 - Opening a join link on a device that already has an active admin session must close or leave the invite page and return to the admin panel without consuming the token.
 
 ### Routes
@@ -101,7 +101,6 @@
   - `/smartlock/verify`
   - `/smartlock/verify-captcha`
 - Cross-device session:
-  - `/smartlock/add-session`
   - `/smartlock/join/<token>`
   - `/smartlock/join-captcha`
 - Email change:
