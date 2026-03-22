@@ -126,9 +126,6 @@
 <div class="zone zone-green panel-section" id="panel-access" data-panel-section="access">
   <div class="zone-title">
     <div class="zone-title-left"><span>📡</span> Logs</div>
-    <div class="zone-title-actions">
-      <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log all other active sessions out?">🚪 All out</a>
-    </div>
   </div>
   <div class="log-search-row">
     <input class="app-input log-search-input" type="search" id="log-search" placeholder="Search devices, IPs, timestamps or states">
@@ -165,6 +162,11 @@
   {% if not log_entries %}
   <p class="no-items">No sessions yet 👀</p>
   {% endif %}
+
+  <a class="log-purge-card" href="/smartlock/session/logout-all" data-confirm="Log all other active sessions out?">
+    <span class="log-purge-icon">🚪</span>
+    <span class="log-purge-copy">Purge other active sessions</span>
+  </a>
 </div>
 </div>
 
