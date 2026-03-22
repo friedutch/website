@@ -46,7 +46,8 @@
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
 <script id="admin-login-script" src="{{ url_for('static', filename='js/pages/smartlock/admin_login.js', v=asset_version) }}"
         data-link-cooldown="{{ link_cooldown }}"
-        data-poll-login="{{ 'true' if captcha_code else 'false' }}"></script>
+        data-poll-login="{{ 'true' if captcha_code else 'false' }}"
+        data-login-sync-channel="{{ login_sync_channel or '' }}"></script>
 
 </body>
 </html>

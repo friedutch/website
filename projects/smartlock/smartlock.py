@@ -201,6 +201,10 @@ def actor_cooldown_key(base_key):
     return f"{base_key}:{get_request_actor_id()}"
 
 
+def get_login_sync_channel():
+    return f"smartlock-login-{get_request_actor_id()}"
+
+
 def build_cookie_probe_url():
     args = request.args.to_dict(flat=True)
     args["_smartlock_cookie_probe"] = "1"
@@ -512,27 +516,32 @@ def init_smartlock(app):
         remaining = cooldown_remaining(cooldown_key)
         captcha_code = session.get("admin_captcha_code")
         message = pop_ui_message("smartlock_login_message")
+        login_sync_channel = get_login_sync_channel()
         if request.method == "POST":
             if remaining > 0:
                 return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", admin_sent=bool(captcha_code),
-                                              link_cooldown=remaining, captcha_code=captcha_code, message=message)
+                                              link_cooldown=remaining, captcha_code=captcha_code, message=message,
+                                              login_sync_channel=login_sync_channel)
             captcha_code = str(random.randint(10, 99))
             error = send_admin_magic_link(get_admin_email(), captcha_code)
             if error:
                 session.pop("admin_captcha_code", None)
                 return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", admin_sent=False,
-                                              link_cooldown=0, captcha_code=None, message=error)
+                                              link_cooldown=0, captcha_code=None, message=error,
+                                              login_sync_channel=login_sync_channel)
             session["admin_captcha_code"] = captcha_code
             set_setting(cooldown_key, datetime.datetime.utcnow().isoformat())
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", admin_sent=True,
-                                          link_cooldown=300, captcha_code=captcha_code)
+                                          link_cooldown=300, captcha_code=captcha_code,
+                                          login_sync_channel=login_sync_channel)
         if remaining == 0 and captcha_code:
             session.pop("admin_captcha_code", None)
             captcha_code = None
         if is_admin():
             return redirect(url_for("smartlock_admin"))
         return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", admin_sent=bool(captcha_code),
-                                      link_cooldown=remaining, captcha_code=captcha_code, message=message)
+                                      link_cooldown=remaining, captcha_code=captcha_code, message=message,
+                                      login_sync_channel=login_sync_channel)
     
     @app.route("/smartlock/poll-status")
     def smartlock_poll_status():
@@ -606,7 +615,9 @@ def init_smartlock(app):
         db3.commit()
         db3.close()
         create_admin_session()
-        return redirect(url_for("smartlock_admin"))
+        return render_page("smartlock/verification_complete.html", page_name="Smart Lock — Access Granted",
+                                      redirect_url=url_for("smartlock_admin"),
+                                      login_sync_channel=get_login_sync_channel())
     
     # ── Add session (cross-device login) ─────────────────────────────────────────
     

@@ -48,6 +48,7 @@
   - open magic link
   - solve captcha challenge
   - receive admin session
+  - when the link is completed in the same browser profile as the login screen, the verification page should close itself and the original login screen should refresh into the admin panel
 - Cross-device session flow:
   - create add-session link
   - open on other device
@@ -72,6 +73,7 @@
 - Login cooldowns are stored in the `settings` table with browser-session-scoped keys.
 - Login cooldowns are intentionally not global; one browser session should not block another person's login request.
 - The browser-session actor id lives in the Flask session cookie as `cooldown_actor_id`.
+- Successful same-browser magic-link verification should signal the original login page to continue into the admin panel instead of leaving the verified email tab on the panel.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
 - Theme toggle and session logout live inside the Settings tab, not the top bar.

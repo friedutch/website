@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{{ page_name or 'Smart Lock — Access Granted' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css', v=asset_version) }}">
+</head>
+<body>
+<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
+<div class="site-header">
+  <div class="site-logo">🏠 <span>Friedutch Plus</span></div>
+  <div class="site-sub">Personal projects & tools</div>
+</div>
+<div class="project-card">
+  <span class="project-icon">✅</span>
+  <div class="project-name">Access granted</div>
+  <div class="project-desc">Closing this verification page and returning to your login screen.</div>
+  <p class="msg-err msg-err-spaced" id="verification-complete-fallback">If this page stays open, <a href="{{ redirect_url }}">continue here</a>.</p>
+</div>
+
+{% include "_debug_footer.html" %}
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<script id="verification-complete-script" src="{{ url_for('static', filename='js/pages/smartlock/verification_complete.js', v=asset_version) }}"
+        data-redirect-url="{{ redirect_url }}"
+        data-login-sync-channel="{{ login_sync_channel or '' }}"></script>
+
+</body>
+</html>

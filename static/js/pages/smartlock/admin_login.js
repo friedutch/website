@@ -2,6 +2,41 @@ document.addEventListener("DOMContentLoaded", function () {
   const script = document.getElementById("admin-login-script");
   const linkCooldown = Number(script?.dataset.linkCooldown || "0");
   const shouldPollLogin = script?.dataset.pollLogin === "true";
+  const loginSyncChannel = script?.dataset.loginSyncChannel || "";
+
+  const completeLogin = function (redirectUrl) {
+    window.location.replace(redirectUrl || "/smartlock/admin");
+  };
+
+  if (loginSyncChannel && "BroadcastChannel" in window) {
+    try {
+      const channel = new BroadcastChannel(loginSyncChannel);
+      channel.onmessage = function (event) {
+        if (event?.data?.type === "smartlock-login-complete") {
+          channel.postMessage({ type: "smartlock-login-ack" });
+          completeLogin(event.data.redirectUrl);
+        }
+      };
+    } catch (error) {
+      // Fall back to storage events below.
+    }
+  }
+
+  if (loginSyncChannel && window.addEventListener && window.localStorage) {
+    window.addEventListener("storage", function (event) {
+      if (event.key !== "smartlock-login-complete:" + loginSyncChannel || !event.newValue) {
+        return;
+      }
+      try {
+        const data = JSON.parse(event.newValue);
+        if (data?.type === "smartlock-login-complete") {
+          completeLogin(data.redirectUrl);
+        }
+      } catch (error) {
+        completeLogin("/smartlock/admin");
+      }
+    });
+  }
 
   if (linkCooldown > 0) {
     const timer = document.getElementById("lk-timer");
