@@ -76,6 +76,126 @@ body {
 .zone .sm-btn {
   min-height: 52px;
 }
+.zone-pink .zone-title-left,
+.zone-pink .settings-session-label,
+.zone-pink .setting-label,
+.zone-pink .setting-val,
+.zone-pink .pending-copy,
+.zone-pink .cd-note-sm {
+  color: var(--pink);
+}
+.zone-pink .sm-pink,
+.zone-pink .sm-btn[data-theme-toggle],
+.zone-pink .settings-action-btn,
+.zone-pink .email-change-save {
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: white;
+  box-shadow: 0 4px 16px rgba(255,60,172,0.35);
+  border-color: transparent;
+}
+.zone-pink .sm-ghost,
+.zone-pink .sm-ghost-pink {
+  border-color: rgba(255,60,172,0.3);
+  color: var(--pink);
+}
+.zone-pink .sm-ghost:hover,
+.zone-pink .sm-ghost-pink:hover {
+  border-color: rgba(255,60,172,0.48);
+  color: white;
+  background: linear-gradient(135deg, rgba(255,60,172,0.18), rgba(120,75,160,0.16));
+}
+.zone-pink .settings-session-card,
+.zone-pink .email-change-input {
+  border-color: rgba(255,60,172,0.22);
+  background: linear-gradient(135deg, rgba(255,60,172,0.08), rgba(120,75,160,0.06));
+}
+.zone-pink .settings-session-value {
+  color: var(--pink);
+}
+.zone-pink .pending-tag {
+  color: var(--pink);
+  border-color: rgba(255,60,172,0.3);
+  background: rgba(255,60,172,0.08);
+}
+.zone-cyan .zone-title-left,
+.zone-cyan .user-method-label,
+.zone-cyan .user-sub,
+.zone-cyan .user-create-copy {
+  color: var(--cyan);
+}
+.zone-cyan .user-search-input {
+  border-color: rgba(0,210,255,0.22);
+  background: linear-gradient(135deg, rgba(0,210,255,0.08), rgba(43,134,197,0.06));
+}
+.zone-cyan .icon-btn,
+.zone-cyan .user-create-card {
+  border-color: rgba(0, 210, 255, 0.36);
+}
+.zone-cyan .icon-btn {
+  background: linear-gradient(135deg, rgba(0,210,255,0.16), rgba(43,134,197,0.1));
+  color: var(--cyan);
+}
+.zone-cyan .icon-btn:hover,
+.zone-cyan .icon-btn:focus-visible {
+  border-color: rgba(0,210,255,0.48);
+  color: white;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+}
+.zone-cyan .user-method-card {
+  border-color: rgba(0,210,255,0.14);
+  background: linear-gradient(135deg, rgba(0,210,255,0.08), rgba(43,134,197,0.06));
+}
+.zone-cyan .chip-on {
+  background: linear-gradient(135deg, rgba(0,210,255,0.18), rgba(43,134,197,0.14));
+  color: var(--cyan);
+  border-color: rgba(0,210,255,0.3);
+}
+.zone-green .zone-title-left,
+.zone-green .session-meta,
+.zone-green .log-purge-copy {
+  color: var(--green);
+}
+.zone-green .log-search-input {
+  border-color: rgba(0,200,130,0.22);
+  background: linear-gradient(135deg, rgba(0,200,130,0.08), rgba(0,210,255,0.06));
+}
+.zone-green .sm-btn,
+.zone-green .log-purge-card,
+.zone-green .icon-btn.session-action {
+  border-color: rgba(0,200,130,0.3);
+}
+.zone-green .sm-ghost,
+.zone-green .sm-ghost-green,
+.zone-green .icon-btn.session-action {
+  color: var(--green);
+}
+.zone-green .sm-pink,
+.zone-green .log-purge-card,
+.zone-green .icon-btn.session-action:hover,
+.zone-green .icon-btn.session-action:focus-visible {
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  color: #0A2A20;
+  box-shadow: 0 4px 16px rgba(0,200,130,0.3);
+  border-color: transparent;
+}
+.zone-green .sm-ghost:hover,
+.zone-green .sm-ghost-green:hover {
+  border-color: rgba(0,200,130,0.44);
+  color: #0A2A20;
+  background: linear-gradient(135deg, rgba(0,200,130,0.18), rgba(0,210,255,0.14));
+}
+.zone-green .session-card {
+  border-color: rgba(0,200,130,0.2);
+  background: linear-gradient(135deg, rgba(0,200,130,0.08), rgba(0,210,255,0.05));
+}
+.zone-green .session-icon,
+.zone-green .current-badge,
+.zone-green .session-state-active,
+.zone-green .session-state-allowed {
+  background: linear-gradient(135deg, rgba(0,200,130,0.18), rgba(0,210,255,0.12));
+  color: var(--green);
+  border-color: rgba(0,200,130,0.24);
+}
 .settings-session-card {
   border: 2px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
@@ -258,10 +378,10 @@ body {
   margin-top: 16px;
   padding: 18px 20px;
   border-radius: var(--radius-sm);
-  border: 2px solid rgba(255, 107, 53, 0.28);
+  border: 2px solid rgba(0,200,130,0.3);
   background:
-    radial-gradient(circle at top left, rgba(255,107,53,0.16), transparent 44%),
-    linear-gradient(135deg, rgba(255,107,53,0.16), rgba(255,60,172,0.1));
+    radial-gradient(circle at top left, rgba(0,200,130,0.14), transparent 44%),
+    linear-gradient(135deg, rgba(0,200,130,0.12), rgba(0,210,255,0.08));
   color: var(--text);
   text-decoration: none;
   transition: all 0.2s;
@@ -270,13 +390,13 @@ body {
 .log-purge-card:hover,
 .log-purge-card:focus-visible {
   transform: translateY(-2px);
-  border-color: rgba(255, 107, 53, 0.44);
+  border-color: rgba(0,200,130,0.44);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
 }
 [data-theme="light"] .log-purge-card {
   background:
-    radial-gradient(circle at top left, rgba(255,107,53,0.12), transparent 44%),
-    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(255,240,236,0.98));
+    radial-gradient(circle at top left, rgba(0,200,130,0.12), transparent 44%),
+    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(232,255,246,0.98));
 }
 .log-purge-icon {
   font-size: 26px;
@@ -285,7 +405,7 @@ body {
 .log-purge-copy {
   font-size: 15px;
   font-weight: 900;
-  color: #ff8f73;
+  color: var(--green);
 }
 .user-card-top { display:flex;align-items:center;gap:14px; }
 .user-avatar {
@@ -322,9 +442,6 @@ body {
 .user-method-id-empty { color:var(--text3);font-weight:700; }
 .icon-btn { width:52px;height:52px;border-radius:12px;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all 0.2s;text-decoration:none; }
 .icon-btn:hover { transform:scale(1.1); }
-.icon-btn.edit {
-  background: linear-gradient(135deg, rgba(0,210,255,0.16), rgba(43,134,197,0.1));
-}
 .icon-btn.edit:hover { border-color:var(--cyan); }
 .session-card {
   background: rgba(255,255,255,0.04);
