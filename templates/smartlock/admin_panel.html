@@ -65,7 +65,7 @@
   <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
   {% endif %}
   {% endif %}
-  <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn settings-logout-btn" href="/smartlock/logout" data-confirm="Log out from this session?">👋 Log out</a>
+  <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn settings-logout-btn" href="/smartlock/logout" data-confirm="Log out">👋 Log out</a>
 </div>
 
 <div class="zone zone-cyan panel-section" id="panel-people" data-panel-section="people">
@@ -148,7 +148,7 @@
       <span class="current-badge current-badge-inline">THIS DEVICE</span>
       <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active</span>
       {% else %}
-      <a class="icon-btn session-action" href="/smartlock/session/logout/{{ entry['session_token'] }}" data-confirm="Log out this session?">🚪</a>
+      <a class="icon-btn session-action" href="/smartlock/session/logout/{{ entry['session_token'] }}" data-confirm="Log out">🚪</a>
       <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active</span>
       {% endif %}
       {% else %}
@@ -163,9 +163,9 @@
   <p class="no-items">No sessions yet 👀</p>
   {% endif %}
 
-  <a class="log-purge-card" href="/smartlock/session/logout-all" data-confirm="Log all other active sessions out?">
+  <a class="log-purge-card" href="/smartlock/session/logout-all" data-confirm="Purge all other active sessions">
     <span class="log-purge-icon">🚪</span>
-    <span class="log-purge-copy">Purge other active sessions</span>
+    <span class="log-purge-copy">Purge all other active sessions</span>
   </a>
 </div>
 </div>
