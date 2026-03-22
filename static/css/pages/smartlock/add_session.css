@@ -42,20 +42,19 @@ body {
 .url-actions { display:flex; gap:10px; flex-wrap:wrap; }
 .url-actions .sm-btn {
   min-height: 52px;
+  flex: 1 1 0;
+  justify-content: center;
 }
-.url-actions .sm-cyan {
+.url-actions .sm-cyan,
+.url-actions .sm-ghost {
   background: linear-gradient(135deg, var(--green), var(--cyan));
   color: #0A2A20;
   box-shadow: 0 4px 16px rgba(0,200,130,0.3);
-}
-.url-actions .sm-ghost {
-  border-color: rgba(0,200,130,0.3);
-  color: var(--green);
+  border-color: transparent;
 }
 .url-actions .sm-ghost:hover {
-  border-color: rgba(0,200,130,0.44);
   color: #0A2A20;
-  background: linear-gradient(135deg, rgba(0,200,130,0.18), rgba(0,210,255,0.14));
+  background: linear-gradient(135deg, var(--green), var(--cyan));
 }
 .cd-note { text-align:center;font-size:13px;font-weight:700;color:var(--text3);margin-bottom:14px; }
 .cd-note span { color:var(--cyan); }

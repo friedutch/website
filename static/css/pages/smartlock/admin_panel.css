@@ -87,22 +87,20 @@ body {
 .zone-pink .sm-pink,
 .zone-pink .sm-btn[data-theme-toggle],
 .zone-pink .settings-action-btn,
+.zone-pink .pending-actions .sm-btn,
+.zone-pink .email-change-toggle,
+.zone-pink .email-change-cancel,
 .zone-pink .email-change-save {
   background: linear-gradient(135deg, var(--pink), var(--purple));
   color: white;
   box-shadow: 0 4px 16px rgba(255,60,172,0.35);
   border-color: transparent;
 }
-.zone-pink .sm-ghost,
-.zone-pink .sm-ghost-pink {
-  border-color: rgba(255,60,172,0.3);
-  color: var(--pink);
-}
 .zone-pink .sm-ghost:hover,
 .zone-pink .sm-ghost-pink:hover {
-  border-color: rgba(255,60,172,0.48);
+  border-color: transparent;
   color: white;
-  background: linear-gradient(135deg, rgba(255,60,172,0.18), rgba(120,75,160,0.16));
+  background: linear-gradient(135deg, var(--pink), var(--purple));
 }
 .zone-pink .settings-session-card,
 .zone-pink .email-change-input {
@@ -507,6 +505,10 @@ body {
 .pending-copy { font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px; }
 .pending-tag { display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--yellow);border:2px solid rgba(255,214,10,0.3);padding:4px 12px;border-radius:50px;margin-bottom:10px; }
 .pending-actions { display:flex;gap:8px;flex-wrap:wrap;margin-top:8px; }
+.pending-actions .sm-btn {
+  flex: 1 1 0;
+  justify-content: center;
+}
 .sm-ghost-pink { border-color:rgba(255,60,172,0.3); color:var(--pink); }
 .sm-ghost-green { border-color:rgba(0,200,130,0.3); color:var(--green); }
 .zone-title-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
