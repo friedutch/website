@@ -16,9 +16,9 @@
 </div>
 <div class="project-card">
   <span class="project-icon">✅</span>
-  <div class="project-name">Access granted</div>
-  <div class="project-desc">Closing this verification page and returning to your login screen.</div>
-  <p class="msg-err msg-err-spaced" id="verification-complete-fallback">If this page stays open, <a href="{{ redirect_url }}">continue here</a>.</p>
+  <div class="project-name">{{ heading or 'Access granted' }}</div>
+  <div class="project-desc">{{ description or 'Closing this verification page and returning to your login screen.' }}</div>
+  <p class="msg-err msg-err-spaced" id="verification-complete-fallback">{{ fallback_copy or 'If this page stays open, continue here.' }} <a href="{{ redirect_url }}">Continue</a>.</p>
 </div>
 
 {% include "_debug_footer.html" %}

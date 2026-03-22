@@ -90,7 +90,7 @@
 - The current device log card should not show a logout control; it should show `THIS DEVICE` immediately before the `Active` badge.
 - When an active session reaches its limit in the current page view, the card should flip to `Allowed` without removing the `THIS DEVICE` badge.
 - The add-session page includes a regenerate action that simply refreshes the page to mint a new join link.
-- Opening a join link on a device that already has an active admin session must redirect back to the admin panel without consuming the token.
+- Opening a join link on a device that already has an active admin session must close or leave the invite page and return to the admin panel without consuming the token.
 
 ### Routes
 - Main:
