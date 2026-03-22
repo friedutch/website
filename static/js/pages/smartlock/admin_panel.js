@@ -49,29 +49,29 @@ document.addEventListener("DOMContentLoaded", function () {
   const userSearchInput = document.getElementById("user-search");
   const userCards = Array.from(document.querySelectorAll("[data-user-card]"));
   const userSearchEmpty = document.getElementById("user-search-empty");
-  if (userSearchInput && userCards.length) {
-    const filterUsers = function () {
-      const query = userSearchInput.value.trim().toLowerCase();
-      let visibleCount = 0;
-      userCards.forEach(function (card) {
-        const haystack = card.dataset.userSearch || "";
-        const visible = !query || haystack.includes(query);
-        card.style.display = visible ? "" : "none";
-        if (visible) {
-          visibleCount += 1;
-        }
-      });
-      if (userSearchEmpty) {
-        userSearchEmpty.classList.toggle("user-search-empty-hidden", visibleCount > 0);
-      }
-    };
-    userSearchInput.addEventListener("input", filterUsers);
-    filterUsers();
-  }
-
   const logSearchInput = document.getElementById("log-search");
   const logCards = Array.from(document.querySelectorAll("[data-log-card]"));
   const logSearchEmpty = document.getElementById("log-search-empty");
+  const syncCreateCardHeights = function () {
+    document.querySelectorAll("[data-create-card]").forEach(function (card) {
+      const group = card.dataset.createCard;
+      const sources = Array.from(document.querySelectorAll('[data-size-source="' + group + '"]')).filter(function (source) {
+        return source.style.display !== "none";
+      });
+      card.style.minHeight = "";
+      if (!sources.length) {
+        return;
+      }
+      let maxHeight = 0;
+      sources.forEach(function (source) {
+        maxHeight = Math.max(maxHeight, source.offsetHeight);
+      });
+      if (maxHeight > 0) {
+        card.style.minHeight = maxHeight + "px";
+      }
+    });
+  };
+
   if (logSearchInput && logCards.length) {
     const filterLogs = function () {
       const query = logSearchInput.value.trim().toLowerCase();
@@ -87,9 +87,40 @@ document.addEventListener("DOMContentLoaded", function () {
       if (logSearchEmpty) {
         logSearchEmpty.classList.toggle("user-search-empty-hidden", visibleCount > 0);
       }
+      syncCreateCardHeights();
     };
     logSearchInput.addEventListener("input", filterLogs);
     filterLogs();
+  }
+
+  const emailChangeToggle = document.querySelector("[data-email-change-open]");
+  const emailChangeForm = document.querySelector("[data-email-change-form]");
+  const emailChangeCancel = document.querySelector("[data-email-change-cancel]");
+  const emailChangeInput = document.querySelector("[data-email-change-input]");
+
+  const setEmailChangeExpanded = function (expanded) {
+    if (emailChangeToggle) {
+      emailChangeToggle.classList.toggle("email-change-toggle-hidden", expanded);
+    }
+    if (emailChangeForm) {
+      emailChangeForm.classList.toggle("email-change-form-hidden", !expanded);
+    }
+    if (expanded && emailChangeInput && !emailChangeInput.disabled) {
+      emailChangeInput.focus();
+    }
+  };
+
+  if (emailChangeToggle && emailChangeForm) {
+    emailChangeToggle.addEventListener("click", function () {
+      setEmailChangeExpanded(true);
+    });
+  }
+
+  if (emailChangeCancel && emailChangeForm) {
+    emailChangeCancel.addEventListener("click", function () {
+      emailChangeForm.reset();
+      setEmailChangeExpanded(false);
+    });
   }
 
   if (cooldownRemaining > 0) {
@@ -97,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const button = document.getElementById("chg-btn");
     const input = document.querySelector("#chg-form input[type=email]");
     const note = document.getElementById("chg-cd");
+    const openButton = document.querySelector("[data-email-change-open]");
     let remaining = cooldownRemaining;
 
     const tickCooldown = function () {
@@ -106,6 +138,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (input) {
           input.disabled = false;
+        }
+        if (openButton) {
+          openButton.disabled = false;
         }
         if (note) {
           note.style.display = "none";
@@ -158,6 +193,31 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const settingsSessionRemaining = document.getElementById("settings-session-remaining");
+  if (userSearchInput && userCards.length) {
+    const filterUsers = function () {
+      const query = userSearchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+      userCards.forEach(function (card) {
+        const haystack = card.dataset.userSearch || "";
+        const visible = !query || haystack.includes(query);
+        card.style.display = visible ? "" : "none";
+        if (visible) {
+          visibleCount += 1;
+        }
+      });
+      if (userSearchEmpty) {
+        userSearchEmpty.classList.toggle("user-search-empty-hidden", visibleCount > 0);
+      }
+      syncCreateCardHeights();
+    };
+    userSearchInput.addEventListener("input", filterUsers);
+    filterUsers();
+  } else {
+    syncCreateCardHeights();
+  }
+
+  window.addEventListener("resize", syncCreateCardHeights);
+
   if (!settingsSessionRemaining) {
     return;
   }

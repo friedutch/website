@@ -33,15 +33,15 @@
 <div class="zone zone-pink panel-section active" id="panel-settings" data-panel-section="settings">
   <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> Settings</div></div>
   <div class="settings-session-card">
-    <div class="setting-label">🕒 My Session Remaining Time</div>
+    <div class="settings-session-label">Remaining session time</div>
     <div class="settings-session-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</div>
   </div>
   <div class="settings-actions">
     <button class="sm-btn sm-ghost settings-action-btn" data-theme-toggle id="theme-btn" type="button">🔄 Theme</button>
   </div>
-  <p class="setting-label">📧 Admin Email</p>
-  <p class="setting-val">{{ admin_email }}</p>
   {% if pending %}
+  <p class="setting-label">Admin email</p>
+  <p class="setting-val">{{ admin_email }}</p>
   <div class="pending-tag">⏳ Awaiting verification</div>
   <p class="pending-copy">Sent to <strong>{{ pending }}</strong></p>
   <div class="pending-actions">
@@ -49,11 +49,17 @@
     <a class="sm-btn sm-ghost sm-ghost-pink" href="/smartlock/change-email/cancel">Cancel</a>
   </div>
   {% else %}
-  <form class="field-row" method="POST" action="/smartlock/change-email" id="chg-form">
+  <div class="email-change-panel" data-email-change-panel>
+    <button class="sm-btn sm-ghost sm-ghost-pink email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>Change email</button>
+    <form class="email-change-form{% if not email_error %} email-change-form-hidden{% endif %}" method="POST" action="/smartlock/change-email" id="chg-form" data-email-change-form>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input class="app-input" type="email" name="new_email" placeholder="New email address" {% if cooldown_remaining > 0 %}disabled{% endif %}>
-    <button class="sm-btn sm-pink" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>✉️ Save</button>
-  </form>
+      <input class="app-input email-change-input" type="email" name="new_email" placeholder="{{ admin_email }}" data-email-change-input {% if cooldown_remaining > 0 %}disabled{% endif %}>
+      <div class="email-change-actions">
+        <button class="sm-btn sm-ghost sm-ghost-pink" type="button" data-email-change-cancel>Cancel</button>
+        <button class="sm-btn sm-pink" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>Save</button>
+      </div>
+    </form>
+  </div>
   {% if email_error %}<p class="msg-err">{{ email_error }}</p>{% endif %}
   {% if cooldown_remaining > 0 %}
   <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
@@ -67,13 +73,13 @@
   <div class="user-search-row">
     <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search names, passcodes, RFID or fingerprint IDs">
   </div>
-  <a class="user-create-card" href="/smartlock/users/new" aria-label="Open new user setup">
+  <a class="user-create-card" href="/smartlock/users/new" aria-label="Open new user setup" data-create-card="user">
     <span class="user-create-plus">+</span>
     <span class="user-create-copy">Create user</span>
   </a>
   {% if users %}
   {% for user in users %}
-  <div class="user-card" data-user-card data-user-search="{{ (user['name'] ~ ' ' ~ user['passcode'] ~ ' ' ~ (user['rfid_id'] or '') ~ ' ' ~ (user['fingerprint_id'] or ''))|lower }}">
+  <div class="user-card" data-user-card data-size-source="user" data-user-search="{{ (user['name'] ~ ' ' ~ user['passcode'] ~ ' ' ~ (user['rfid_id'] or '') ~ ' ' ~ (user['fingerprint_id'] or ''))|lower }}">
     <div class="user-card-top">
       <div class="user-avatar">👤</div>
       <div class="user-info">
@@ -121,19 +127,19 @@
   <div class="zone-title">
     <div class="zone-title-left"><span>📡</span> Logs</div>
     <div class="zone-title-actions">
-      <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log out all other sessions?">🚪 All out</a>
+      <a class="sm-btn sm-ghost sm-ghost-green" href="/smartlock/session/logout-all" data-confirm="Log all other active sessions out?">🚪 All out</a>
     </div>
   </div>
   <div class="log-search-row">
     <input class="app-input log-search-input" type="search" id="log-search" placeholder="Search devices, IPs, timestamps or states">
   </div>
-  <a class="log-create-card" href="/smartlock/add-session" aria-label="Open add session">
+  <a class="log-create-card" href="/smartlock/add-session" aria-label="Open add session" data-create-card="log">
     <span class="log-create-plus">+</span>
     <span class="log-create-copy">Add session</span>
   </a>
 
   {% for entry in log_entries %}
-  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ entry['device_search_terms'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">
+  <div class="session-card {{ 'current' if entry['current'] else '' }} {{ entry['state'] }}" data-log-card data-size-source="log" data-log-search="{{ (entry['ip'] ~ ' ' ~ entry['created_at'] ~ ' ' ~ entry['icon'] ~ ' ' ~ entry['state'] ~ ' ' ~ entry['device_search_terms'] ~ ' ' ~ ('this device' if entry['current'] else ''))|lower }}">
     <div class="session-icon">{{ entry['icon'] }}</div>
     <div class="session-info">
       <div class="session-ip">{{ entry['ip'] }}</div>
