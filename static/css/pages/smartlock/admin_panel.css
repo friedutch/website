@@ -149,8 +149,7 @@ body {
   border-color: rgba(0,210,255,0.3);
 }
 .zone-green .zone-title-left,
-.zone-green .session-meta,
-.zone-green .log-purge-copy {
+.zone-green .session-meta {
   color: var(--green);
 }
 .zone-green .log-search-input {
@@ -200,7 +199,7 @@ body {
   padding: 22px 16px;
   margin-bottom: 16px;
   background: rgba(255,255,255,0.04);
-  min-height: 154px;
+  min-height: 188px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -230,7 +229,7 @@ body {
 }
 .zone-title { margin-bottom: 10px; }
 .email-change-panel {
-  margin-bottom: 6px;
+  margin-bottom: 16px;
 }
 .email-change-toggle {
   width: 100%;
@@ -380,7 +379,7 @@ body {
   background:
     radial-gradient(circle at top left, rgba(0,200,130,0.14), transparent 44%),
     linear-gradient(135deg, rgba(0,200,130,0.12), rgba(0,210,255,0.08));
-  color: var(--text);
+  color: #06261a;
   text-decoration: none;
   transition: all 0.2s;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
@@ -399,11 +398,12 @@ body {
 .log-purge-icon {
   font-size: 26px;
   line-height: 1;
+  color: #06261a;
 }
 .log-purge-copy {
   font-size: 15px;
   font-weight: 900;
-  color: var(--green);
+  color: #06261a;
 }
 .user-card-top { display:flex;align-items:center;gap:14px; }
 .user-avatar {
@@ -530,7 +530,7 @@ body {
   .zone-title-actions { align-items: flex-start; }
   .zone-title { flex-direction: column; }
   .zone-title-actions { width: 100%; }
-  .settings-session-card { min-height: 138px; }
+  .settings-session-card { min-height: 188px; }
   .settings-session-value { font-size: 44px; }
   .user-method-grid { grid-template-columns:1fr; }
   .session-card { align-items:flex-start; flex-wrap:wrap; }
