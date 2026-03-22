@@ -50,7 +50,7 @@
   </div>
   {% else %}
   <div class="email-change-panel" data-email-change-panel>
-    <button class="sm-btn sm-ghost sm-ghost-pink email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>📧 Change email</button>
+    <button class="sm-btn sm-ghost sm-ghost-pink email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>📧 Email</button>
     <form class="email-change-form{% if not email_error %} email-change-form-hidden{% endif %}" method="POST" action="/smartlock/change-email" id="chg-form" data-email-change-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button class="sm-btn sm-ghost sm-ghost-pink email-change-cancel" type="button" data-email-change-cancel>Cancel</button>

@@ -131,11 +131,13 @@ body {
 .email-change-input {
   flex: 1 1 0;
   min-width: 0;
+  min-height: 52px;
 }
 .email-change-cancel,
 .email-change-save {
   flex: 0 0 auto;
   white-space: nowrap;
+  min-height: 52px;
 }
 .user-card {
   background: linear-gradient(135deg, rgba(255,60,172,0.1), rgba(43,134,197,0.08));
