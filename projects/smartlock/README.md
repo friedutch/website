@@ -84,7 +84,7 @@
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new` and matches the visible user-card height.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
 - The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed, and that add-session card matches the visible session-card height.
-- In Settings, email change starts as a single wide `Change email` button and expands inline into an editable form with cancel/save actions.
+- In Settings, email change starts as a single wide `Change email` button and expands inline into a single-row editable form with the email field followed by cancel/save actions.
 - Log search also matches stored device aliases, so terms like phone, tablet, computer, pc, and browser can find matching entries.
 - The combined log feed merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
 - Active log cards for other devices show logout followed by an `Active` badge.

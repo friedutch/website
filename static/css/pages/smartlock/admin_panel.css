@@ -121,16 +121,18 @@ body {
 }
 .email-change-form {
   display: flex;
-  flex-direction: column;
   gap: 10px;
-}
-.email-change-input {
+  align-items: center;
   width: 100%;
 }
-.email-change-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+.email-change-input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.email-change-cancel,
+.email-change-save {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .user-card {
   background: linear-gradient(135deg, rgba(255,60,172,0.1), rgba(43,134,197,0.08));
@@ -405,5 +407,11 @@ body {
   .user-method-grid { grid-template-columns:1fr; }
   .session-card { align-items:flex-start; flex-wrap:wrap; }
   .session-side { width:100%; margin-left:0; }
-  .email-change-actions { grid-template-columns: 1fr; }
+  .email-change-form {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .email-change-input {
+    flex-basis: 100%;
+  }
 }
