@@ -31,6 +31,7 @@
 - Do not assume LaunchAgent changes are normal code changes.
 - Do not edit, reload, kickstart, bootstrap, bootout, or otherwise touch any `friedutch.plus` LaunchAgent or its plist unless explicitly asked.
 - For repo work, stop at repo edits, commit, and push to GitHub unless the human explicitly asks for operational intervention.
+- Do not commit any live Minecraft server instance files, world data, Paper jars, plugin jars, or copied server roots into this repo.
 - Treat Smart Lock as sensitive admin functionality.
 
 ### Repo map
@@ -39,7 +40,7 @@
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)
   - app factory, homepage, deploy webhook, project registration
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py)
-  - shared render helper for footer/debug metadata
+  - shared render helper for template rendering and asset-version injection
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
   - Smart Lock owner
 - [`projects/footprint/footprint.py`](/Users/administrator/Sites/friedutchplus/projects/footprint/footprint.py)

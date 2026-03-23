@@ -60,7 +60,7 @@
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/deploy`
-- [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the template path and the footer timestamp
+- [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the page title and asset version
 - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html): public landing page for the self-hosted Minecraft server
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): Smart Lock feature owner
@@ -126,7 +126,8 @@
 - Minecraft start and stop controls are not public; they require either a local request on the host or an authenticated Smart Lock admin session.
 - This page only publishes server details; it does not run the game server inside Flask.
 - Run the actual Minecraft server as a separate process or service on your host.
-- Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_SERVER_*` environment variables.
+- Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_JOIN_*` variables plus the `MINECRAFT_SERVER_*` metadata variables.
+- The live Minecraft server root must stay outside this repo. Do not commit server jars, plugin jars, `server.properties`, `ops.json`, world data, or copied server directories.
 
 ### Observability / debugging conventions
 - The Flask app sets baseline security headers on responses:

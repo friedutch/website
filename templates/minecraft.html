@@ -27,10 +27,7 @@
       <p class="card-label">Join now</p>
       <div class="address-line">
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
-        <code id="join-address">{{ minecraft.join_host }}</code>
-        {% if minecraft.join_port != "25565" %}
-        <code>{{ minecraft.join_host }}:{{ minecraft.join_port }}</code>
-        {% endif %}
+        <code id="join-address">{{ minecraft.join_address }}</code>
         <strong class="card-stat join-status">{{ minecraft.status }}</strong>
       </div>
     </article>

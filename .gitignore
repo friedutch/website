@@ -7,3 +7,23 @@ __pycache__/
 *.db-wal
 projects/smartlock/smartlock.db
 projects/footprint/footprint.db
+
+# Never commit a live Minecraft server instance or world snapshot.
+**/eula.txt
+**/server.properties
+**/ops.json
+**/whitelist.json
+**/banned-ips.json
+**/banned-players.json
+**/usercache.json
+**/server-icon.png
+**/paper-*.jar
+**/spigot-*.jar
+**/craftbukkit-*.jar
+**/plugins/
+**/libraries/
+**/logs/
+**/cache/
+**/versions/
+**/world/
+**/world_*/

@@ -2,7 +2,7 @@
 
 ## Human Summary
 - This module owns the public Minecraft landing page for `friedutch.plus`.
-- It reads `MINECRAFT_SERVER_*` environment variables plus local server files and renders the public connection page at `/minecraft/`.
+- It reads the Minecraft page environment variables plus local server files and renders the public connection page at `/minecraft/`.
 - It can also expose simple start and stop controls for the separate Minecraft LaunchAgent.
 
 ## AI Copilot
@@ -27,6 +27,7 @@
 - Start and stop controls on the page require either a local request from the host or a Smart Lock admin session.
 - A DNS record such as `mc.friedutch.plus` should point at the host running the Minecraft server.
 - The provided ops files assume a live server root at `/Users/administrator/Servers/minecraft`.
+- Keep that live server root outside the Git repo and never commit a copied server instance, world folder, Paper jar, or plugin jar.
 
 ### Ops files
 - `ops/install_paper.sh` downloads a stable Paper server jar from PaperMC's official downloads service and seeds the live server directory.

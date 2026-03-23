@@ -150,6 +150,14 @@ def _edition_label():
     return edition
 
 
+def _join_address(join_host, join_port):
+    if join_host == "Unavailable":
+        return join_host
+    if join_port in {"", "25565", "Unavailable"}:
+        return join_host
+    return f"{join_host}:{join_port}"
+
+
 def _minecraft_config():
     server_root = Path(os.getenv("MINECRAFT_SERVER_ROOT", str(DEFAULT_SERVER_ROOT)))
     properties = _read_server_properties(server_root)
@@ -157,22 +165,15 @@ def _minecraft_config():
     world_path = server_root / world_name
     service_label = os.getenv("MINECRAFT_LAUNCH_AGENT_LABEL", DEFAULT_LAUNCH_AGENT_LABEL)
     is_online = _service_loaded(service_label)
-    server_port = int(properties.get("server-port", os.getenv("MINECRAFT_JOIN_PORT", "25565")) or 25565)
-    status_payload = _minecraft_status("127.0.0.1", server_port) if is_online else {}
-    players = status_payload.get("players", {}) if isinstance(status_payload, dict) else {}
-    players_online = players.get("online")
-    players_max = players.get("max") or properties.get("max-players")
-    if players_online is None or players_max is None:
-        players_display = "Unavailable"
-    else:
-        players_display = f"{players_online} / {players_max}"
+    join_host = os.getenv("MINECRAFT_JOIN_HOST", "").strip() or "Unavailable"
+    join_port = os.getenv("MINECRAFT_JOIN_PORT", "").strip() or "Unavailable"
     return {
-        "join_host": os.getenv("MINECRAFT_JOIN_HOST", "").strip() or "Unavailable",
-        "join_port": os.getenv("MINECRAFT_JOIN_PORT", "").strip() or "Unavailable",
+        "join_host": join_host,
+        "join_port": join_port,
+        "join_address": _join_address(join_host, join_port),
         "edition": _edition_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
         "status": "Online" if is_online else "Offline",
-        "players": players_display,
         "access": _access_status(properties),
         "world_name": world_name,
         "world_size": _human_size(world_path),
