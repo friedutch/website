@@ -76,10 +76,6 @@ body {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
 }
 
-.detail-primary {
-  grid-column: span 2;
-}
-
 .address-line {
   display: flex;
   flex-wrap: wrap;
@@ -122,6 +118,18 @@ body {
   transform: translateY(-1px);
   border-color: rgba(0, 210, 255, 0.45);
   color: var(--cyan);
+}
+
+.card-stat-inline {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 900;
+  margin: 0;
 }
 
 .card-stat {
@@ -215,9 +223,5 @@ body {
   .hero-panel,
   .detail-card {
     padding: 22px 18px;
-  }
-
-  .detail-primary {
-    grid-column: span 1;
   }
 }

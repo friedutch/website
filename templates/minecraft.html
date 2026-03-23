@@ -23,7 +23,7 @@
   </header>
 
   <section class="details-grid">
-    <article class="detail-card detail-primary">
+    <article class="detail-card">
       <p class="card-label">Join Link</p>
       <div class="address-line">
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
@@ -32,7 +32,7 @@
       </div>
     </article>
 
-    <article class="detail-card detail-primary">
+    <article class="detail-card">
       <p class="card-label">Golden Rules</p>
       <ul class="detail-list">
         <li>
@@ -50,30 +50,15 @@
       </ul>
     </article>
 
-    <article class="detail-card detail-primary">
+    <article class="detail-card">
       <p class="card-label">Game Details</p>
       <ul class="detail-list">
-        {% if minecraft.can_manage %}
-        <li>
-          <span>Controls</span>
-          <div class="detail-actions">
-            <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
-            </form>
-            <form method="POST" action="{{ url_for('minecraft.minecraft_server_stop') }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="action-btn action-btn-danger" type="submit" {% if not minecraft.can_stop %}disabled{% endif %}>Stop</button>
-            </form>
-          </div>
-        </li>
-        {% endif %}
         <li>
           <span>Edition</span>
           <strong>{{ minecraft.edition }}</strong>
         </li>
         <li>
-          <span>Modloader</span>
+          <span>Mod Loader</span>
           <strong>{{ minecraft.modloader }}</strong>
         </li>
         <li>
@@ -86,6 +71,56 @@
         </li>
       </ul>
     </article>
+
+    {% if minecraft.can_manage %}
+    <article class="detail-card">
+      <p class="card-label">Admin Controls</p>
+      <ul class="detail-list">
+        <li>
+          <span>Status</span>
+          <div class="detail-actions">
+            <strong class="card-stat-inline">{{ minecraft.status }}</strong>
+            <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
+            </form>
+            <form method="POST" action="{{ url_for('minecraft.minecraft_server_stop') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="action-btn action-btn-danger" type="submit" {% if not minecraft.can_stop %}disabled{% endif %}>Stop</button>
+            </form>
+          </div>
+        </li>
+        <li>
+          <span>Access</span>
+          <div class="detail-actions">
+            <strong>{{ minecraft.access }}</strong>
+            <button class="action-btn" type="button" disabled>Change</button>
+          </div>
+        </li>
+        <li>
+          <span>Reset World</span>
+          <div class="detail-actions">
+            <strong>{{ minecraft.world_name }}</strong>
+            <button class="action-btn action-btn-danger" type="button" disabled>Reset</button>
+          </div>
+        </li>
+        <li>
+          <span>Version</span>
+          <div class="detail-actions">
+            <strong>{{ minecraft.version }}</strong>
+            <button class="action-btn" type="button" disabled>Change</button>
+          </div>
+        </li>
+        <li>
+          <span>Mod Loader</span>
+          <div class="detail-actions">
+            <strong>{{ minecraft.modloader }}</strong>
+            <button class="action-btn" type="button" disabled>Change</button>
+          </div>
+        </li>
+      </ul>
+    </article>
+    {% endif %}
   </section>
 </div>
 

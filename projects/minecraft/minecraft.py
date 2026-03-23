@@ -184,7 +184,6 @@ def _minecraft_config():
         "status": "Online" if is_online else "Offline",
         "access": _access_status(properties),
         "world_name": world_name,
-        "world_size": _human_size(world_path),
         "can_manage": _can_manage_server(),
         "can_start": not is_online,
         "can_stop": is_online,
