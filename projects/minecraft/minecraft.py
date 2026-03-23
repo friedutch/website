@@ -74,6 +74,13 @@ def _access_status(properties):
     return "Public"
 
 
+def _edition_label():
+    edition = os.getenv("MINECRAFT_SERVER_EDITION", "Java Edition").strip()
+    if edition.lower().endswith(" edition"):
+        return edition[:-8]
+    return edition
+
+
 def _minecraft_config():
     server_root = Path(os.getenv("MINECRAFT_SERVER_ROOT", str(DEFAULT_SERVER_ROOT)))
     properties = _read_server_properties(server_root)
@@ -81,14 +88,12 @@ def _minecraft_config():
     world_path = server_root / world_name
     service_label = os.getenv("MINECRAFT_LAUNCH_AGENT_LABEL", DEFAULT_LAUNCH_AGENT_LABEL)
     is_online = _service_loaded(service_label)
-    level_seed = properties.get("level-seed", "").strip() or os.getenv("MINECRAFT_WORLD_SEED", "Hidden")
-
     return {
         "host": os.getenv("MINECRAFT_SERVER_HOST", "mc.friedutch.plus"),
         "join_host": os.getenv("MINECRAFT_JOIN_HOST", "mc.friedutch.plus"),
         "join_port": os.getenv("MINECRAFT_JOIN_PORT", "25565"),
         "port": os.getenv("MINECRAFT_SERVER_PORT", "25565"),
-        "edition": os.getenv("MINECRAFT_SERVER_EDITION", "Java Edition"),
+        "edition": _edition_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "Set your live version in .env"),
         "status": "Online" if is_online else "Offline",
         "access": _access_status(properties),
@@ -97,7 +102,6 @@ def _minecraft_config():
             "Self-hosted survival world running alongside the Friedutch Plus site.",
         ),
         "world_name": world_name,
-        "world_seed": level_seed,
         "world_size": _human_size(world_path),
         "can_start": not is_online,
         "can_stop": is_online,
