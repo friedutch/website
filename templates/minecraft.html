@@ -41,9 +41,34 @@
     </article>
 
     <article class="detail-card detail-primary">
-      <p class="card-label">World & access</p>
-      <p class="card-stat">Public survival</p>
-      <p class="card-copy">A home-hosted world for friends and visitors. The server is currently {{ minecraft.whitelist|lower }} to anyone with the join address.</p>
+      <p class="card-label">Server details</p>
+      <ul class="detail-list">
+        <li>
+          <span>Status</span>
+          <div class="detail-actions">
+            <strong class="card-stat">{{ minecraft.status }}</strong>
+            <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
+              <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
+            </form>
+            <form method="POST" action="{{ url_for('minecraft.minecraft_server_stop') }}">
+              <button class="action-btn action-btn-danger" type="submit" {% if not minecraft.can_stop %}disabled{% endif %}>Stop</button>
+            </form>
+          </div>
+        </li>
+        <li>
+          <span>World seed</span>
+          <strong>{{ minecraft.world_seed }}</strong>
+        </li>
+        <li>
+          <span>World size</span>
+          <strong>{{ minecraft.world_size }}</strong>
+        </li>
+        <li>
+          <span>Access</span>
+          <strong>{{ minecraft.access }}</strong>
+        </li>
+      </ul>
+      <p class="card-copy">The live world folder is <code>{{ minecraft.world_name }}</code>, and its size updates from the host automatically.</p>
     </article>
   </section>
 </div>
@@ -69,5 +94,6 @@ document.querySelectorAll('[data-copy-target]').forEach((button) => {
   });
 });
 </script>
+{% include "_debug_footer.html" %}
 </body>
 </html>

@@ -102,21 +102,25 @@
   - `MAIL_FROM`
   - `MAIL_TO`
   - `HIBP_API_KEY`
-  - `MINECRAFT_SERVER_HOST`
-  - `MINECRAFT_SERVER_PORT`
-  - `MINECRAFT_JOIN_HOST`
-  - `MINECRAFT_JOIN_PORT`
-  - `MINECRAFT_SERVER_EDITION`
-  - `MINECRAFT_SERVER_VERSION`
-  - `MINECRAFT_SERVER_STATUS`
-  - `MINECRAFT_SERVER_WHITELIST`
-  - `MINECRAFT_SERVER_DESCRIPTION`
+- `MINECRAFT_SERVER_HOST`
+- `MINECRAFT_SERVER_PORT`
+- `MINECRAFT_JOIN_HOST`
+- `MINECRAFT_JOIN_PORT`
+- `MINECRAFT_SERVER_ROOT`
+- `MINECRAFT_WORLD_NAME`
+- `MINECRAFT_LAUNCH_AGENT_LABEL`
+- `MINECRAFT_LAUNCH_AGENT_PLIST`
+- `MINECRAFT_SERVER_EDITION`
+- `MINECRAFT_SERVER_VERSION`
+- `MINECRAFT_SERVER_ACCESS`
+- `MINECRAFT_SERVER_DESCRIPTION`
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 
 ### Minecraft landing page
 - The Minecraft landing page is served from `https://friedutch.plus/minecraft`.
-- This page should stay visitor-facing and simple, with the live join hostname shown clearly and no operational clutter.
+- This page includes the standard site debug footer like every other page.
+- This page shows the live join hostname plus a server-details block sourced from the local Minecraft host when available.
 - This page only publishes server details; it does not run the game server inside Flask.
 - Run the actual Minecraft server as a separate process or service on your host.
 - Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_SERVER_*` environment variables.

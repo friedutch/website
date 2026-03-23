@@ -117,6 +117,85 @@ body {
   margin: 12px 0 14px;
 }
 
+.detail-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.detail-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-xs);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+.detail-list span {
+  color: var(--text2);
+  font-weight: 800;
+}
+
+.detail-list strong {
+  font-size: 15px;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
+.detail-actions .card-stat {
+  margin: 0;
+}
+
+.detail-actions form {
+  margin: 0;
+}
+
+.action-btn {
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(0, 210, 255, 0.28);
+  background: rgba(0, 210, 255, 0.08);
+  transition: transform 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(0, 210, 255, 0.45);
+  color: var(--cyan);
+}
+
+.action-btn-danger {
+  border-color: rgba(255, 92, 92, 0.28);
+  background: rgba(255, 92, 92, 0.08);
+}
+
+.action-btn-danger:hover:not(:disabled) {
+  border-color: rgba(255, 92, 92, 0.45);
+  color: #ff8d8d;
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 @media (max-width: 720px) {
   body {
     padding-inline: 16px;

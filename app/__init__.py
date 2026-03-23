@@ -49,7 +49,7 @@ def create_app():
         SESSION_COOKIE_SAMESITE="Lax",
     )
 
-    init_minecraft(flask_app)
+    init_minecraft(flask_app, csrf)
     init_smartlock(flask_app)
     init_footprint(flask_app, csrf)
 

@@ -2,8 +2,8 @@
 
 ## Human Summary
 - This module owns the public Minecraft landing page for `friedutch.plus`.
-- It does not run the Minecraft server process itself.
-- It reads `MINECRAFT_SERVER_*` environment variables and renders the public connection page at `/minecraft/`.
+- It reads `MINECRAFT_SERVER_*` environment variables plus local server files and renders the public connection page at `/minecraft/`.
+- It can also expose simple start and stop controls for the separate Minecraft LaunchAgent.
 
 ## AI Copilot
 
@@ -16,13 +16,14 @@
 - [`projects/minecraft/ops/server.properties.example`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/server.properties.example)
 
 ### Purpose
-- Publish connection details for a separately hosted Minecraft server.
+- Publish connection details and live host metadata for a separately hosted Minecraft server.
 - Keep Minecraft-specific route logic out of the main app factory.
 - Serve the Minecraft info page from `/minecraft/` on the main website.
 
 ### Runtime model
 - The Flask site only serves the landing page.
 - The actual Minecraft daemon should run as its own process or service outside this repo.
+- The page reads server status from the LaunchAgent label and world details from `server.properties` plus the live world directory.
 - A DNS record such as `mc.friedutch.plus` should point at the host running the Minecraft server.
 - The provided ops files assume a live server root at `/Users/administrator/Servers/minecraft`.
 
@@ -38,8 +39,11 @@
 - `MINECRAFT_SERVER_PORT`
 - `MINECRAFT_JOIN_HOST`
 - `MINECRAFT_JOIN_PORT`
+- `MINECRAFT_SERVER_ROOT`
+- `MINECRAFT_WORLD_NAME`
+- `MINECRAFT_LAUNCH_AGENT_LABEL`
+- `MINECRAFT_LAUNCH_AGENT_PLIST`
 - `MINECRAFT_SERVER_EDITION`
 - `MINECRAFT_SERVER_VERSION`
-- `MINECRAFT_SERVER_STATUS`
-- `MINECRAFT_SERVER_WHITELIST`
+- `MINECRAFT_SERVER_ACCESS`
 - `MINECRAFT_SERVER_DESCRIPTION`
