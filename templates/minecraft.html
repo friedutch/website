@@ -26,11 +26,12 @@
     <article class="detail-card detail-primary">
       <p class="card-label">Join now</p>
       <div class="address-line">
+        <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
         <code id="join-address">{{ minecraft.join_host }}</code>
         {% if minecraft.join_port != "25565" %}
         <code>{{ minecraft.join_host }}:{{ minecraft.join_port }}</code>
         {% endif %}
-        <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
+        <strong class="card-stat join-status">{{ minecraft.status }}</strong>
       </div>
     </article>
 
@@ -38,9 +39,8 @@
       <p class="card-label">Server details</p>
       <ul class="detail-list">
         <li>
-          <span>Status</span>
+          <span>Controls</span>
           <div class="detail-actions">
-            <strong class="card-stat">{{ minecraft.status }}</strong>
             <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
               <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
             </form>

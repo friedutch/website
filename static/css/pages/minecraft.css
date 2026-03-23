@@ -85,6 +85,7 @@ body {
   flex-wrap: wrap;
   gap: 10px;
   margin: 12px 0 14px;
+  align-items: stretch;
 }
 
 .address-line code,
@@ -100,11 +101,21 @@ body {
   font-weight: 900;
 }
 
+.address-line code {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
 .copy-btn {
   cursor: pointer;
   color: var(--text);
   font-family: inherit;
   transition: transform 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.join-status {
+  margin: 0;
+  white-space: nowrap;
 }
 
 .copy-btn:hover {
