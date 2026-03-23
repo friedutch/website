@@ -20,11 +20,6 @@
     <p class="eyebrow">Friedutch Plus</p>
     <h1>Minecraft server</h1>
     <p class="hero-copy">Self-hosted versatile Minecraft world.</p>
-    <div class="hero-pills">
-      <span class="chip chip-on">{{ minecraft.status }}</span>
-      <span class="chip chip-off">{{ minecraft.edition }}</span>
-      <span class="chip chip-off">{{ minecraft.version }}</span>
-    </div>
   </header>
 
   <section class="details-grid">
@@ -63,12 +58,12 @@
           <strong>{{ minecraft.version }}</strong>
         </li>
         <li>
-          <span>World size</span>
-          <strong>{{ minecraft.world_size }}</strong>
-        </li>
-        <li>
           <span>Access</span>
           <strong>{{ minecraft.access }}</strong>
+        </li>
+        <li>
+          <span>World size</span>
+          <strong>{{ minecraft.world_size }}</strong>
         </li>
       </ul>
     </article>
