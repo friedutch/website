@@ -119,6 +119,7 @@
 - The Minecraft landing page is served from `https://friedutch.plus/minecraft`.
 - This page includes the standard site debug footer like every other page.
 - This page shows the live join hostname plus a server-details block sourced from the local Minecraft host when available.
+- Minecraft start and stop controls are not public; they require either a local request on the host or an authenticated Smart Lock admin session.
 - This page only publishes server details; it does not run the game server inside Flask.
 - Run the actual Minecraft server as a separate process or service on your host.
 - Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_SERVER_*` environment variables.
@@ -130,6 +131,13 @@
   - local template path
   - GitHub file URL for the active route's Python file
   - `Last Commit` timestamp in UTC
+- The Flask app sets baseline security headers on responses:
+  - Content-Security-Policy
+  - X-Frame-Options
+  - X-Content-Type-Options
+  - Referrer-Policy
+  - Cross-Origin-Opener-Policy
+  - Cross-Origin-Resource-Policy
 - Static CSS/JS URLs include an asset-version query string so browsers pick up new frontend files after deploys.
 - Deploy output is written to:
   - `/tmp/deploy.log`

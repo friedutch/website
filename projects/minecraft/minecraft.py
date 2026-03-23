@@ -4,9 +4,10 @@ import socket
 import subprocess
 from pathlib import Path
 
-from flask import Blueprint, redirect, url_for
+from flask import Blueprint, abort, redirect, request, url_for
 
 from app.rendering import render_page
+from projects.smartlock import is_admin
 
 
 DEFAULT_SERVER_ROOT = Path(os.getenv("MINECRAFT_SERVER_ROOT", "/Users/administrator/Servers/minecraft"))
@@ -175,6 +176,7 @@ def _minecraft_config():
         "access": _access_status(properties),
         "world_name": world_name,
         "world_size": _human_size(world_path),
+        "can_manage": _can_manage_server(),
         "can_start": not is_online,
         "can_stop": is_online,
     }
@@ -210,6 +212,14 @@ def _launchctl(action):
     raise ValueError(f"Unsupported action: {action}")
 
 
+def _is_local_request():
+    return request.remote_addr in {"127.0.0.1", "::1"}
+
+
+def _can_manage_server():
+    return _is_local_request() or is_admin()
+
+
 def init_minecraft(flask_app, csrf):
     minecraft_bp = Blueprint("minecraft", __name__)
 
@@ -219,14 +229,16 @@ def init_minecraft(flask_app, csrf):
         return render_minecraft_page()
 
     @minecraft_bp.route("/minecraft/server/start", methods=["POST"])
-    @csrf.exempt
     def minecraft_server_start():
+        if not _can_manage_server():
+            abort(403)
         _launchctl("start")
         return redirect(url_for("minecraft.minecraft"))
 
     @minecraft_bp.route("/minecraft/server/stop", methods=["POST"])
-    @csrf.exempt
     def minecraft_server_stop():
+        if not _can_manage_server():
+            abort(403)
         _launchctl("stop")
         return redirect(url_for("minecraft.minecraft"))
 

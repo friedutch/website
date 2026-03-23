@@ -24,6 +24,7 @@
 - The Flask site only serves the landing page.
 - The actual Minecraft daemon should run as its own process or service outside this repo.
 - The page reads server status from the LaunchAgent label and world details from `server.properties` plus the live world directory.
+- Start and stop controls on the page require either a local request from the host or a Smart Lock admin session.
 - A DNS record such as `mc.friedutch.plus` should point at the host running the Minecraft server.
 - The provided ops files assume a live server root at `/Users/administrator/Servers/minecraft`.
 

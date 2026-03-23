@@ -38,17 +38,21 @@
     <article class="detail-card detail-primary">
       <p class="card-label">Server details</p>
       <ul class="detail-list">
+        {% if minecraft.can_manage %}
         <li>
           <span>Controls</span>
           <div class="detail-actions">
             <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
             </form>
             <form method="POST" action="{{ url_for('minecraft.minecraft_server_stop') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button class="action-btn action-btn-danger" type="submit" {% if not minecraft.can_stop %}disabled{% endif %}>Stop</button>
             </form>
           </div>
         </li>
+        {% endif %}
         <li>
           <span>Edition</span>
           <strong>{{ minecraft.edition }}</strong>
