@@ -3,7 +3,7 @@ import hmac
 import subprocess
 from datetime import datetime, UTC
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
 from app.rendering import render_page
@@ -63,6 +63,9 @@ def create_app():
 
     @flask_app.after_request
     def apply_security_headers(response):
+        x_robots_tag = getattr(g, "x_robots_tag", None)
+        if x_robots_tag:
+            response.headers["X-Robots-Tag"] = x_robots_tag
         response.headers.setdefault("X-Content-Type-Options", "nosniff")
         response.headers.setdefault("X-Frame-Options", "DENY")
         response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")

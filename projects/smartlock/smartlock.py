@@ -605,14 +605,14 @@ def init_smartlock(app):
             serializer.loads(token, salt="admin-magic-login", max_age=300)
         except SignatureExpired:
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Link expired ⏱️",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         except BadSignature:
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Invalid link 🚫",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         db = get_db()
         if db.execute("SELECT 1 FROM used_tokens WHERE token = ?", (token,)).fetchone():
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Link already used 🚫",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         token_hash = hashlib.sha256(token.encode()).hexdigest()
         db2 = sqlite3.connect(DB_PATH)
         db2.row_factory = sqlite3.Row
@@ -621,14 +621,14 @@ def init_smartlock(app):
         correct = row["number"] if row else None
         if not correct:
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Session expired 💨",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         options = {correct}
         while len(options) < 3:
             options.add(str(random.randint(10, 99)))
         options = list(options)
         random.shuffle(options)
         return render_page("smartlock/captcha.html", page_name="Smart Lock — Solve captcha", token=token, options=options,
-                                      error=None, mode="login")
+                                      error=None, mode="login", noindex=True)
     
     @app.route('/smartlock/verify-captcha', methods=['POST'])
     def smartlock_verify_captcha():
@@ -684,14 +684,14 @@ def init_smartlock(app):
                                           redirect_url=url_for("smartlock_admin"),
                                           heading="Session already active",
                                           description="Closing this invite page and returning to the existing admin session.",
-                                          fallback_copy="If this page stays open, continue here.")
+                                          fallback_copy="If this page stays open, continue here.", noindex=True)
         db = sqlite3.connect(DB_PATH)
         db.row_factory = sqlite3.Row
         row = db.execute("SELECT * FROM join_tokens WHERE token = ?", (token,)).fetchone()
         db.close()
         if not row:
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Join link expired or invalid 🚫",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         created = datetime.datetime.fromisoformat(row["created_at"])
         if (datetime.datetime.utcnow() - created).total_seconds() > 300:
             db2 = sqlite3.connect(DB_PATH)
@@ -699,7 +699,7 @@ def init_smartlock(app):
             db2.commit()
             db2.close()
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Join link expired ⏱️",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         correct = row["number"]
         options = {correct}
         while len(options) < 3:
@@ -707,7 +707,7 @@ def init_smartlock(app):
         options = list(options)
         random.shuffle(options)
         return render_page("smartlock/captcha.html", page_name="Smart Lock — Solve captcha", token=token, options=options,
-                                      error=None, mode="join")
+                                      error=None, mode="join", noindex=True)
     
     @app.route("/smartlock/join-captcha", methods=["POST"])
     def smartlock_join_captcha():
@@ -716,7 +716,7 @@ def init_smartlock(app):
                                           redirect_url=url_for("smartlock_admin"),
                                           heading="Session already active",
                                           description="Closing this invite page and returning to the existing admin session.",
-                                          fallback_copy="If this page stays open, continue here.")
+                                          fallback_copy="If this page stays open, continue here.", noindex=True)
         token = request.form.get("token")
         chosen = request.form.get("captcha_code")
         db = sqlite3.connect(DB_PATH)
@@ -725,11 +725,11 @@ def init_smartlock(app):
         db.close()
         if not row:
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Join link expired 🚫",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         created = datetime.datetime.fromisoformat(row["created_at"])
         if (datetime.datetime.utcnow() - created).total_seconds() > 300:
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Join link expired ⏱️",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         if chosen != row["number"]:
             log_attempt("join_session", method_id="captcha", success=False)
             db3 = sqlite3.connect(DB_PATH)
@@ -737,7 +737,7 @@ def init_smartlock(app):
             db3.commit()
             db3.close()
             return render_page("smartlock/admin_login.html", page_name="Smart Lock — Access", message="Wrong captcha. Request a new link. 🚫",
-                                          admin_sent=False, link_cooldown=0, captcha_code=None)
+                                          admin_sent=False, link_cooldown=0, captcha_code=None, noindex=True)
         db2 = sqlite3.connect(DB_PATH)
         db2.execute("DELETE FROM join_tokens WHERE token = ?", (token,))
         db2.commit()
@@ -837,10 +837,10 @@ def init_smartlock(app):
             new_email = serializer.loads(token, salt="admin-email-change", max_age=300)
         except SignatureExpired:
             return render_page("smartlock/email_pending.html", page_name="Smart Lock — Verify Email", pending_email=get_pending_email(),
-                                          sent_at=get_pending_sent_at(), error="Link expired ⏱️", captcha_code=None)
+                                          sent_at=get_pending_sent_at(), error="Link expired ⏱️", captcha_code=None, noindex=True)
         except BadSignature:
             return render_page("smartlock/email_pending.html", page_name="Smart Lock — Verify Email", pending_email=get_pending_email(),
-                                          sent_at=get_pending_sent_at(), error="Invalid link 🚫", captcha_code=None)
+                                          sent_at=get_pending_sent_at(), error="Invalid link 🚫", captcha_code=None, noindex=True)
         pending = get_pending_email()
         if not pending or pending != new_email: return redirect(url_for("smartlock_admin"))
         token_hash = hashlib.sha256(token.encode()).hexdigest()
@@ -851,14 +851,14 @@ def init_smartlock(app):
         correct = row["number"] if row else None
         if not correct:
             return render_page("smartlock/email_pending.html", page_name="Smart Lock — Verify Email", pending_email=pending,
-                                          sent_at=get_pending_sent_at(), error="Session expired 💨", captcha_code=None)
+                                          sent_at=get_pending_sent_at(), error="Session expired 💨", captcha_code=None, noindex=True)
         options = {correct}
         while len(options) < 3:
             options.add(str(random.randint(10, 99)))
         options = list(options)
         random.shuffle(options)
         return render_page("smartlock/captcha.html", page_name="Smart Lock — Solve captcha", token=token, options=options,
-                                      error=None, mode="email_change")
+                                      error=None, mode="email_change", noindex=True)
     
     @app.route("/smartlock/verify-email-captcha", methods=["POST"])
     def smartlock_verify_email_captcha():
@@ -876,12 +876,12 @@ def init_smartlock(app):
             db3.commit()
             db3.close()
             return render_page("smartlock/email_pending.html", page_name="Smart Lock — Verify Email", pending_email=get_pending_email(),
-                                          sent_at=get_pending_sent_at(), error="Wrong captcha. Request a new link. 🚫", captcha_code=None)
+                                          sent_at=get_pending_sent_at(), error="Wrong captcha. Request a new link. 🚫", captcha_code=None, noindex=True)
         try:
             new_email = serializer.loads(token, salt="admin-email-change", max_age=300)
         except:
             return render_page("smartlock/email_pending.html", page_name="Smart Lock — Verify Email", pending_email=get_pending_email(),
-                                          sent_at=get_pending_sent_at(), error="Link expired ⏱️", captcha_code=None)
+                                          sent_at=get_pending_sent_at(), error="Link expired ⏱️", captcha_code=None, noindex=True)
         db = get_db()
         pending = get_pending_email()
         if not pending or pending != new_email: return redirect(url_for("smartlock_admin"))
@@ -983,7 +983,7 @@ def init_smartlock(app):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         user = get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
         return render_page("smartlock/admin_user_detail.html", page_name=f"{user['name']} — Friedutch Plus", user=user,
-                                      is_new_user=False, error=None)
+                                      is_new_user=False, error=None, noindex=True)
     
     @app.route("/smartlock/user/<int:user_id>/toggle/<method>", methods=["POST"])
     def smartlock_toggle_method(user_id, method):

@@ -160,6 +160,7 @@
 - Cookies are `Secure`, `HttpOnly`, `SameSite=Lax`.
 - Admin login clears and rebuilds the Flask session before elevating it.
 - Admin-side destructive actions and toggles are POST-only and CSRF-protected.
+- Tokenized and user-id Smart Lock pages are marked `X-Robots-Tag: noindex, nofollow`.
 - Smart Lock should be treated as sensitive/admin-only functionality.
 
 ### Known pitfalls for future changes
