@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>friedutchplus.minecraft</string>
+  <string>friedutchplus.minecraft.server</string>
 
   <key>ProgramArguments</key>
   <array>
@@ -35,9 +35,9 @@
   <true/>
 
   <key>StandardOutPath</key>
-  <string>/Users/administrator/Library/Logs/friedutchplus.minecraft.log</string>
+  <string>/Users/administrator/Library/Logs/friedutchplus.minecraft.server.log</string>
 
   <key>StandardErrorPath</key>
-  <string>/Users/administrator/Library/Logs/friedutchplus.minecraft.err.log</string>
+  <string>/Users/administrator/Library/Logs/friedutchplus.minecraft.server.err.log</string>
 </dict>
 </plist>

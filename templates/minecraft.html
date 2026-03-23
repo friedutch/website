@@ -17,8 +17,8 @@
   </div>
 
   <header class="hero-panel">
-    <p class="eyebrow">Self-hosted server</p>
-    <h1>Minecraft server status</h1>
+    <p class="eyebrow">Friedutch Plus</p>
+    <h1>Minecraft server</h1>
     <p class="hero-copy">{{ minecraft.description }}</p>
     <div class="hero-pills">
       <span class="chip chip-on">{{ minecraft.status }}</span>
@@ -37,13 +37,13 @@
         {% endif %}
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
       </div>
-      <p class="card-copy">Use the exact join hostname above in Minecraft Java `{{ minecraft.version }}`. This is the only currently working game endpoint.</p>
+      <p class="card-copy">Open Minecraft Java `{{ minecraft.version }}`, go to Multiplayer, and paste the address above.</p>
     </article>
 
     <article class="detail-card">
-      <p class="card-label">Info page</p>
-      <p class="card-stat">friedutch.plus/minecraft</p>
-      <p class="card-copy">Share this page for status and instructions. Share the join hostname above for actual Minecraft connections.</p>
+      <p class="card-label">World</p>
+      <p class="card-stat">Public survival</p>
+      <p class="card-copy">A home-hosted world for friends and visitors. This page stays simple so the join address is always obvious.</p>
     </article>
 
     <article class="detail-card">
@@ -53,13 +53,11 @@
     </article>
 
     <article class="detail-card">
-      <p class="card-label">Ops note</p>
-      <p class="card-copy">`mc.friedutch.plus` is not a working join address on the current Playit free setup. The live server address is the Playit hostname shown above.</p>
+      <p class="card-label">Share this page</p>
+      <p class="card-copy">Send people here for the latest join details, then have them copy the address above into Minecraft.</p>
     </article>
   </section>
 </div>
-
-{% include "_debug_footer.html" %}
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
 <script>

@@ -104,8 +104,8 @@
   - `HIBP_API_KEY`
   - `MINECRAFT_SERVER_HOST`
   - `MINECRAFT_SERVER_PORT`
-- `MINECRAFT_JOIN_HOST`
-- `MINECRAFT_JOIN_PORT`
+  - `MINECRAFT_JOIN_HOST`
+  - `MINECRAFT_JOIN_PORT`
   - `MINECRAFT_SERVER_EDITION`
   - `MINECRAFT_SERVER_VERSION`
   - `MINECRAFT_SERVER_STATUS`
@@ -115,8 +115,8 @@
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 
 ### Minecraft landing page
-- The Minecraft landing page is served from `https://mc.friedutch.plus/` when the Cloudflare Tunnel hostname is configured.
-- This page publishes the website hostname separately from the actual live join hostname when a tunnel provider is in use.
+- The Minecraft landing page is served from `https://friedutch.plus/minecraft`.
+- This page should stay visitor-facing and simple, with the live join hostname shown clearly and no operational clutter.
 - This page only publishes server details; it does not run the game server inside Flask.
 - Run the actual Minecraft server as a separate process or service on your host.
 - Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_SERVER_*` environment variables.

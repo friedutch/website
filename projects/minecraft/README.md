@@ -3,7 +3,7 @@
 ## Human Summary
 - This module owns the public Minecraft landing page for `friedutch.plus`.
 - It does not run the Minecraft server process itself.
-- It reads `MINECRAFT_SERVER_*` environment variables and renders the public connection page at `mc.friedutch.plus`.
+- It reads `MINECRAFT_SERVER_*` environment variables and renders the public connection page at `/minecraft/`.
 
 ## AI Copilot
 
@@ -18,7 +18,7 @@
 ### Purpose
 - Publish connection details for a separately hosted Minecraft server.
 - Keep Minecraft-specific route logic out of the main app factory.
-- Serve the Minecraft info page from the dedicated `mc.friedutch.plus` hostname when that host points at the Flask app.
+- Serve the Minecraft info page from `/minecraft/` on the main website.
 
 ### Runtime model
 - The Flask site only serves the landing page.
@@ -30,7 +30,7 @@
 - `ops/install_paper.sh` downloads a stable Paper server jar from PaperMC's official downloads service and seeds the live server directory.
 - `ops/provision_host.sh` installs the live server directory, installs the LaunchAgent, and restarts the Flask site so the page reflects the current config.
 - `ops/start_server.sh` starts the Paper server with a configurable Java binary and heap size.
-- `ops/friedutchplus.minecraft.plist.example` is the LaunchAgent template for keeping the server alive on macOS.
+- `ops/friedutchplus.minecraft.server.plist.example` is the LaunchAgent template for keeping the server alive on macOS.
 - `ops/server.properties.example` is a baseline server configuration for the live server directory.
 
 ### Environment variables

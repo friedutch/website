@@ -79,11 +79,7 @@ def create_app():
 
     @flask_app.route("/")
     def home():
-        return render_page(
-            "home.html",
-            page_name="Friedutch Plus",
-            minecraft_host=os.getenv("MINECRAFT_SERVER_HOST", "mc.friedutch.plus").lower(),
-        )
+        return render_page("home.html", page_name="Friedutch Plus")
 
     return flask_app
 
