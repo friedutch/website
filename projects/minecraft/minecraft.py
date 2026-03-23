@@ -150,6 +150,10 @@ def _edition_label():
     return edition
 
 
+def _is_latest_version():
+    return os.getenv("MINECRAFT_SERVER_IS_LATEST", "").strip().lower() in {"1", "true", "yes", "on"}
+
+
 def _join_address(join_host, join_port):
     if join_host == "Unavailable":
         return join_host
@@ -173,6 +177,7 @@ def _minecraft_config():
         "join_address": _join_address(join_host, join_port),
         "edition": _edition_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
+        "version_is_latest": _is_latest_version(),
         "status": "Online" if is_online else "Offline",
         "access": _access_status(properties),
         "world_name": world_name,

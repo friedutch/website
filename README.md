@@ -115,6 +115,7 @@
   - `MINECRAFT_LAUNCH_AGENT_PLIST`
   - `MINECRAFT_SERVER_EDITION`
   - `MINECRAFT_SERVER_VERSION`
+  - `MINECRAFT_SERVER_IS_LATEST`
   - `MINECRAFT_SERVER_ACCESS`
 - `MAIL_TO` is only the bootstrap default for the Smart Lock admin email; after initialization, the live admin email is stored in the Smart Lock database settings.
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
