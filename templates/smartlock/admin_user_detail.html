@@ -82,9 +82,12 @@
   <div class="method-head">
     <span class="method-emoji">💳</span>
     <span class="method-label">RFID Badge</span>
-    <a class="method-toggle {{ 'on' if user['rfid_enabled'] else 'off' }}" href="/smartlock/user/{{ user['id'] }}/toggle/rfid">
-      {{ 'Enabled ✓' if user['rfid_enabled'] else 'Disabled' }}
-    </a>
+    <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/rfid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="method-toggle {{ 'on' if user['rfid_enabled'] else 'off' }}" type="submit">
+        {{ 'Enabled ✓' if user['rfid_enabled'] else 'Disabled' }}
+      </button>
+    </form>
   </div>
   {% if user['rfid_id'] %}<div class="current-id">Current: {{ user['rfid_id'] }}</div>{% endif %}
   <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid">
@@ -98,9 +101,12 @@
   <div class="method-head">
     <span class="method-emoji">🖐️</span>
     <span class="method-label">Fingerprint</span>
-    <a class="method-toggle {{ 'on' if user['fingerprint_enabled'] else 'off' }}" href="/smartlock/user/{{ user['id'] }}/toggle/fingerprint">
-      {{ 'Enabled ✓' if user['fingerprint_enabled'] else 'Disabled' }}
-    </a>
+    <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/fingerprint">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="method-toggle {{ 'on' if user['fingerprint_enabled'] else 'off' }}" type="submit">
+        {{ 'Enabled ✓' if user['fingerprint_enabled'] else 'Disabled' }}
+      </button>
+    </form>
   </div>
   {% if user['fingerprint_id'] %}<div class="current-id">Current: {{ user['fingerprint_id'] }}</div>{% endif %}
   <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/fingerprint">
@@ -110,10 +116,12 @@
   </form>
 </div>
 
-<a class="big-btn delete-user-btn" href="/smartlock/users/delete/{{ user['id'] }}"
-   data-confirm="Delete {{ user['name'] }}">
-  🗑️ Delete {{ user['name'] }}
-</a>
+<form method="POST" action="/smartlock/users/delete/{{ user['id'] }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="big-btn delete-user-btn" type="submit" data-confirm="Delete {{ user['name'] }}">
+    🗑️ Delete {{ user['name'] }}
+  </button>
+</form>
 {% endif %}
 
 {% include "_debug_footer.html" %}

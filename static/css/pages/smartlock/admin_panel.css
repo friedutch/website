@@ -69,6 +69,10 @@ body {
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
+.settings-actions form,
+.session-side form {
+  margin: 0;
+}
 .settings-action-btn {
   width: 100%;
   justify-content: center;
@@ -161,6 +165,9 @@ body {
 .zone-green .icon-btn.session-action {
   border-color: rgba(0,200,130,0.3);
 }
+.zone-green form {
+  margin: 0;
+}
 .zone-green .sm-ghost,
 .zone-green .sm-ghost-green,
 .zone-green .icon-btn.session-action {
@@ -174,6 +181,9 @@ body {
   color: #0A2A20;
   box-shadow: 0 4px 16px rgba(0,200,130,0.3);
   border-color: transparent;
+}
+.zone-green .log-purge-card {
+  width: 100%;
 }
 .zone-green .sm-ghost:hover,
 .zone-green .sm-ghost-green:hover {

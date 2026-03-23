@@ -112,16 +112,16 @@
   - `/smartlock/verify-email-captcha`
 - Admin/session management:
   - `/smartlock/admin`
-  - `/smartlock/session/logout/<session_token>`
-  - `/smartlock/session/logout-all`
-  - `/smartlock/logout`
+  - `POST /smartlock/session/logout/<session_token>`
+  - `POST /smartlock/session/logout-all`
+  - `POST /smartlock/logout`
 - User management:
   - `/smartlock/users/new`
   - `/smartlock/users/add`
   - `/smartlock/users/create`
-  - `/smartlock/users/delete/<int:user_id>`
+  - `POST /smartlock/users/delete/<int:user_id>`
   - `/smartlock/user/<int:user_id>`
-  - `/smartlock/user/<int:user_id>/toggle/<method>`
+  - `POST /smartlock/user/<int:user_id>/toggle/<method>`
   - `/smartlock/user/<int:user_id>/set/<method>`
 
 ### Database tables
@@ -158,6 +158,8 @@
 - Join links should only be consumed when a new device actually completes the join flow.
 - Brute-force lockout exists for repeated attempts.
 - Cookies are `Secure`, `HttpOnly`, `SameSite=Lax`.
+- Admin login clears and rebuilds the Flask session before elevating it.
+- Admin-side destructive actions and toggles are POST-only and CSRF-protected.
 - Smart Lock should be treated as sensitive/admin-only functionality.
 
 ### Known pitfalls for future changes

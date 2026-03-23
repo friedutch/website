@@ -15,6 +15,10 @@ body {
 .detail-error { margin-bottom: 18px; }
 .method-zone { background:linear-gradient(135deg,rgba(0,210,255,0.08),rgba(43,134,197,0.06));border:2px solid rgba(0,210,255,0.18);border-radius:var(--radius-sm);padding:18px;margin-bottom:12px; box-shadow: 0 16px 36px rgba(0,0,0,0.14); }
 .method-head { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
+.method-head form,
+.delete-user-btn {
+  margin: 0;
+}
 .method-emoji { font-size:24px; }
 .method-label { flex:1;font-size:16px;font-weight:800; color: var(--cyan); }
 .method-toggle { font-size:12px;font-weight:800;padding:6px 14px;border-radius:50px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif; }
@@ -70,4 +74,7 @@ body {
   box-shadow:0 6px 24px rgba(255,107,53,0.4);
   margin-top:8px;
   text-decoration:none;
+  width: 100%;
+  border: none;
+  cursor: pointer;
 }

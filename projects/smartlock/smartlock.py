@@ -290,10 +290,17 @@ def create_admin_session():
     )
     db.commit()
     db.close()
+    preserved = {
+        "smartlock_cookies_probe": session.get("smartlock_cookies_probe"),
+        "cooldown_actor_id": session.get("cooldown_actor_id"),
+    }
+    session.clear()
+    for key, value in preserved.items():
+        if value:
+            session[key] = value
     session["role"] = "admin"
     session["session_token"] = token
     session["last_active"] = now
-    session.pop("admin_captcha_code", None)
     cutoff = (datetime.datetime.utcnow() - datetime.timedelta(hours=1)).isoformat()
     db2 = sqlite3.connect(DB_PATH)
     db2.execute("DELETE FROM active_sessions WHERE created_at < ?", (cutoff,))
@@ -733,7 +740,7 @@ def init_smartlock(app):
         create_admin_session()
         return redirect(url_for("smartlock_admin"))
     
-    @app.route("/smartlock/session/logout/<session_token>")
+    @app.route("/smartlock/session/logout/<session_token>", methods=["POST"])
     def smartlock_session_logout(session_token):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         db = get_db()
@@ -744,7 +751,7 @@ def init_smartlock(app):
             return redirect(url_for("smartlock_login"))
         return redirect(url_for("smartlock_admin"))
     
-    @app.route("/smartlock/session/logout-all")
+    @app.route("/smartlock/session/logout-all", methods=["POST"])
     def smartlock_session_logout_all():
         if not is_admin(): return redirect(url_for("smartlock_login"))
         current = session.get("session_token")
@@ -958,7 +965,7 @@ def init_smartlock(app):
         db.commit()
         return redirect(url_for("smartlock_user_detail", user_id=cursor.lastrowid))
     
-    @app.route("/smartlock/users/delete/<int:user_id>")
+    @app.route("/smartlock/users/delete/<int:user_id>", methods=["POST"])
     def smartlock_delete_user(user_id):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         get_db().execute("DELETE FROM users WHERE id = ?", (user_id,))
@@ -972,7 +979,7 @@ def init_smartlock(app):
         return render_page("smartlock/admin_user_detail.html", page_name=f"{user['name']} — Friedutch Plus", user=user,
                                       is_new_user=False, error=None)
     
-    @app.route("/smartlock/user/<int:user_id>/toggle/<method>")
+    @app.route("/smartlock/user/<int:user_id>/toggle/<method>", methods=["POST"])
     def smartlock_toggle_method(user_id, method):
         if not is_admin(): return redirect(url_for("smartlock_login"))
         if method not in ("rfid", "fingerprint"): return redirect(url_for("smartlock_user_detail", user_id=user_id))
@@ -992,7 +999,7 @@ def init_smartlock(app):
         get_db().commit()
         return redirect(url_for("smartlock_user_detail", user_id=user_id))
     
-    @app.route("/smartlock/logout")
+    @app.route("/smartlock/logout", methods=["POST"])
     def smartlock_logout():
         token = session.get("session_token")
         if token:

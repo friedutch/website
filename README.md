@@ -52,6 +52,11 @@
 - Smart Lock requires session cookies:
   - no-cookie browsers should be shown the minimal cookies-required page instead of login/admin UI
   - Smart Lock POST failures from missing CSRF session state should render that same cookies-required page
+- Smart Lock admin mutations are POST-only and CSRF-protected:
+  - session logout
+  - session purge
+  - user deletion
+  - RFID/fingerprint toggles
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/deploy`
