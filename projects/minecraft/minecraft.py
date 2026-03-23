@@ -220,8 +220,7 @@ def _can_manage_server():
 def init_minecraft(flask_app, csrf):
     minecraft_bp = Blueprint("minecraft", __name__)
 
-    @minecraft_bp.route("/minecraft", strict_slashes=False)
-    @minecraft_bp.route("/minecraft/", strict_slashes=False)
+    @minecraft_bp.route("/minecraft/")
     def minecraft():
         return render_minecraft_page()
 

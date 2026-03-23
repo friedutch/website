@@ -121,7 +121,7 @@
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 
 ### Minecraft landing page
-- The Minecraft landing page is served from `https://friedutch.plus/minecraft`.
+- The Minecraft landing page is served from `https://friedutch.plus/minecraft/`.
 - This page shows the live join hostname plus a server-details block sourced from the local Minecraft host when available.
 - Minecraft start and stop controls are not public; they require either a local request on the host or an authenticated Smart Lock admin session.
 - This page only publishes server details; it does not run the game server inside Flask.
