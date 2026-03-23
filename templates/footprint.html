@@ -16,7 +16,10 @@
   </div>
   <div class="top-right">
     <a class="top-icon-btn" href="/">🏠</a>
-    <a class="top-icon-btn" href="/smartlock/logout" data-confirm="Log out">👋</a>
+    <form method="POST" action="/smartlock/logout" class="top-icon-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
+    </form>
     <button class="top-icon-btn" data-theme-toggle id="theme-btn">🔄</button>
   </div>
 </div>

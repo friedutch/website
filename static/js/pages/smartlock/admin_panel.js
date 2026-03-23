@@ -259,7 +259,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (remaining <= 0) {
       clearInterval(noticeIntervalId);
       setTimeout(function () {
-        window.location.href = "/smartlock/logout";
+        const logoutForm = document.querySelector('form[action="/smartlock/logout"]');
+        if (logoutForm) {
+          logoutForm.submit();
+          return;
+        }
+        window.location.href = "/smartlock/login";
       }, 5000);
       return;
     }

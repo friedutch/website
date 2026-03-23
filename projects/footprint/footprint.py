@@ -9,7 +9,7 @@ import bleach as _bleach
 from flask import request, jsonify
 from app.rendering import render_page
 
-from projects.smartlock.smartlock import is_admin
+from projects.smartlock.smartlock import is_admin, require_admin_login
 
 FOOTPRINT_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "footprint.db")
 HIBP_API_KEY = os.getenv("HIBP_API_KEY", "")
@@ -258,6 +258,9 @@ def _hibp_addresses(domain):
 def init_footprint(app, csrf):
     @app.route("/footprint/")
     def footprint_index():
+        admin_redirect = require_admin_login()
+        if admin_redirect:
+            return admin_redirect
         return render_page("footprint.html")
 
     @app.route("/footprint/scan", methods=["POST"])

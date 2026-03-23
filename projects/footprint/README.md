@@ -35,6 +35,7 @@
 ### Access model
 - Footprint relies on Smart Lock admin state.
 - Treat it as an admin-only internal tool.
+- The `/footprint/` page should redirect to Smart Lock login when there is no active admin session.
 
 ### What the feature does
 - Accepts a scan target:

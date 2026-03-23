@@ -155,6 +155,12 @@ def is_admin():
     return session.get("role") == "admin"
 
 
+def require_admin_login():
+    if is_admin():
+        return None
+    return redirect(url_for("smartlock_login"))
+
+
 def get_device_icon():
     ua = request.headers.get("User-Agent", "").lower()
     if "iphone" in ua or "android" in ua and "mobile" in ua:
