@@ -1,12 +1,23 @@
 body {
   margin: 0;
   padding: 0;
+  background-color: var(--bg);
   background:
-    linear-gradient(180deg, rgba(6, 10, 18, 0.74), rgba(6, 10, 18, 0.84)),
+    linear-gradient(180deg, rgba(6, 10, 18, 0.42), rgba(6, 10, 18, 0.58)),
     url("/static/img/pages/minecraft/background.jpg") center / cover fixed no-repeat,
     radial-gradient(circle at top left, rgba(0, 210, 255, 0.14), transparent 30%),
     radial-gradient(circle at top right, rgba(0, 200, 130, 0.14), transparent 28%),
     linear-gradient(180deg, rgba(255, 214, 10, 0.06), transparent 28%),
+    var(--bg);
+}
+
+[data-theme="light"] body {
+  background:
+    linear-gradient(180deg, rgba(240, 244, 255, 0.48), rgba(240, 244, 255, 0.64)),
+    url("/static/img/pages/minecraft/background.jpg") center / cover fixed no-repeat,
+    radial-gradient(circle at top left, rgba(0, 210, 255, 0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(0, 200, 130, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 214, 10, 0.05), transparent 28%),
     var(--bg);
 }
 
@@ -18,8 +29,14 @@ body {
   display: grid;
   gap: 20px;
   background:
-    linear-gradient(180deg, rgba(9, 14, 24, 0.96), rgba(9, 14, 24, 0.985)),
-    var(--bg);
+    linear-gradient(180deg, rgba(9, 14, 24, 0.76), rgba(9, 14, 24, 0.86)),
+    rgba(9, 14, 24, 0.7);
+}
+
+[data-theme="light"] .minecraft-shell {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(244, 246, 255, 0.9)),
+    rgba(240, 240, 255, 0.78);
 }
 
 .hero-panel,
@@ -34,6 +51,12 @@ body {
   background:
     linear-gradient(145deg, rgba(0, 200, 130, 0.16), rgba(43, 134, 197, 0.12)),
     var(--surface);
+}
+
+[data-theme="light"] .hero-panel {
+  background:
+    linear-gradient(145deg, rgba(0, 200, 130, 0.1), rgba(43, 134, 197, 0.08)),
+    rgba(255, 255, 255, 0.82);
 }
 
 .eyebrow,
@@ -81,7 +104,11 @@ body {
 
 .detail-card {
   padding: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, rgba(22, 33, 62, 0.52), rgba(22, 33, 62, 0.34));
+}
+
+[data-theme="light"] .detail-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(245, 245, 255, 0.74));
 }
 
 .address-line {
