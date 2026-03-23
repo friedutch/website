@@ -17,10 +17,11 @@
   </div>
 
   <section class="details-grid">
-    <article class="detail-card">
+    <article class="detail-card server-id-card server-id-card-{{ minecraft.status|lower }}">
       <p class="card-label">Server ID</p>
       <div class="server-id-head">
         <h1>{{ minecraft.server_name }}</h1>
+        <p class="server-id-sub">{{ minecraft.summary }}</p>
       </div>
       <div class="address-line">
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
@@ -43,7 +44,7 @@
           <strong>No griefing or stealing.</strong>
         </li>
         <li>
-          <span>Stay fair</span>
+          <span>Play fair</span>
           <strong>No cheats, x-ray, or hacked clients.</strong>
         </li>
         <li>
@@ -71,10 +72,6 @@
         <li>
           <span>Access</span>
           <strong>{{ minecraft.access }}</strong>
-        </li>
-        <li>
-          <span>Host</span>
-          <strong>{{ minecraft.host }}</strong>
         </li>
       </ul>
     </article>

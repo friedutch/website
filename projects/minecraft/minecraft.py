@@ -176,6 +176,10 @@ def _player_count(status, properties, is_online):
     return f"{online} / {maximum}"
 
 
+def _server_summary(access, version, modloader, edition):
+    return f"{access} {version} {modloader} {edition}"
+
+
 def _minecraft_config():
     server_root = Path(os.getenv("MINECRAFT_SERVER_ROOT", str(DEFAULT_SERVER_ROOT)))
     properties = _read_server_properties(server_root)
@@ -190,13 +194,18 @@ def _minecraft_config():
         "join_port": join_port,
         "join_address": _join_address(join_host, join_port),
         "server_name": "FP SMP",
-        "host": "macOS",
         "edition": _edition_label(),
         "modloader": _modloader_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
         "status": "Online" if is_online else "Offline",
         "player_count": _player_count(status_payload, properties, is_online),
         "access": _access_status(properties),
+        "summary": _server_summary(
+            _access_status(properties),
+            os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
+            _modloader_label(),
+            _edition_label(),
+        ),
         "world_name": world_name,
         "can_manage": _can_manage_server(),
         "can_start": not is_online,
