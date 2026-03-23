@@ -141,7 +141,9 @@ def _access_status(properties):
 
 
 def _edition_label():
-    edition = os.getenv("MINECRAFT_SERVER_EDITION", "Java Edition").strip()
+    edition = os.getenv("MINECRAFT_SERVER_EDITION", "").strip()
+    if not edition:
+        return "Unknown"
     if edition.lower().endswith(" edition"):
         return edition[:-8]
     return edition
@@ -157,15 +159,19 @@ def _minecraft_config():
     server_port = int(properties.get("server-port", os.getenv("MINECRAFT_JOIN_PORT", "25565")) or 25565)
     status_payload = _minecraft_status("127.0.0.1", server_port) if is_online else {}
     players = status_payload.get("players", {}) if isinstance(status_payload, dict) else {}
-    players_online = players.get("online", 0)
-    players_max = players.get("max") or properties.get("max-players", "?")
+    players_online = players.get("online")
+    players_max = players.get("max") or properties.get("max-players")
+    if players_online is None or players_max is None:
+        players_display = "Unavailable"
+    else:
+        players_display = f"{players_online}/{players_max}"
     return {
-        "join_host": os.getenv("MINECRAFT_JOIN_HOST", "mc.friedutch.plus"),
-        "join_port": os.getenv("MINECRAFT_JOIN_PORT", "25565"),
+        "join_host": os.getenv("MINECRAFT_JOIN_HOST", "").strip() or "Unavailable",
+        "join_port": os.getenv("MINECRAFT_JOIN_PORT", "").strip() or "Unavailable",
         "edition": _edition_label(),
-        "version": os.getenv("MINECRAFT_SERVER_VERSION", "Set your live version in .env"),
+        "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
         "status": "Online" if is_online else "Offline",
-        "players": f"{players_online}/{players_max}",
+        "players": players_display,
         "access": _access_status(properties),
         "world_name": world_name,
         "world_size": _human_size(world_path),
