@@ -67,6 +67,7 @@
   - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
   - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html)
   - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css)
+  - [`static/img/pages/minecraft/background.jpg`](/Users/administrator/Sites/friedutchplus/static/img/pages/minecraft/background.jpg)
 
 ### Separation rules
 - Python belongs in `.py`
@@ -82,6 +83,18 @@
 - Another AI copilot must treat that LaunchAgent, and any related `friedutch.plus` LaunchAgents, as hands-off operational infrastructure.
 - `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the app service.
 
+### Minecraft page notes
+- The Minecraft page is currently a stacked list of full-width cards.
+- The top card is a `Server ID` card showing:
+  - public server name `FP SMP`
+  - join address
+  - online status
+  - live player count when available
+- Public details live in `Game Details`.
+- Start/stop and other operational controls live only in the `Admin Controls` card and only render for a Smart Lock admin session.
+- The page background image is served from [`static/img/pages/minecraft/background.jpg`](/Users/administrator/Sites/friedutchplus/static/img/pages/minecraft/background.jpg).
+- The live Minecraft server-list name comes from the server `motd`, which is currently `FP SMP`.
+
 ### Frontend behavior notes
 - Shared theme and confirm behavior lives in:
   - [`static/js/early-theme.js`](/Users/administrator/Sites/friedutchplus/static/js/early-theme.js)
@@ -94,7 +107,7 @@
 
 ### Commands another AI will likely need
 - Validate Python syntax:
-  - `python3 -m py_compile run.py app/__init__.py app/rendering.py projects/smartlock/smartlock.py projects/footprint/footprint.py`
+  - `python3 -m py_compile run.py app/__init__.py app/rendering.py projects/smartlock/smartlock.py projects/footprint/footprint.py projects/minecraft/minecraft.py`
 - Inspect changed files:
   - `git status --short`
   - `git diff -- <paths>`

@@ -123,12 +123,19 @@
 
 ### Minecraft landing page
 - The Minecraft landing page is served from `https://friedutch.plus/minecraft/`.
-- This page shows the live join hostname plus a server-details block sourced from the local Minecraft host when available.
-- Minecraft start and stop controls live in an admin-only controls block and require an authenticated Smart Lock admin session.
+- This page is currently a stacked card layout with:
+  - a `Server ID` card for `FP SMP`
+  - a public `Golden Rules` card
+  - a public `Game Details` card
+  - an admin-only `Admin Controls` card
+- The page shows the live join hostname, online status, and live player count when the local server responds to a status ping.
+- Minecraft start and stop controls live in the admin-only controls block and require an authenticated Smart Lock admin session.
 - This page only publishes server details; it does not run the game server inside Flask.
 - Run the actual Minecraft server as a separate process or service on your host.
 - Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_JOIN_*` variables plus the `MINECRAFT_SERVER_*` metadata variables.
 - The live Minecraft server root must stay outside this repo. Do not commit server jars, plugin jars, `server.properties`, `ops.json`, world data, or copied server directories.
+- The Minecraft page background image lives at [`static/img/pages/minecraft/background.jpg`](/Users/administrator/Sites/friedutchplus/static/img/pages/minecraft/background.jpg).
+- The live Minecraft server-list name is driven by the server `motd`, which is currently `FP SMP`.
 
 ### Observability / debugging conventions
 - The Flask app sets baseline security headers on responses:

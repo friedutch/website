@@ -23,11 +23,26 @@
 ### Runtime model
 - The Flask site only serves the landing page.
 - The actual Minecraft daemon should run as its own process or service outside this repo.
-- The page reads server status from the LaunchAgent label and world details from `server.properties` plus the live world directory.
+- The page reads server status from the LaunchAgent label and selected world/server details from local `server.properties`.
 - Start and stop controls on the page live in the admin-only controls block and require an authenticated Smart Lock admin session.
 - A DNS record such as `mc.friedutch.plus` should point at the host running the Minecraft server.
 - The provided ops files assume a live server root at `/Users/administrator/Servers/minecraft`.
 - Keep that live server root outside the Git repo and never commit a copied server instance, world folder, Paper jar, or plugin jar.
+
+### Current page structure
+- `Server ID`
+  - public top card
+  - shows server name `FP SMP`, join address, status, and player count
+- `Golden Rules`
+  - public rules card
+- `Game Details`
+  - public metadata card
+  - currently shows host, edition, mod loader, version, and access
+- `Admin Controls`
+  - only visible to Smart Lock admins
+  - contains start/stop and placeholder operational actions
+- The page background image is [`static/img/pages/minecraft/background.jpg`](/Users/administrator/Sites/friedutchplus/static/img/pages/minecraft/background.jpg).
+- The live Minecraft server-list name comes from the server `motd`, currently set to `FP SMP`.
 
 ### Ops files
 - `ops/install_paper.sh` downloads a stable Paper server jar from PaperMC's official downloads service and seeds the live server directory.
@@ -35,6 +50,7 @@
 - `ops/start_server.sh` starts the Paper server with a configurable Java binary and heap size.
 - `ops/friedutchplus.minecraft.server.plist.example` is the LaunchAgent template for keeping the server alive on macOS.
 - `ops/server.properties.example` is a baseline server configuration for the live server directory.
+- The example `motd` is `FP SMP` to match the website’s `Server ID` card.
 - The baseline server example keeps `online-mode=true`, `white-list=true`, `hide-online-players=true`, `enable-query=false`, and `enable-rcon=false`.
 
 ### Environment variables
