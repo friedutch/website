@@ -26,6 +26,7 @@
 - The process is managed by a macOS LaunchAgent outside the repo:
   - `/Users/administrator/Library/LaunchAgents/friedutchplus.server.plist`
 - The LaunchAgent now points directly at [`run.py`](/Users/administrator/Sites/friedutchplus/run.py).
+- Future AI coding copilots must not edit or operate that LaunchAgent, or any related `friedutch.plus` LaunchAgents, unless the human explicitly asks for operational changes.
 - Deploys are expected to restart the existing LaunchAgent-managed service, not run ad hoc Python processes.
 
 ### How code becomes live
@@ -46,6 +47,7 @@
 - Do not move frontend code back into embedded Python strings.
 - Prefer updating [`run.py`](/Users/administrator/Sites/friedutchplus/run.py) and the app factory.
 - Treat LaunchAgent changes as operational changes, not normal app-code changes.
+- Unless explicitly instructed otherwise, another AI copilot should limit itself to repo edits plus `git commit`/`git push`, and should not reload or modify running `friedutch.plus` services.
 - If changing deploy/restart behavior, preserve the current “kickstart if present, bootstrap if absent” pattern unless there is a deliberate replacement plan.
 - Smart Lock requires session cookies:
   - no-cookie browsers should be shown the minimal cookies-required page instead of login/admin UI
@@ -150,4 +152,5 @@
   - [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh)
   - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)
   - LaunchAgent logs
+- For normal feature work, do not operate any `friedutch.plus` LaunchAgent; make the repo change, commit it, and push it.
 - For feature work, stay inside the owning module and its templates/static files.

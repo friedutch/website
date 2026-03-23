@@ -29,6 +29,8 @@
 - Do not move HTML/CSS/JS back into Python strings.
 - Do not rename DB tables casually.
 - Do not assume LaunchAgent changes are normal code changes.
+- Do not edit, reload, kickstart, bootstrap, bootout, or otherwise touch any `friedutch.plus` LaunchAgent or its plist unless explicitly asked.
+- For repo work, stop at repo edits, commit, and push to GitHub unless the human explicitly asks for operational intervention.
 - Treat Smart Lock as sensitive admin functionality.
 
 ### Repo map
@@ -76,6 +78,7 @@
 - It is self-hosted on macOS.
 - The process is managed by LaunchAgent outside the repo:
   - `/Users/administrator/Library/LaunchAgents/friedutchplus.server.plist`
+- Another AI copilot must treat that LaunchAgent, and any related `friedutch.plus` LaunchAgents, as hands-off operational infrastructure.
 - `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the app service.
 
 ### Frontend behavior notes
