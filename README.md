@@ -114,6 +114,7 @@
   - `MINECRAFT_LAUNCH_AGENT_LABEL`
   - `MINECRAFT_LAUNCH_AGENT_PLIST`
   - `MINECRAFT_SERVER_EDITION`
+  - `MINECRAFT_SERVER_MODLOADER`
   - `MINECRAFT_SERVER_VERSION`
   - `MINECRAFT_SERVER_ACCESS`
 - `MAIL_TO` is only the bootstrap default for the Smart Lock admin email; after initialization, the live admin email is stored in the Smart Lock database settings.

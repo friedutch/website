@@ -150,6 +150,13 @@ def _edition_label():
     return edition
 
 
+def _modloader_label():
+    modloader = os.getenv("MINECRAFT_SERVER_MODLOADER", "").strip()
+    if not modloader or modloader.lower() == "none":
+        return "Vanilla"
+    return modloader
+
+
 def _join_address(join_host, join_port):
     if join_host == "Unavailable":
         return join_host
@@ -172,6 +179,7 @@ def _minecraft_config():
         "join_port": join_port,
         "join_address": _join_address(join_host, join_port),
         "edition": _edition_label(),
+        "modloader": _modloader_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
         "status": "Online" if is_online else "Offline",
         "access": _access_status(properties),
