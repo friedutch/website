@@ -178,6 +178,7 @@ def _minecraft_config():
         "join_host": join_host,
         "join_port": join_port,
         "join_address": _join_address(join_host, join_port),
+        "host": "macOS",
         "edition": _edition_label(),
         "modloader": _modloader_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
