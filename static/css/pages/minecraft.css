@@ -1,9 +1,8 @@
 body {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 28px 24px 100px;
+  margin: 0;
+  padding: 0;
   background:
-    linear-gradient(180deg, rgba(6, 10, 18, 0.76), rgba(6, 10, 18, 0.88)),
+    linear-gradient(180deg, rgba(6, 10, 18, 0.74), rgba(6, 10, 18, 0.84)),
     url("/static/img/pages/minecraft/background.jpg") center / cover fixed no-repeat,
     radial-gradient(circle at top left, rgba(0, 210, 255, 0.14), transparent 30%),
     radial-gradient(circle at top right, rgba(0, 200, 130, 0.14), transparent 28%),
@@ -12,8 +11,15 @@ body {
 }
 
 .minecraft-shell {
+  max-width: 960px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 28px 24px 100px;
   display: grid;
   gap: 20px;
+  background:
+    linear-gradient(180deg, rgba(9, 14, 24, 0.96), rgba(9, 14, 24, 0.985)),
+    var(--bg);
 }
 
 .hero-panel,
@@ -218,7 +224,7 @@ body {
 }
 
 @media (max-width: 720px) {
-  body {
+  .minecraft-shell {
     padding-inline: 16px;
   }
 
