@@ -24,7 +24,7 @@
 
   <section class="details-grid">
     <article class="detail-card detail-primary">
-      <p class="card-label">Join now</p>
+      <p class="card-label">Join Link</p>
       <div class="address-line">
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
         <code id="join-address">{{ minecraft.join_address }}</code>
@@ -51,7 +51,7 @@
     </article>
 
     <article class="detail-card detail-primary">
-      <p class="card-label">Details</p>
+      <p class="card-label">Game Details</p>
       <ul class="detail-list">
         {% if minecraft.can_manage %}
         <li>
@@ -69,20 +69,16 @@
         </li>
         {% endif %}
         <li>
-          <span>Game Edition</span>
+          <span>Edition</span>
           <strong>{{ minecraft.edition }}</strong>
         </li>
         <li>
-          <span>Paper Version</span>
+          <span>Version</span>
           <strong>{{ minecraft.version }}</strong>
         </li>
         <li>
-          <span>Player Access</span>
+          <span>Access</span>
           <strong>{{ minecraft.access }}</strong>
-        </li>
-        <li>
-          <span>World size</span>
-          <strong>{{ minecraft.world_size }}</strong>
         </li>
       </ul>
     </article>
