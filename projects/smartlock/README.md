@@ -148,6 +148,7 @@
   - requires `RESEND_API_KEY`
   - requires `MAIL_FROM`
   - initial admin email defaults from `MAIL_TO`
+  - after initialization, the active admin email lives in the Smart Lock `settings` table and can diverge from `.env`
 - Flask-WTF for CSRF
 - Bleach for sanitization
 

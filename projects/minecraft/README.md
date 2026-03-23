@@ -35,8 +35,6 @@
 - `ops/server.properties.example` is a baseline server configuration for the live server directory.
 
 ### Environment variables
-- `MINECRAFT_SERVER_HOST`
-- `MINECRAFT_SERVER_PORT`
 - `MINECRAFT_JOIN_HOST`
 - `MINECRAFT_JOIN_PORT`
 - `MINECRAFT_SERVER_ROOT`
@@ -46,4 +44,3 @@
 - `MINECRAFT_SERVER_EDITION`
 - `MINECRAFT_SERVER_VERSION`
 - `MINECRAFT_SERVER_ACCESS`
-- `MINECRAFT_SERVER_DESCRIPTION`

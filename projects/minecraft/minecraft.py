@@ -89,18 +89,12 @@ def _minecraft_config():
     service_label = os.getenv("MINECRAFT_LAUNCH_AGENT_LABEL", DEFAULT_LAUNCH_AGENT_LABEL)
     is_online = _service_loaded(service_label)
     return {
-        "host": os.getenv("MINECRAFT_SERVER_HOST", "mc.friedutch.plus"),
         "join_host": os.getenv("MINECRAFT_JOIN_HOST", "mc.friedutch.plus"),
         "join_port": os.getenv("MINECRAFT_JOIN_PORT", "25565"),
-        "port": os.getenv("MINECRAFT_SERVER_PORT", "25565"),
         "edition": _edition_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "Set your live version in .env"),
         "status": "Online" if is_online else "Offline",
         "access": _access_status(properties),
-        "description": os.getenv(
-            "MINECRAFT_SERVER_DESCRIPTION",
-            "Self-hosted survival world running alongside the Friedutch Plus site.",
-        ),
         "world_name": world_name,
         "world_size": _human_size(world_path),
         "can_start": not is_online,
