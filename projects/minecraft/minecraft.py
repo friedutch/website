@@ -2,7 +2,10 @@ import os
 import json
 import socket
 import subprocess
+import time
 from pathlib import Path
+from urllib.error import URLError
+from urllib.request import urlopen
 
 from flask import Blueprint, redirect, url_for
 
@@ -17,6 +20,9 @@ DEFAULT_LAUNCH_AGENT_PLIST = os.getenv(
     "MINECRAFT_LAUNCH_AGENT_PLIST",
     "/Users/administrator/Library/LaunchAgents/friedutchplus.minecraft.server.plist",
 )
+PAPER_VERSIONS_URL = "https://fill.papermc.io/v3/projects/paper"
+LATEST_VERSION_CACHE_TTL = 3600
+_latest_version_cache = {"value": None, "checked_at": 0.0}
 
 
 def _read_varint(sock):
@@ -150,8 +156,47 @@ def _edition_label():
     return edition
 
 
-def _is_latest_version():
-    return os.getenv("MINECRAFT_SERVER_IS_LATEST", "").strip().lower() in {"1", "true", "yes", "on"}
+def _version_key(version):
+    parts = version.split(".")
+    if not parts or any(not part.isdigit() for part in parts):
+        return None
+    return tuple(int(part) for part in parts)
+
+
+def _extract_latest_paper_version(payload):
+    if not isinstance(payload, dict):
+        return None
+    versions = payload.get("versions")
+    if not isinstance(versions, list):
+        return None
+    stable_versions = [version for version in versions if isinstance(version, str) and _version_key(version) is not None]
+    if not stable_versions:
+        return None
+    return max(stable_versions, key=_version_key)
+
+
+def _latest_paper_version():
+    now = time.time()
+    if now - _latest_version_cache["checked_at"] < LATEST_VERSION_CACHE_TTL:
+        return _latest_version_cache["value"]
+    latest_version = None
+    try:
+        with urlopen(PAPER_VERSIONS_URL, timeout=2.5) as response:
+            latest_version = _extract_latest_paper_version(json.load(response))
+    except (OSError, ValueError, json.JSONDecodeError, URLError):
+        latest_version = None
+    _latest_version_cache["value"] = latest_version
+    _latest_version_cache["checked_at"] = now
+    return latest_version
+
+
+def _version_display(version):
+    if not version or version == "Unknown":
+        return "Unknown"
+    latest_version = _latest_paper_version()
+    if latest_version and version == latest_version:
+        return f"Latest ({version})"
+    return version
 
 
 def _join_address(join_host, join_port):
@@ -176,8 +221,7 @@ def _minecraft_config():
         "join_port": join_port,
         "join_address": _join_address(join_host, join_port),
         "edition": _edition_label(),
-        "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
-        "version_is_latest": _is_latest_version(),
+        "version": _version_display(os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown"),
         "status": "Online" if is_online else "Offline",
         "access": _access_status(properties),
         "world_name": world_name,

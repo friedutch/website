@@ -51,15 +51,15 @@
         </li>
         {% endif %}
         <li>
-          <span>Edition</span>
+          <span>Game Edition</span>
           <strong>{{ minecraft.edition }}</strong>
         </li>
         <li>
-          <span>Version</span>
-          <strong>{% if minecraft.version_is_latest %}Latest ({{ minecraft.version }}){% else %}{{ minecraft.version }}{% endif %}</strong>
+          <span>Paper Version</span>
+          <strong>{{ minecraft.version }}</strong>
         </li>
         <li>
-          <span>Access</span>
+          <span>Player Access</span>
           <strong>{{ minecraft.access }}</strong>
         </li>
         <li>
