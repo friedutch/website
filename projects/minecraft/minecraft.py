@@ -164,7 +164,7 @@ def _minecraft_config():
     if players_online is None or players_max is None:
         players_display = "Unavailable"
     else:
-        players_display = f"{players_online}/{players_max}"
+        players_display = f"{players_online} / {players_max}"
     return {
         "join_host": os.getenv("MINECRAFT_JOIN_HOST", "").strip() or "Unavailable",
         "join_port": os.getenv("MINECRAFT_JOIN_PORT", "").strip() or "Unavailable",
