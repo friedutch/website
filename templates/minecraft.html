@@ -19,7 +19,7 @@
   <header class="hero-panel">
     <p class="eyebrow">Friedutch Plus</p>
     <h1>Minecraft server</h1>
-    <p class="hero-copy">{{ minecraft.description }}</p>
+    <p class="hero-copy">Self-hosted versatile Minecraft world.</p>
     <div class="hero-pills">
       <span class="chip chip-on">{{ minecraft.status }}</span>
       <span class="chip chip-off">{{ minecraft.edition }}</span>
@@ -37,7 +37,6 @@
         {% endif %}
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
       </div>
-      <p class="card-copy">Open Minecraft Java `{{ minecraft.version }}`, go to Multiplayer, and paste the address above.</p>
     </article>
 
     <article class="detail-card detail-primary">
@@ -60,6 +59,14 @@
           <strong>{{ minecraft.world_seed }}</strong>
         </li>
         <li>
+          <span>Edition</span>
+          <strong>{{ minecraft.edition }}</strong>
+        </li>
+        <li>
+          <span>Version</span>
+          <strong>{{ minecraft.version }}</strong>
+        </li>
+        <li>
           <span>World size</span>
           <strong>{{ minecraft.world_size }}</strong>
         </li>
@@ -68,7 +75,6 @@
           <strong>{{ minecraft.access }}</strong>
         </li>
       </ul>
-      <p class="card-copy">The live world folder is <code>{{ minecraft.world_name }}</code>, and its size updates from the host automatically.</p>
     </article>
   </section>
 </div>
