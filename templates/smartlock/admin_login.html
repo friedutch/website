@@ -41,7 +41,6 @@
   {% if message %}<p class="msg-err msg-err-spaced">{{ message }}</p>{% endif %}
 </div>
 
-{% include "_debug_footer.html" %}
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
 <script id="admin-login-script" src="{{ url_for('static', filename='js/pages/smartlock/admin_login.js', v=asset_version) }}"

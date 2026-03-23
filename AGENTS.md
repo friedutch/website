@@ -89,12 +89,6 @@
 - Smart Lock admin tab memory uses that same browser storage layer.
 
 ### Debugging notes
-- Every page renders a debug footer showing:
-  - page title
-  - request URL
-  - local template path
-  - GitHub file URL
-  - last commit timestamp
 - Static assets use versioned URLs to reduce stale-cache problems.
 
 ### Commands another AI will likely need

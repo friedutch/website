@@ -12,7 +12,7 @@
 - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html)
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css)
 - [`projects/minecraft/ops/start_server.sh`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/start_server.sh)
-- [`projects/minecraft/ops/friedutchplus.minecraft.plist.example`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/friedutchplus.minecraft.plist.example)
+- [`projects/minecraft/ops/friedutchplus.minecraft.server.plist.example`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/friedutchplus.minecraft.server.plist.example)
 - [`projects/minecraft/ops/server.properties.example`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/server.properties.example)
 
 ### Purpose
@@ -34,6 +34,7 @@
 - `ops/start_server.sh` starts the Paper server with a configurable Java binary and heap size.
 - `ops/friedutchplus.minecraft.server.plist.example` is the LaunchAgent template for keeping the server alive on macOS.
 - `ops/server.properties.example` is a baseline server configuration for the live server directory.
+- The baseline server example keeps `online-mode=true`, `white-list=true`, `hide-online-players=true`, `enable-query=false`, and `enable-rcon=false`.
 
 ### Environment variables
 - `MINECRAFT_JOIN_HOST`
