@@ -40,21 +40,10 @@
       <p class="card-copy">Open Minecraft Java `{{ minecraft.version }}`, go to Multiplayer, and paste the address above.</p>
     </article>
 
-    <article class="detail-card">
-      <p class="card-label">World</p>
+    <article class="detail-card detail-primary">
+      <p class="card-label">World & access</p>
       <p class="card-stat">Public survival</p>
-      <p class="card-copy">A home-hosted world for friends and visitors. This page stays simple so the join address is always obvious.</p>
-    </article>
-
-    <article class="detail-card">
-      <p class="card-label">Access</p>
-      <p class="card-stat">{{ minecraft.whitelist }}</p>
-      <p class="card-copy">The server is currently open to anyone with the join address.</p>
-    </article>
-
-    <article class="detail-card">
-      <p class="card-label">Share this page</p>
-      <p class="card-copy">Send people here for the latest join details, then have them copy the address above into Minecraft.</p>
+      <p class="card-copy">A home-hosted world for friends and visitors. The server is currently {{ minecraft.whitelist|lower }} to anyone with the join address.</p>
     </article>
   </section>
 </div>
