@@ -1,5 +1,5 @@
 # Copy this file into the live server root as server.properties before first run
-motd=Friedutch Plus SMP
+motd=FP SMP
 difficulty=normal
 gamemode=survival
 enable-command-block=false

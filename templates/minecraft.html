@@ -16,20 +16,23 @@
     <a href="/">← Back to home</a>
   </div>
 
-  <header class="hero-panel">
-    <p class="eyebrow">Friedutch Plus</p>
-    <h1>Minecraft server</h1>
-    <p class="hero-copy">Self-hosted SMP Minecraft world.</p>
-  </header>
-
   <section class="details-grid">
     <article class="detail-card">
-      <p class="card-label">Join Link</p>
+      <p class="card-label">Server ID</p>
+      <div class="server-id-head">
+        <h1>{{ minecraft.server_name }}</h1>
+      </div>
       <div class="address-line">
         <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
         <code id="join-address">{{ minecraft.join_address }}</code>
         <strong class="card-stat join-status">{{ minecraft.status }}</strong>
       </div>
+      <ul class="detail-list">
+        <li>
+          <span>Players</span>
+          <strong>{{ minecraft.player_count }}</strong>
+        </li>
+      </ul>
     </article>
 
     <article class="detail-card">

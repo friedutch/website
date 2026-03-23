@@ -165,24 +165,37 @@ def _join_address(join_host, join_port):
     return f"{join_host}:{join_port}"
 
 
+def _player_count(status, properties, is_online):
+    if not is_online or not isinstance(status, dict):
+        return "Unavailable"
+    players = status.get("players", {})
+    online = players.get("online")
+    maximum = players.get("max") or properties.get("max-players")
+    if online is None or maximum is None:
+        return "Unavailable"
+    return f"{online} / {maximum}"
+
+
 def _minecraft_config():
     server_root = Path(os.getenv("MINECRAFT_SERVER_ROOT", str(DEFAULT_SERVER_ROOT)))
     properties = _read_server_properties(server_root)
     world_name = os.getenv("MINECRAFT_WORLD_NAME", properties.get("level-name", DEFAULT_WORLD_NAME))
-    world_path = server_root / world_name
     service_label = os.getenv("MINECRAFT_LAUNCH_AGENT_LABEL", DEFAULT_LAUNCH_AGENT_LABEL)
     is_online = _service_loaded(service_label)
     join_host = os.getenv("MINECRAFT_JOIN_HOST", "").strip() or "Unavailable"
     join_port = os.getenv("MINECRAFT_JOIN_PORT", "").strip() or "Unavailable"
+    status_payload = _minecraft_status("127.0.0.1", int(properties.get("server-port", "25565") or 25565)) if is_online else {}
     return {
         "join_host": join_host,
         "join_port": join_port,
         "join_address": _join_address(join_host, join_port),
+        "server_name": "FP SMP",
         "host": "macOS",
         "edition": _edition_label(),
         "modloader": _modloader_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "").strip() or "Unknown",
         "status": "Online" if is_online else "Offline",
+        "player_count": _player_count(status_payload, properties, is_online),
         "access": _access_status(properties),
         "world_name": world_name,
         "can_manage": _can_manage_server(),
