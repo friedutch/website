@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{{ page_name }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/minecraft.css', v=asset_version) }}">
+</head>
+<body>
+<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
+
+<div class="minecraft-shell">
+  <div class="back-link">
+    <a href="/">← Back to home</a>
+  </div>
+
+  <header class="hero-panel">
+    <p class="eyebrow">Self-hosted server</p>
+    <h1>Minecraft server status</h1>
+    <p class="hero-copy">{{ minecraft.description }}</p>
+    <div class="hero-pills">
+      <span class="chip chip-on">{{ minecraft.status }}</span>
+      <span class="chip chip-off">{{ minecraft.edition }}</span>
+      <span class="chip chip-off">{{ minecraft.version }}</span>
+    </div>
+  </header>
+
+  <section class="details-grid">
+    <article class="detail-card detail-primary">
+      <p class="card-label">Join now</p>
+      <div class="address-line">
+        <code id="join-address">{{ minecraft.join_host }}</code>
+        {% if minecraft.join_port != "25565" %}
+        <code>{{ minecraft.join_host }}:{{ minecraft.join_port }}</code>
+        {% endif %}
+        <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
+      </div>
+      <p class="card-copy">Use the exact join hostname above in Minecraft Java `{{ minecraft.version }}`. This is the only currently working game endpoint.</p>
+    </article>
+
+    <article class="detail-card">
+      <p class="card-label">Info page</p>
+      <p class="card-stat">friedutch.plus/minecraft</p>
+      <p class="card-copy">Share this page for status and instructions. Share the join hostname above for actual Minecraft connections.</p>
+    </article>
+
+    <article class="detail-card">
+      <p class="card-label">Access</p>
+      <p class="card-stat">{{ minecraft.whitelist }}</p>
+      <p class="card-copy">The server is currently open to anyone with the join address.</p>
+    </article>
+
+    <article class="detail-card">
+      <p class="card-label">Ops note</p>
+      <p class="card-copy">`mc.friedutch.plus` is not a working join address on the current Playit free setup. The live server address is the Playit hostname shown above.</p>
+    </article>
+  </section>
+</div>
+
+{% include "_debug_footer.html" %}
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<script>
+document.querySelectorAll('[data-copy-target]').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const target = document.querySelector(button.dataset.copyTarget);
+    if (!target) return;
+    try {
+      await navigator.clipboard.writeText(target.textContent.trim());
+      button.textContent = 'Copied';
+      window.setTimeout(() => {
+        button.textContent = 'Copy';
+      }, 1600);
+    } catch {
+      button.textContent = 'Copy failed';
+      window.setTimeout(() => {
+        button.textContent = 'Copy';
+      }, 1600);
+    }
+  });
+});
+</script>
+</body>
+</html>

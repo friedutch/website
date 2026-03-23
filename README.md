@@ -11,9 +11,10 @@
 
 ### Purpose
 - Personal self-hosted Flask web app for the `friedutch.plus` website.
-- The repo contains one main Flask app shell plus two internal project modules:
+- The repo contains one main Flask app shell plus feature modules:
   - Smart Lock
   - Footprint
+  - Minecraft public landing page
 
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
@@ -53,8 +54,11 @@
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/deploy`
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the template path and the footer timestamp
+- [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html): public landing page for the self-hosted Minecraft server
+- [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): Smart Lock feature owner
 - [`projects/footprint/footprint.py`](/Users/administrator/Sites/friedutchplus/projects/footprint/footprint.py): Footprint feature owner
+- [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py): Minecraft landing page feature owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates): Jinja templates
 - [`static/`](/Users/administrator/Sites/friedutchplus/static): CSS and JS assets
 
@@ -71,6 +75,10 @@
   - [`templates/footprint.html`](/Users/administrator/Sites/friedutchplus/templates/footprint.html)
   - [`static/css/pages/footprint.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/footprint.css)
   - [`static/js/pages/footprint.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/footprint.js)
+- Minecraft owns:
+  - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
+  - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html)
+  - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css)
 - Smart Lock login cooldowns are actor-scoped, not global:
   - one browser/device should not block another from requesting its own magic link
   - the current actor identity is a browser-session token stored in the Flask session cookie
@@ -92,8 +100,24 @@
   - `MAIL_FROM`
   - `MAIL_TO`
   - `HIBP_API_KEY`
+  - `MINECRAFT_SERVER_HOST`
+  - `MINECRAFT_SERVER_PORT`
+- `MINECRAFT_JOIN_HOST`
+- `MINECRAFT_JOIN_PORT`
+  - `MINECRAFT_SERVER_EDITION`
+  - `MINECRAFT_SERVER_VERSION`
+  - `MINECRAFT_SERVER_STATUS`
+  - `MINECRAFT_SERVER_WHITELIST`
+  - `MINECRAFT_SERVER_DESCRIPTION`
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
+
+### Minecraft landing page
+- The Minecraft landing page is served from `https://mc.friedutch.plus/` when the Cloudflare Tunnel hostname is configured.
+- This page publishes the website hostname separately from the actual live join hostname when a tunnel provider is in use.
+- This page only publishes server details; it does not run the game server inside Flask.
+- Run the actual Minecraft server as a separate process or service on your host.
+- Point DNS such as `mc.friedutch.plus` to that host and keep the page config synchronized through the `MINECRAFT_SERVER_*` environment variables.
 
 ### Observability / debugging conventions
 - Every page includes a footer showing:
@@ -121,6 +145,7 @@
 - Then read:
   - [`projects/smartlock/README.md`](/Users/administrator/Sites/friedutchplus/projects/smartlock/README.md)
   - [`projects/footprint/README.md`](/Users/administrator/Sites/friedutchplus/projects/footprint/README.md)
+  - [`projects/minecraft/README.md`](/Users/administrator/Sites/friedutchplus/projects/minecraft/README.md)
 - For live/runtime issues, inspect:
   - [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh)
   - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)

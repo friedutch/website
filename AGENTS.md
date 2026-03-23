@@ -4,6 +4,7 @@
 - This file tells an AI coding agent how to safely operate inside the Friedutch Plus repo.
 - Read this first, then read the feature README for the area you are changing.
 - The app is a self-hosted personal Flask site with two internal tools: Smart Lock and Footprint.
+- The app also contains a public Minecraft landing page module.
 
 ## AI Copilot
 
@@ -12,6 +13,7 @@
 2. Read [`README.md`](/Users/administrator/Sites/friedutchplus/README.md).
 3. If touching Smart Lock, read [`projects/smartlock/README.md`](/Users/administrator/Sites/friedutchplus/projects/smartlock/README.md).
 4. If touching Footprint, read [`projects/footprint/README.md`](/Users/administrator/Sites/friedutchplus/projects/footprint/README.md).
+5. If touching Minecraft, read [`projects/minecraft/README.md`](/Users/administrator/Sites/friedutchplus/projects/minecraft/README.md).
 
 ### Primary goals
 - Keep the website working.
@@ -40,6 +42,8 @@
   - Smart Lock owner
 - [`projects/footprint/footprint.py`](/Users/administrator/Sites/friedutchplus/projects/footprint/footprint.py)
   - Footprint owner
+- [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
+  - Minecraft landing page owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates)
   - Jinja templates
 - [`static/`](/Users/administrator/Sites/friedutchplus/static)
@@ -56,6 +60,10 @@
   - [`templates/footprint.html`](/Users/administrator/Sites/friedutchplus/templates/footprint.html)
   - [`static/css/pages/footprint.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/footprint.css)
   - [`static/js/pages/footprint.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/footprint.js)
+- Minecraft owns:
+  - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
+  - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html)
+  - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css)
 
 ### Separation rules
 - Python belongs in `.py`

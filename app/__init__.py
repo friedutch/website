@@ -28,6 +28,7 @@ def get_git_output(project_root, *args):
 
 def create_app():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    from projects.minecraft import init_minecraft
     from projects.smartlock import init_smartlock
     from projects.footprint import init_footprint
 
@@ -42,13 +43,13 @@ def create_app():
     flask_app.config["GITHUB_REPO_URL"] = get_git_output(project_root, "remote", "get-url", "origin")
     flask_app.config["GITHUB_BRANCH"] = get_git_output(project_root, "rev-parse", "--abbrev-ref", "HEAD") or "main"
     flask_app.config["ASSET_VERSION"] = get_git_output(project_root, "rev-parse", "--short", "HEAD") or flask_app.config["LAST_DEPLOYMENT"]
-
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
     )
 
+    init_minecraft(flask_app)
     init_smartlock(flask_app)
     init_footprint(flask_app, csrf)
 
@@ -78,7 +79,11 @@ def create_app():
 
     @flask_app.route("/")
     def home():
-        return render_page("home.html", page_name="Friedutch Plus")
+        return render_page(
+            "home.html",
+            page_name="Friedutch Plus",
+            minecraft_host=os.getenv("MINECRAFT_SERVER_HOST", "mc.friedutch.plus").lower(),
+        )
 
     return flask_app
 

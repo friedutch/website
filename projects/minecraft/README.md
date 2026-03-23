@@ -1,0 +1,45 @@
+# Minecraft
+
+## Human Summary
+- This module owns the public Minecraft landing page for `friedutch.plus`.
+- It does not run the Minecraft server process itself.
+- It reads `MINECRAFT_SERVER_*` environment variables and renders the public connection page at `mc.friedutch.plus`.
+
+## AI Copilot
+
+### Ownership
+- [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
+- [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html)
+- [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css)
+- [`projects/minecraft/ops/start_server.sh`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/start_server.sh)
+- [`projects/minecraft/ops/friedutchplus.minecraft.plist.example`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/friedutchplus.minecraft.plist.example)
+- [`projects/minecraft/ops/server.properties.example`](/Users/administrator/Sites/friedutchplus/projects/minecraft/ops/server.properties.example)
+
+### Purpose
+- Publish connection details for a separately hosted Minecraft server.
+- Keep Minecraft-specific route logic out of the main app factory.
+- Serve the Minecraft info page from the dedicated `mc.friedutch.plus` hostname when that host points at the Flask app.
+
+### Runtime model
+- The Flask site only serves the landing page.
+- The actual Minecraft daemon should run as its own process or service outside this repo.
+- A DNS record such as `mc.friedutch.plus` should point at the host running the Minecraft server.
+- The provided ops files assume a live server root at `/Users/administrator/Servers/minecraft`.
+
+### Ops files
+- `ops/install_paper.sh` downloads a stable Paper server jar from PaperMC's official downloads service and seeds the live server directory.
+- `ops/provision_host.sh` installs the live server directory, installs the LaunchAgent, and restarts the Flask site so the page reflects the current config.
+- `ops/start_server.sh` starts the Paper server with a configurable Java binary and heap size.
+- `ops/friedutchplus.minecraft.plist.example` is the LaunchAgent template for keeping the server alive on macOS.
+- `ops/server.properties.example` is a baseline server configuration for the live server directory.
+
+### Environment variables
+- `MINECRAFT_SERVER_HOST`
+- `MINECRAFT_SERVER_PORT`
+- `MINECRAFT_JOIN_HOST`
+- `MINECRAFT_JOIN_PORT`
+- `MINECRAFT_SERVER_EDITION`
+- `MINECRAFT_SERVER_VERSION`
+- `MINECRAFT_SERVER_STATUS`
+- `MINECRAFT_SERVER_WHITELIST`
+- `MINECRAFT_SERVER_DESCRIPTION`
