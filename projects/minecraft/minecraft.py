@@ -1,4 +1,6 @@
 import os
+import json
+import socket
 import subprocess
 from pathlib import Path
 
@@ -14,6 +16,70 @@ DEFAULT_LAUNCH_AGENT_PLIST = os.getenv(
     "MINECRAFT_LAUNCH_AGENT_PLIST",
     "/Users/administrator/Library/LaunchAgents/friedutchplus.minecraft.server.plist",
 )
+
+
+def _read_varint(sock):
+    value = 0
+    position = 0
+    while True:
+        current = sock.recv(1)
+        if not current:
+            raise OSError("Connection closed while reading VarInt")
+        current_byte = current[0]
+        value |= (current_byte & 0x7F) << position
+        if not current_byte & 0x80:
+            return value
+        position += 7
+        if position >= 35:
+            raise ValueError("VarInt too large")
+
+
+def _write_varint(value):
+    payload = bytearray()
+    while True:
+        temp = value & 0x7F
+        value >>= 7
+        if value:
+            temp |= 0x80
+        payload.append(temp)
+        if not value:
+            return bytes(payload)
+
+
+def _minecraft_status(host, port):
+    address = host or "127.0.0.1"
+    try:
+        with socket.create_connection((address, port), timeout=1.5) as sock:
+            host_bytes = address.encode("utf-8")
+            handshake_data = (
+                _write_varint(0)
+                + _write_varint(765)
+                + _write_varint(len(host_bytes))
+                + host_bytes
+                + port.to_bytes(2, "big")
+                + _write_varint(1)
+            )
+            sock.sendall(_write_varint(len(handshake_data)) + handshake_data)
+
+            request_data = _write_varint(0)
+            sock.sendall(_write_varint(len(request_data)) + request_data)
+
+            _read_varint(sock)
+            packet_id = _read_varint(sock)
+            if packet_id != 0:
+                return {}
+            payload_length = _read_varint(sock)
+            payload = bytearray()
+            while len(payload) < payload_length:
+                chunk = sock.recv(payload_length - len(payload))
+                if not chunk:
+                    break
+                payload.extend(chunk)
+            if len(payload) != payload_length:
+                return {}
+            return json.loads(payload.decode("utf-8"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return {}
 
 
 def _read_server_properties(server_root):
@@ -88,12 +154,18 @@ def _minecraft_config():
     world_path = server_root / world_name
     service_label = os.getenv("MINECRAFT_LAUNCH_AGENT_LABEL", DEFAULT_LAUNCH_AGENT_LABEL)
     is_online = _service_loaded(service_label)
+    server_port = int(properties.get("server-port", os.getenv("MINECRAFT_JOIN_PORT", "25565")) or 25565)
+    status_payload = _minecraft_status("127.0.0.1", server_port) if is_online else {}
+    players = status_payload.get("players", {}) if isinstance(status_payload, dict) else {}
+    players_online = players.get("online", 0)
+    players_max = players.get("max") or properties.get("max-players", "?")
     return {
         "join_host": os.getenv("MINECRAFT_JOIN_HOST", "mc.friedutch.plus"),
         "join_port": os.getenv("MINECRAFT_JOIN_PORT", "25565"),
         "edition": _edition_label(),
         "version": os.getenv("MINECRAFT_SERVER_VERSION", "Set your live version in .env"),
         "status": "Online" if is_online else "Offline",
+        "players": f"{players_online}/{players_max}",
         "access": _access_status(properties),
         "world_name": world_name,
         "world_size": _human_size(world_path),
