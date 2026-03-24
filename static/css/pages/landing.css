@@ -21,9 +21,10 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 42%, rgba(23, 192, 181, 0.24), transparent 24%),
-    radial-gradient(circle at 56% 46%, rgba(240, 100, 73, 0.18), transparent 18%),
-    linear-gradient(160deg, rgba(23, 192, 181, 0.12), rgba(17, 82, 90, 0.34), rgba(10, 35, 40, 0.82));
+    radial-gradient(circle at 50% 42%, rgba(23, 192, 181, 0.42), transparent 23%),
+    radial-gradient(circle at 56% 46%, rgba(240, 100, 73, 0.34), transparent 17%),
+    radial-gradient(circle at 47% 53%, rgba(242, 193, 74, 0.18), transparent 20%),
+    linear-gradient(160deg, rgba(34, 209, 198, 0.18), rgba(20, 96, 106, 0.5), rgba(8, 24, 29, 0.92));
   opacity: 0;
   transition: opacity 0.28s ease;
   pointer-events: none;
@@ -46,8 +47,8 @@ body {
 }
 
 .landing-logo {
-  width: min(62vw, 390px);
-  min-width: 220px;
+  width: min(50vw, 310px);
+  min-width: 180px;
   height: auto;
   display: block;
 }
