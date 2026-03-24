@@ -13,6 +13,69 @@ body {
   gap: 14px;
 }
 
+.upload-queue {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.upload-job {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-3);
+}
+
+.upload-job-head,
+.upload-job-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.upload-job-name {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.upload-job-state,
+.upload-job-size {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.upload-job-progress {
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.upload-job-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  transition: width 0.18s ease;
+}
+
+.upload-job-complete .upload-job-fill {
+  background: linear-gradient(135deg, var(--success), color-mix(in srgb, var(--success) 62%, white));
+}
+
+.upload-job-error .upload-job-fill {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 62%, white));
+}
+
 .upload-drop {
   display: grid;
   gap: 10px;

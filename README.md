@@ -97,6 +97,7 @@
 - Cloud Storage is a single-admin private drop zone:
   - it reuses Smart Lock admin sessions instead of introducing a separate login system
   - uploaded files stay available until manually deleted
+  - large uploads use chunked background requests instead of one giant blocking form post
   - file contents live outside the repo in `CLOUD_STORAGE_ROOT`
 
 ### Databases

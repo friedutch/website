@@ -73,7 +73,7 @@
     <div class="zone-title-left"><span>📤</span> Upload</div>
     <span class="zone-title-note">Stored outside the repo</span>
   </div>
-  <form class="upload-form" method="POST" action="/cloud-storage/upload" enctype="multipart/form-data">
+  <form class="upload-form" method="POST" action="/cloud-storage/upload" enctype="multipart/form-data" id="cloud-upload-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label class="upload-drop" for="cloud-file-input" id="cloud-upload-drop">
       <span class="upload-drop-icon">+</span>
@@ -81,8 +81,9 @@
       <span class="upload-drop-sub" id="cloud-file-name">No files selected yet</span>
     </label>
     <input class="upload-input" id="cloud-file-input" type="file" name="file" multiple required>
-    <button class="big-btn btn-primary" type="submit">Upload files</button>
+    <button class="big-btn btn-primary" type="submit" id="cloud-upload-submit">Upload files</button>
   </form>
+  <div class="upload-queue empty-hidden" id="cloud-upload-queue" aria-live="polite"></div>
 </div>
 
 <div class="zone zone-purple">

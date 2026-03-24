@@ -31,7 +31,9 @@
 - Uploaded files remain available until manually deleted.
 - Total stored file size is capped at 10 GB.
 - Multi-file uploads are supported, including drag and drop from the browser.
-- Uploads are checked against the 10 GB total storage limit after save.
+- Large uploads are sent in background chunked requests so the page stays responsive and avoids giant single-request payloads.
+- Upload sessions are staged in a temporary upload-session directory under the storage root before finalizing into the main file list.
+- Uploads are checked against the 10 GB total storage limit before and during finalization.
 - File records include a SHA-256 checksum plus download history metadata.
 - The page uses the shared site header plus a persistent storage-usage bar that shows used and remaining space.
 
@@ -44,6 +46,14 @@
   - main UI
 - `POST /cloud-storage/upload`
   - upload a file
+- `POST /cloud-storage/upload/start`
+  - start a chunked upload session
+- `POST /cloud-storage/upload/chunk/<upload_id>`
+  - append one upload chunk
+- `POST /cloud-storage/upload/finish/<upload_id>`
+  - finalize a staged upload into the file list
+- `POST /cloud-storage/upload/cancel/<upload_id>`
+  - discard a staged upload
 - `/cloud-storage/download/<int:file_id>`
   - download a stored file
 - `POST /cloud-storage/delete/<int:file_id>`
