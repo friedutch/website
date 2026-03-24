@@ -28,7 +28,6 @@
 </div>
 
 <h1>☁️ Cloud Storage</h1>
-<p class="page-sub">Drop a file on your Mac, then log in and pull it down from another device.</p>
 
 {% if message %}<p class="page-message page-message-ok">{{ message }}</p>{% endif %}
 {% if error %}<p class="page-message page-message-error">{{ error }}</p>{% endif %}
@@ -73,7 +72,6 @@
   </form>
   <p class="upload-hint">Storage root: <code>{{ storage_root }}</code></p>
   <p class="upload-hint">Storage limit: <strong>{{ metrics.total_size_label }}</strong> used of <strong>{{ metrics.storage_limit_label }}</strong></p>
-  <p class="upload-hint">Per-file limit: <strong>1.0 GB</strong> · Multi-file uploads supported</p>
 </div>
 
 <div class="zone zone-purple">

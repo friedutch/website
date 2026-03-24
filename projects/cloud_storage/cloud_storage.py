@@ -14,7 +14,6 @@ from projects.smartlock.smartlock import require_admin_login
 
 CLOUD_STORAGE_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cloud_storage.db")
 DEFAULT_STORAGE_ROOT = "/Users/administrator/Storage/cloud_storage"
-MAX_UPLOAD_BYTES = 1024 * 1024 * 1024
 MAX_TOTAL_STORAGE_BYTES = 10 * 1024 * 1024 * 1024
 
 
@@ -192,9 +191,6 @@ def init_cloud_storage(app):
                 saved_paths.append(destination)
 
                 saved_size = destination.stat().st_size
-                if saved_size > MAX_UPLOAD_BYTES:
-                    raise ValueError(f"{original_name} is too large. Individual files must stay within 1.0 GB.")
-
                 total_new_usage += saved_size
                 if total_new_usage > MAX_TOTAL_STORAGE_BYTES:
                     raise ValueError("That upload would exceed the 10.0 GB storage limit.")

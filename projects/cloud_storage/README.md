@@ -31,7 +31,7 @@
 - Uploaded files remain available until manually deleted.
 - Total stored file size is capped at 10 GB.
 - Multi-file uploads are supported, including drag and drop from the browser.
-- Uploads are size-limited in the app and checked again after save.
+- Uploads are checked against the 10 GB total storage limit after save.
 - File records include a SHA-256 checksum plus download history metadata.
 
 ### Registration model
