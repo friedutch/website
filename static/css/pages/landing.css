@@ -32,15 +32,11 @@ body {
   pointer-events: none;
 }
 
-.landing-shell.is-leaving::before {
-  opacity: 1;
-}
-
 .landing-logo-link {
   position: relative;
   z-index: 1;
   display: inline-block;
-  transition: transform 0.18s ease, filter 0.18s ease, opacity 0.24s ease;
+  transition: transform 0.18s ease, filter 0.18s ease;
 }
 
 .landing-shell:has(.landing-logo-link:hover)::before {
@@ -50,12 +46,6 @@ body {
 .landing-logo-link:hover {
   transform: rotate(var(--landing-logo-rotation)) scale(1.14);
   filter: drop-shadow(0 18px 34px rgba(23, 192, 181, 0.2));
-}
-
-.landing-shell.is-leaving .landing-logo-link {
-  opacity: 0;
-  transform: rotate(var(--landing-logo-rotation)) scale(1.24);
-  filter: drop-shadow(0 22px 40px rgba(23, 192, 181, 0.26));
 }
 
 .landing-logo {

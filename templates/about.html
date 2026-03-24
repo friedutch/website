@@ -9,41 +9,17 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/about.css', v=asset_version) }}">
 </head>
 <body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon brand-icon-logo">
-        <img src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
-      </div>
-      <div>
-        <div class="brand-name">Friedutch Plus</div>
-        <div class="brand-sub">friedutch.plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      <a class="top-icon-btn" href="/about">🏠</a>
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-      <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
-    </div>
-  </div>
-</div>
 <div class="site-header">
   <div class="site-logo">
     <img class="site-logo-mark" src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
     <span>Friedutch Plus</span>
   </div>
-  <div class="site-sub">Personal projects & tools</div>
 </div>
 <p class="projects-label">About</p>
 <section class="project-card active about-card">
-  <div class="project-name">Friedutch Plus</div>
-  <p class="project-desc">Friedutch Plus is my self-hosted website for private admin tools and public project pages.</p>
-  <p class="project-desc">Public sections stay open to everyone, while sensitive tools only unlock after Smart Lock verifies my session.</p>
+  <p class="project-desc">Friedutch Plus is my self-hosted website for the tools and pages that support my own setup. It brings together a small set of focused projects in one place instead of splitting them across separate apps or dashboards.</p>
+  <p class="project-desc">Some parts of the site are public and meant to be viewed directly, like the Minecraft page and general project overview. Other parts are private operational tools that are only available to me after Smart Lock verifies my session.</p>
+  <p class="project-desc">In practice, that means this site works as both a front door and a control surface: public pages explain what is available, while protected pages handle admin actions, file access, and other personal management tasks behind authentication.</p>
 </section>
 <p class="projects-label">Projects</p>
 <div class="projects-grid">
@@ -66,7 +42,10 @@
     <span class="project-tag tag-live">✅ Live</span>
   </a>
 </div>
-{% include "_site_footer.html" %}
+<footer class="universal-footer about-footer">
+  <button class="universal-footer-link" data-theme-toggle data-theme-label="Theme" data-theme-text-only="true" type="button">Theme</button>
+  <a class="universal-footer-link" href="{{ config.GITHUB_REPO_URL }}" target="_blank" rel="noreferrer">GitHub Repository</a>
+</footer>
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

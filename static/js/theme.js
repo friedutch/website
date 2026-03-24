@@ -12,17 +12,30 @@ function getStorage(){
   function writeCookie(name, value){
     document.cookie = name + "=" + encodeURIComponent(value) + "; path=/; max-age=31536000; SameSite=Lax";
   }
+  function clearCookie(name){
+    document.cookie = name + "=; path=/; max-age=0; SameSite=Lax";
+  }
   window.friedutchStorage = {
     get: function(key){
       try {
         const stored = window.localStorage.getItem(key);
-        if(stored !== null){ return stored; }
+        if(stored === 'dark' || stored === 'light'){ return stored; }
       } catch (error) {
         // Fall back to cookies when localStorage is unavailable.
       }
-      return readCookie("friedutch_" + key);
+      const cookieValue = readCookie("friedutch_" + key);
+      return cookieValue === 'dark' || cookieValue === 'light' ? cookieValue : null;
     },
     set: function(key, value){
+      if(value !== 'dark' && value !== 'light'){
+        try {
+          window.localStorage.removeItem(key);
+        } catch (error) {
+          // Fall back to cookies when localStorage is unavailable.
+        }
+        clearCookie("friedutch_" + key);
+        return;
+      }
       try {
         window.localStorage.setItem(key, value);
       } catch (error) {
@@ -38,13 +51,15 @@ function applyTheme(t){document.documentElement.setAttribute('data-theme',t==='s
 function themeIcon(t){return t==='dark'?'🌙':t==='light'?'☀️':'🔄';}
 function themeButtonText(btn, theme){
   const label = btn?.dataset?.themeLabel;
+  const textOnly = btn?.dataset?.themeTextOnly === 'true';
   const icon = themeIcon(theme);
+  if(label && textOnly){ return label; }
   return label ? icon + ' ' + label : icon;
 }
 function toggleTheme(btn){
   const storage=getStorage();
   const themes=['dark','light','system'];
-  const cur=storage.get('theme')||'dark';
+  const cur=storage.get('theme')||'system';
   const next=themes[(themes.indexOf(cur)+1)%3];
   storage.set('theme',next);
   applyTheme(next);
@@ -52,7 +67,7 @@ function toggleTheme(btn){
 }
 (function(){
   const storage=getStorage();
-  const t=storage.get('theme')||'dark';
+  const t=storage.get('theme')||'system';
   applyTheme(t);
   document.addEventListener('DOMContentLoaded',function(){
     const btn=document.getElementById('theme-btn')||document.querySelector('[data-theme-toggle]');

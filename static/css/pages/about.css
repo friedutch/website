@@ -1,17 +1,12 @@
 body {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 34px 24px 88px;
+  padding: 52px 24px 88px;
 }
 
 .site-header {
-  margin-top: 36px;
+  margin-top: 0;
   margin-bottom: 18px;
-}
-
-.app-brand .brand-icon-logo {
-  width: 46px;
-  height: 46px;
 }
 
 .site-logo {
@@ -40,4 +35,11 @@ body {
 
 .about-card .project-desc {
   max-width: 70ch;
+}
+
+.about-footer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
