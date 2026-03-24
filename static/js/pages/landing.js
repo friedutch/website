@@ -7,6 +7,13 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  function resetLandingState() {
+    isLeaving = false;
+    shell.classList.remove("is-leaving");
+  }
+
+  resetLandingState();
+
   logoLink.addEventListener("mouseenter", function () {
     const gradientAngle = Math.floor(Math.random() * 360);
     const rotation = Math.floor(Math.random() * 41) - 20;
@@ -28,4 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
       window.location.href = logoLink.href;
     }, 240);
   });
+
+  window.addEventListener("pageshow", resetLandingState);
 });
