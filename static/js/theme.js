@@ -49,11 +49,12 @@ function getStorage(){
 function getSystemTheme(){return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t==='system'?getSystemTheme():t);}
 function themeIcon(t){return t==='dark'?'🌙':t==='light'?'☀️':'🔄';}
+function themeLabelText(t){return t==='system'?'system':t;}
 function themeButtonText(btn, theme){
   const label = btn?.dataset?.themeLabel;
   const textOnly = btn?.dataset?.themeTextOnly === 'true';
   const icon = themeIcon(theme);
-  if(label && textOnly){ return label; }
+  if(label && textOnly){ return label + ': ' + themeLabelText(theme); }
   return label ? icon + ' ' + label : icon;
 }
 function toggleTheme(btn){
