@@ -63,16 +63,17 @@
   </div>
   <form class="upload-form" method="POST" action="/cloud-storage/upload" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label class="upload-drop" for="cloud-file-input">
+    <label class="upload-drop" for="cloud-file-input" id="cloud-upload-drop">
       <span class="upload-drop-icon">+</span>
-      <span class="upload-drop-title">Choose a file</span>
-      <span class="upload-drop-sub" id="cloud-file-name">No file selected yet</span>
+      <span class="upload-drop-title">Choose files or drop them here</span>
+      <span class="upload-drop-sub" id="cloud-file-name">No files selected yet</span>
     </label>
-    <input class="upload-input" id="cloud-file-input" type="file" name="file" required>
-    <button class="big-btn btn-primary" type="submit">Upload file</button>
+    <input class="upload-input" id="cloud-file-input" type="file" name="file" multiple required>
+    <button class="big-btn btn-primary" type="submit">Upload files</button>
   </form>
   <p class="upload-hint">Storage root: <code>{{ storage_root }}</code></p>
   <p class="upload-hint">Storage limit: <strong>{{ metrics.total_size_label }}</strong> used of <strong>{{ metrics.storage_limit_label }}</strong></p>
+  <p class="upload-hint">Per-file limit: <strong>1.0 GB</strong> · Multi-file uploads supported</p>
 </div>
 
 <div class="zone zone-purple">

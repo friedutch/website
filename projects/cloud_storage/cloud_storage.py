@@ -138,6 +138,17 @@ def _render_cloud_storage(message=None, error=None):
     )
 
 
+def _validate_upload_file(uploaded_file):
+    if not uploaded_file or not uploaded_file.filename:
+        return None, "Choose at least one file to upload."
+
+    original_name = secure_filename(uploaded_file.filename).strip()
+    if not original_name:
+        return None, "One of the selected filenames is not allowed."
+
+    return original_name, None
+
+
 def init_cloud_storage(app):
     @app.route("/cloud-storage/")
     def cloud_storage_index():
@@ -152,50 +163,68 @@ def init_cloud_storage(app):
         if admin_redirect:
             return admin_redirect
 
-        uploaded_file = request.files.get("file")
-        if not uploaded_file or not uploaded_file.filename:
-            return _render_cloud_storage(error="Choose a file to upload.")
-
-        original_name = secure_filename(uploaded_file.filename).strip()
-        if not original_name:
-            return _render_cloud_storage(error="That filename is not allowed.")
+        uploaded_files = [file for file in request.files.getlist("file") if file and file.filename]
+        if not uploaded_files:
+            return _render_cloud_storage(error="Choose at least one file to upload.")
 
         content_length = request.content_length or 0
-        if content_length > MAX_UPLOAD_BYTES:
-            return _render_cloud_storage(error="That file is too large for this page.")
+        if content_length > MAX_TOTAL_STORAGE_BYTES:
+            return _render_cloud_storage(error="That request is too large for Cloud Storage.")
 
         current_usage = _storage_metrics(_list_files())["total_size_bytes"]
         if current_usage >= MAX_TOTAL_STORAGE_BYTES:
             return _render_cloud_storage(error="Cloud Storage is full. Delete files before uploading more.")
 
-        stored_name = f"{uuid.uuid4().hex}_{original_name}"
-        destination = get_storage_root() / stored_name
+        storage_root = get_storage_root()
+        pending_inserts = []
+        saved_paths = []
+        total_new_usage = current_usage
 
         try:
-            uploaded_file.save(destination)
-            saved_size = destination.stat().st_size
-            if saved_size > MAX_UPLOAD_BYTES:
-                destination.unlink(missing_ok=True)
-                return _render_cloud_storage(error="That file is too large for this page.")
-            if current_usage + saved_size > MAX_TOTAL_STORAGE_BYTES:
-                destination.unlink(missing_ok=True)
-                return _render_cloud_storage(error="That upload would exceed the 10.0 GB storage limit.")
-            checksum_sha256 = _sha256_for_file(destination)
+            for uploaded_file in uploaded_files:
+                original_name, validation_error = _validate_upload_file(uploaded_file)
+                if validation_error:
+                    raise ValueError(validation_error)
+
+                stored_name = f"{uuid.uuid4().hex}_{original_name}"
+                destination = storage_root / stored_name
+                uploaded_file.save(destination)
+                saved_paths.append(destination)
+
+                saved_size = destination.stat().st_size
+                if saved_size > MAX_UPLOAD_BYTES:
+                    raise ValueError(f"{original_name} is too large. Individual files must stay within 1.0 GB.")
+
+                total_new_usage += saved_size
+                if total_new_usage > MAX_TOTAL_STORAGE_BYTES:
+                    raise ValueError("That upload would exceed the 10.0 GB storage limit.")
+
+                checksum_sha256 = _sha256_for_file(destination)
+                pending_inserts.append(
+                    (original_name, stored_name, (uploaded_file.mimetype or "").strip(), saved_size, checksum_sha256)
+                )
+        except ValueError as error:
+            for path in saved_paths:
+                path.unlink(missing_ok=True)
+            return _render_cloud_storage(error=str(error))
         except OSError:
-            current_app.logger.exception("Failed to save uploaded cloud storage file")
-            return _render_cloud_storage(error="Upload failed while saving the file.")
+            current_app.logger.exception("Failed to save uploaded cloud storage files")
+            for path in saved_paths:
+                path.unlink(missing_ok=True)
+            return _render_cloud_storage(error="Upload failed while saving one of the files.")
 
         db = _get_db()
-        db.execute(
+        db.executemany(
             """
             INSERT INTO files (original_name, stored_name, mime_type, size_bytes, checksum_sha256)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (original_name, stored_name, (uploaded_file.mimetype or "").strip(), saved_size, checksum_sha256),
+            pending_inserts,
         )
         db.commit()
         db.close()
-        return _render_cloud_storage(message="File uploaded.")
+        file_count = len(pending_inserts)
+        return _render_cloud_storage(message=f"Uploaded {file_count} file{'s' if file_count != 1 else ''}.")
 
     @app.route("/cloud-storage/download/<int:file_id>")
     def cloud_storage_download(file_id):
