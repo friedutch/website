@@ -122,7 +122,7 @@ h1 {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 24px;
 }
@@ -158,6 +158,14 @@ h1 {
 .upload-hint code,
 .file-meta {
   color: var(--cyan);
+}
+
+.metric-val-ok {
+  color: var(--green);
+}
+
+.metric-val-warn {
+  color: var(--orange);
 }
 
 .metric-val-small {
@@ -238,6 +246,15 @@ h1 {
   gap: 12px;
 }
 
+.file-search-row {
+  margin-bottom: 14px;
+}
+
+.file-search-input {
+  border-color: rgba(120, 75, 160, 0.22);
+  background: linear-gradient(135deg, rgba(120, 75, 160, 0.08), rgba(43, 134, 197, 0.06));
+}
+
 .file-card {
   background: linear-gradient(135deg, rgba(120, 75, 160, 0.08), rgba(43, 134, 197, 0.06));
   border: 2px solid rgba(120, 75, 160, 0.16);
@@ -245,6 +262,11 @@ h1 {
   padding: 16px;
   display: grid;
   gap: 14px;
+}
+
+.file-card-missing {
+  border-color: rgba(255, 107, 53, 0.2);
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.08), rgba(120, 75, 160, 0.06));
 }
 
 .file-icon {
@@ -277,6 +299,29 @@ h1 {
   word-break: break-word;
 }
 
+.file-detail-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.file-chip {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 50px;
+  border: 1px solid rgba(0, 210, 255, 0.22);
+  background: rgba(0, 210, 255, 0.08);
+  color: var(--cyan);
+}
+
+.file-chip-warn {
+  border-color: rgba(255, 107, 53, 0.24);
+  background: rgba(255, 107, 53, 0.1);
+  color: var(--orange);
+}
+
 .delete-file-btn:hover {
   border-color: var(--orange);
   color: var(--orange);
@@ -296,6 +341,10 @@ h1 {
   font-size: 14px;
   font-weight: 600;
   color: var(--text3);
+}
+
+.empty-hidden {
+  display: none;
 }
 
 @media (max-width: 720px) {

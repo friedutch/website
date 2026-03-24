@@ -42,9 +42,17 @@
     <div class="metric-label">Stored size</div>
     <div class="metric-val metric-val-info">{{ metrics.total_size_label }}</div>
   </div>
+  <div class="metric">
+    <div class="metric-label">Remaining</div>
+    <div class="metric-val metric-val-small">{{ metrics.remaining_size_label }}</div>
+  </div>
   <div class="metric metric-wide">
     <div class="metric-label">Latest upload</div>
     <div class="metric-val metric-val-small">{{ metrics.latest_upload }}</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Missing</div>
+    <div class="metric-val {% if metrics.missing_count %}metric-val-warn{% else %}metric-val-ok{% endif %}">{{ metrics.missing_count }}</div>
   </div>
 </div>
 
@@ -64,6 +72,7 @@
     <button class="big-btn btn-primary" type="submit">Upload file</button>
   </form>
   <p class="upload-hint">Storage root: <code>{{ storage_root }}</code></p>
+  <p class="upload-hint">Storage limit: <strong>{{ metrics.total_size_label }}</strong> used of <strong>{{ metrics.storage_limit_label }}</strong></p>
 </div>
 
 <div class="zone zone-purple">
@@ -71,20 +80,35 @@
     <div class="zone-title-left"><span>🗂️</span> Stored files</div>
     <span class="zone-title-note">Available until deleted</span>
   </div>
+  {% if files %}
+  <div class="file-search-row">
+    <input class="app-input file-search-input" type="search" id="cloud-file-search" placeholder="Search filenames, types, sizes, or checksums">
+  </div>
+  {% endif %}
 
   {% if files %}
   <div class="file-list">
     {% for file in files %}
-    <div class="file-card">
+    <div class="file-card {% if file.missing %}file-card-missing{% endif %}" data-file-card data-file-search="{{ (file.original_name ~ ' ' ~ file.mime_type ~ ' ' ~ file.size_label ~ ' ' ~ file.checksum_sha256 ~ ' ' ~ ('missing' if file.missing else 'ready'))|lower }}">
       <div class="file-card-top">
         <div class="file-icon">📄</div>
         <div class="file-info">
           <div class="file-name">{{ file.original_name }}</div>
           <div class="file-meta">{{ file.size_label }} · {{ file.mime_type }} · {{ file.created_at }} UTC</div>
+          <div class="file-detail-row">
+            <span class="file-chip">SHA256 {{ file.checksum_short }}</span>
+            <span class="file-chip">Downloads {{ file.download_count }}</span>
+            <span class="file-chip">Last pull {{ file.last_downloaded_at }}</span>
+            {% if file.missing %}<span class="file-chip file-chip-warn">Missing on disk</span>{% endif %}
+          </div>
         </div>
       </div>
       <div class="file-actions">
+        {% if file.missing %}
+        <button class="sm-btn sm-ghost" type="button" disabled>Download unavailable</button>
+        {% else %}
         <a class="sm-btn sm-cyan" href="/cloud-storage/download/{{ file.id }}">Download</a>
+        {% endif %}
         <form method="POST" action="/cloud-storage/delete/{{ file.id }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="sm-btn sm-ghost delete-file-btn" type="submit" data-confirm="Delete {{ file.original_name }}">Delete</button>
@@ -93,6 +117,7 @@
     </div>
     {% endfor %}
   </div>
+  <p class="empty empty-hidden" id="cloud-file-search-empty">No files match this search.</p>
   {% else %}
   <div class="empty">
     <div class="empty-icon">📭</div>

@@ -29,6 +29,9 @@
 - File contents are written to `CLOUD_STORAGE_ROOT`.
 - The default storage root is `/Users/administrator/Storage/cloud_storage`.
 - Uploaded files remain available until manually deleted.
+- Total stored file size is capped at 10 GB.
+- Uploads are size-limited in the app and checked again after save.
+- File records include a SHA-256 checksum plus download history metadata.
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.
@@ -46,7 +49,7 @@
 
 ### Database table
 - `files`
-  - original filename, stored filename, mime type, size, and created timestamp
+  - original filename, stored filename, mime type, size, checksum, download history, and created timestamp
 
 ### Environment variables
 - `CLOUD_STORAGE_ROOT`

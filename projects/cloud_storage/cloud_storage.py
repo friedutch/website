@@ -1,7 +1,8 @@
 import os
 import sqlite3
 import uuid
-from datetime import datetime
+import hashlib
+import datetime
 from pathlib import Path
 
 from flask import abort, current_app, redirect, request, send_file, url_for
@@ -14,6 +15,7 @@ from projects.smartlock.smartlock import require_admin_login
 CLOUD_STORAGE_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cloud_storage.db")
 DEFAULT_STORAGE_ROOT = "/Users/administrator/Storage/cloud_storage"
 MAX_UPLOAD_BYTES = 1024 * 1024 * 1024
+MAX_TOTAL_STORAGE_BYTES = 10 * 1024 * 1024 * 1024
 
 
 def get_storage_root():
@@ -32,9 +34,21 @@ def init_cloud_storage_db():
         stored_name TEXT UNIQUE NOT NULL,
         mime_type TEXT,
         size_bytes INTEGER NOT NULL,
+        checksum_sha256 TEXT,
+        download_count INTEGER NOT NULL DEFAULT 0,
+        last_downloaded_at TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )"""
     )
+    existing_columns = {
+        row[1] for row in db.execute("PRAGMA table_info(files)").fetchall()
+    }
+    if "checksum_sha256" not in existing_columns:
+        db.execute("ALTER TABLE files ADD COLUMN checksum_sha256 TEXT")
+    if "download_count" not in existing_columns:
+        db.execute("ALTER TABLE files ADD COLUMN download_count INTEGER NOT NULL DEFAULT 0")
+    if "last_downloaded_at" not in existing_columns:
+        db.execute("ALTER TABLE files ADD COLUMN last_downloaded_at TEXT")
     db.commit()
     db.close()
 
@@ -57,12 +71,23 @@ def _get_db():
     return db
 
 
+def _sha256_for_file(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _list_files():
     db = _get_db()
     rows = db.execute("SELECT * FROM files ORDER BY created_at DESC, id DESC").fetchall()
     db.close()
+    storage_root = get_storage_root()
     files = []
     for row in rows:
+        file_path = storage_root / row["stored_name"]
+        checksum = row["checksum_sha256"] or ""
         files.append(
             {
                 "id": row["id"],
@@ -71,6 +96,15 @@ def _list_files():
                 "size_bytes": row["size_bytes"],
                 "size_label": _human_size(row["size_bytes"]),
                 "created_at": row["created_at"][:19].replace("T", " "),
+                "download_count": row["download_count"] or 0,
+                "last_downloaded_at": (
+                    row["last_downloaded_at"][:19].replace("T", " ") + " UTC"
+                    if row["last_downloaded_at"]
+                    else "Never"
+                ),
+                "checksum_sha256": checksum,
+                "checksum_short": checksum[:12] if checksum else "Pending",
+                "missing": not file_path.is_file(),
             }
         )
     return files
@@ -80,8 +114,12 @@ def _storage_metrics(files):
     total_bytes = sum(file["size_bytes"] for file in files)
     return {
         "file_count": len(files),
+        "total_size_bytes": total_bytes,
         "total_size_label": _human_size(total_bytes),
         "latest_upload": files[0]["created_at"] + " UTC" if files else "Never",
+        "missing_count": sum(1 for file in files if file["missing"]),
+        "storage_limit_label": _human_size(MAX_TOTAL_STORAGE_BYTES),
+        "remaining_size_label": _human_size(max(0, MAX_TOTAL_STORAGE_BYTES - total_bytes)),
     }
 
 
@@ -126,12 +164,23 @@ def init_cloud_storage(app):
         if content_length > MAX_UPLOAD_BYTES:
             return _render_cloud_storage(error="That file is too large for this page.")
 
+        current_usage = _storage_metrics(_list_files())["total_size_bytes"]
+        if current_usage >= MAX_TOTAL_STORAGE_BYTES:
+            return _render_cloud_storage(error="Cloud Storage is full. Delete files before uploading more.")
+
         stored_name = f"{uuid.uuid4().hex}_{original_name}"
         destination = get_storage_root() / stored_name
 
         try:
             uploaded_file.save(destination)
             saved_size = destination.stat().st_size
+            if saved_size > MAX_UPLOAD_BYTES:
+                destination.unlink(missing_ok=True)
+                return _render_cloud_storage(error="That file is too large for this page.")
+            if current_usage + saved_size > MAX_TOTAL_STORAGE_BYTES:
+                destination.unlink(missing_ok=True)
+                return _render_cloud_storage(error="That upload would exceed the 10.0 GB storage limit.")
+            checksum_sha256 = _sha256_for_file(destination)
         except OSError:
             current_app.logger.exception("Failed to save uploaded cloud storage file")
             return _render_cloud_storage(error="Upload failed while saving the file.")
@@ -139,10 +188,10 @@ def init_cloud_storage(app):
         db = _get_db()
         db.execute(
             """
-            INSERT INTO files (original_name, stored_name, mime_type, size_bytes)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO files (original_name, stored_name, mime_type, size_bytes, checksum_sha256)
+            VALUES (?, ?, ?, ?, ?)
             """,
-            (original_name, stored_name, (uploaded_file.mimetype or "").strip(), saved_size),
+            (original_name, stored_name, (uploaded_file.mimetype or "").strip(), saved_size, checksum_sha256),
         )
         db.commit()
         db.close()
@@ -162,7 +211,20 @@ def init_cloud_storage(app):
 
         file_path = get_storage_root() / row["stored_name"]
         if not file_path.is_file():
-            abort(404)
+            return _render_cloud_storage(error="That file is missing on disk. Delete the entry or upload it again.")
+
+        db = _get_db()
+        db.execute(
+            """
+            UPDATE files
+            SET download_count = COALESCE(download_count, 0) + 1,
+                last_downloaded_at = ?
+            WHERE id = ?
+            """,
+            (datetime.datetime.utcnow().isoformat(), file_id),
+        )
+        db.commit()
+        db.close()
 
         return send_file(
             file_path,
