@@ -8,8 +8,26 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
 </head>
 <body>
+<div class="top-bar-unified">
+  <div class="top-bar-main">
+    <div class="app-brand">
+      <div class="brand-icon">🔐</div>
+      <div>
+        <div class="brand-name">Smart Lock</div>
+        <div class="brand-sub">Friedutch Plus</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <a class="top-icon-btn" href="/">🏠</a>
+      <form method="POST" action="/smartlock/logout" class="top-icon-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
+      </form>
+      <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
+    </div>
+  </div>
+</div>
 <main class="simple-page">
-  <div class="back-link"><a href="/">← Home</a></div>
   <h1>Enable cookies to use Smart Lock.</h1>
   <p>Smart Lock needs session cookies for login, captcha verification, and CSRF protection.</p>
 </main>

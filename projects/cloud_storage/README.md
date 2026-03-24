@@ -33,6 +33,7 @@
 - Multi-file uploads are supported, including drag and drop from the browser.
 - Uploads are checked against the 10 GB total storage limit after save.
 - File records include a SHA-256 checksum plus download history metadata.
+- The page uses the shared site header plus a persistent storage-usage bar that shows used and remaining space.
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.

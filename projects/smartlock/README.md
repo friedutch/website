@@ -5,7 +5,7 @@
 - The admin signs in using a magic link plus a captcha-like confirmation step.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
-- The admin panel uses top tabs for Settings, Users, and Logs.
+- The admin panel uses top tabs for Users and Logs, while the top header carries the persistent session-time island and the global Home, Log out, and Theme controls.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
 - Another AI should read [`/Users/administrator/Sites/friedutchplus/AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) before changing this feature.
@@ -76,15 +76,15 @@
 - Successful same-browser magic-link verification should signal the original login page to continue into the admin panel instead of leaving the verified email tab on the panel.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
-- Theme toggle and session logout live inside the Settings tab, not the top bar.
-- The current session's remaining time now lives in a centered Settings card instead of the top bar.
+- Smart Lock now uses the shared site header across its pages, with Home, Log out, and Theme controls pinned on the right.
+- The current session's remaining time lives in a persistent header island directly under the top action row.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new` and matches the visible user-card height.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
 - The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed, and when used it reveals the invite row directly in the admin panel.
-- In Settings, email change starts as a single wide `Change email` button and expands inline into a single-row editable form with the email field followed by cancel/save actions.
+- The email-change controls now live in their own Admin card above the tabbed panels; the idle state starts as a single wide `Change email` button and expands inline into a single-row editable form with the email field followed by cancel/save actions.
 - Log search also matches stored device aliases, so terms like phone, tablet, computer, pc, and browser can find matching entries.
 - The combined log feed merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
 - Active log cards for other devices show logout followed by an `Active` badge.

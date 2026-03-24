@@ -10,24 +10,35 @@
 </head>
 <body>
 <div class="top-bar-unified">
-  <div class="app-brand">
-    <div class="brand-icon">☁️</div>
-    <div>
-      <div class="brand-name">Cloud Storage</div>
-      <div class="brand-sub">Friedutch Plus</div>
+  <div class="top-bar-main">
+    <div class="app-brand">
+      <div class="brand-icon">☁️</div>
+      <div>
+        <div class="brand-name">Cloud Storage</div>
+        <div class="brand-sub">Friedutch Plus</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <a class="top-icon-btn" href="/">🏠</a>
+      <form method="POST" action="/smartlock/logout" class="top-icon-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
+      </form>
+      <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
     </div>
   </div>
-  <div class="top-right">
-    <a class="top-icon-btn" href="/">🏠</a>
-    <form method="POST" action="/smartlock/logout" class="top-icon-form">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-    </form>
-    <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
+  <div class="top-bar-meta">
+    <div class="header-progress">
+      <div class="header-progress-bar" aria-hidden="true">
+        <div class="header-progress-fill" style="width: {{ (metrics.total_size_bytes / (10 * 1024 * 1024 * 1024) * 100) if metrics.total_size_bytes else 0 }}%"></div>
+      </div>
+      <div class="header-progress-meta">
+        <span>{{ metrics.total_size_label }} used</span>
+        <span>{{ metrics.remaining_size_label }} remaining</span>
+      </div>
+    </div>
   </div>
 </div>
-
-<h1>☁️ Cloud Storage</h1>
 
 {% if message %}<p class="page-message page-message-ok">{{ message }}</p>{% endif %}
 {% if error %}<p class="page-message page-message-error">{{ error }}</p>{% endif %}

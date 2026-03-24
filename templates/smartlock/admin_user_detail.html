@@ -9,8 +9,25 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_user_detail.css', v=asset_version) }}">
 </head>
 <body>
-<button class="theme-toggle" data-theme-toggle id="theme-btn">🔄</button>
-<a class="back-link" href="/smartlock/admin">← Back to panel</a>
+<div class="top-bar-unified">
+  <div class="top-bar-main">
+    <div class="app-brand">
+      <div class="brand-icon">🔐</div>
+      <div>
+        <div class="brand-name">Smart Lock</div>
+        <div class="brand-sub">Friedutch Plus</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <a class="top-icon-btn" href="/">🏠</a>
+      <form method="POST" action="/smartlock/logout" class="top-icon-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
+      </form>
+      <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
+    </div>
+  </div>
+</div>
 <div class="detail-header">
   <div class="detail-avatar">👤</div>
   <div>

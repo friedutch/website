@@ -11,68 +11,74 @@
 <body>
 
 <div class="top-bar-unified">
-  <div class="app-brand">
-    <div class="brand-icon">🔐</div>
-    <div>
-      <div class="brand-name">Smart Lock</div>
-      <div class="brand-sub">Friedutch Plus</div>
+  <div class="top-bar-main">
+    <div class="app-brand">
+      <div class="brand-icon">🔐</div>
+      <div>
+        <div class="brand-name">Smart Lock</div>
+        <div class="brand-sub">Friedutch Plus</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <div class="panel-tabs" role="tablist" aria-label="Admin sections">
+        <button class="panel-tab active" type="button" data-panel-tab="people" aria-selected="true">Users</button>
+        <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
+      </div>
+      <div class="top-right">
+        <a class="top-icon-btn" href="/">🏠</a>
+        <form method="POST" action="/smartlock/logout" class="top-icon-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
+        </form>
+        <button class="top-icon-btn" data-theme-toggle id="theme-btn" data-theme-label="Theme" type="button">🔄</button>
+      </div>
     </div>
   </div>
-  <div class="top-bar-right">
-    <div class="panel-tabs" role="tablist" aria-label="Admin sections">
-      <button class="panel-tab active" type="button" data-panel-tab="settings" aria-selected="true">Settings</button>
-      <button class="panel-tab" type="button" data-panel-tab="people" aria-selected="false">Users</button>
-      <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
+  <div class="top-bar-meta">
+    <div class="header-island">
+      <span class="header-island-label">Session</span>
+      <span class="header-island-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</span>
     </div>
   </div>
 </div>
 
 {% if panel_message %}<p class="msg-err panel-message">{{ panel_message }}</p>{% endif %}
 
-<div class="back-link"><a href="/">← Back to home</a></div>
-
-<div class="panel-stack">
-<div class="zone zone-pink panel-section active" id="panel-settings" data-panel-section="settings">
-  <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> Settings</div></div>
-  <div class="settings-session-card">
-    <div class="settings-session-label">Remaining session time</div>
-    <div class="settings-session-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</div>
-  </div>
+<div class="zone zone-pink admin-tools-card">
+  <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> <span>Admin</span></div></div>
   <div class="settings-actions">
-    <button class="sm-btn sm-ghost settings-action-btn" data-theme-toggle data-theme-label="Theme" id="theme-btn" type="button">🔄 Theme</button>
+    {% if pending %}
+    <div class="admin-email-block">
+      <p class="setting-label">Admin email</p>
+      <p class="setting-val">{{ admin_email }}</p>
+      <div class="pending-tag">⏳ Awaiting verification</div>
+      <p class="pending-copy">Sent to <strong>{{ pending }}</strong></p>
+      <div class="pending-actions">
+        <a class="sm-btn sm-pink settings-action-btn" href="/smartlock/change-email/pending">View status</a>
+        <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn" href="/smartlock/change-email/cancel">Cancel</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="email-change-panel" data-email-change-panel>
+      <button class="sm-btn sm-ghost sm-ghost-pink settings-action-btn email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>📧 Change email</button>
+      <form class="email-change-form{% if not email_error %} email-change-form-hidden{% endif %}" method="POST" action="/smartlock/change-email" id="chg-form" data-email-change-form>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input class="app-input email-change-input" type="email" name="new_email" placeholder="{{ admin_email }}" data-email-change-input {% if cooldown_remaining > 0 %}disabled{% endif %}>
+        <button class="sm-btn sm-ghost sm-ghost-pink email-change-cancel" type="button" data-email-change-cancel>Cancel</button>
+        <button class="sm-btn sm-pink email-change-save" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>Save</button>
+      </form>
+    </div>
+    {% if email_error %}<p class="msg-err">{{ email_error }}</p>{% endif %}
+    {% if cooldown_remaining > 0 %}
+    <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
+    {% endif %}
+    {% endif %}
   </div>
-  {% if pending %}
-  <p class="setting-label">Admin email</p>
-  <p class="setting-val">{{ admin_email }}</p>
-  <div class="pending-tag">⏳ Awaiting verification</div>
-  <p class="pending-copy">Sent to <strong>{{ pending }}</strong></p>
-  <div class="pending-actions">
-    <a class="sm-btn sm-pink" href="/smartlock/change-email/pending">View status</a>
-    <a class="sm-btn sm-ghost sm-ghost-pink" href="/smartlock/change-email/cancel">Cancel</a>
-  </div>
-  {% else %}
-  <div class="email-change-panel" data-email-change-panel>
-    <button class="sm-btn sm-ghost sm-ghost-pink email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>📧 Email</button>
-    <form class="email-change-form{% if not email_error %} email-change-form-hidden{% endif %}" method="POST" action="/smartlock/change-email" id="chg-form" data-email-change-form>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="sm-btn sm-ghost sm-ghost-pink email-change-cancel" type="button" data-email-change-cancel>Cancel</button>
-      <input class="app-input email-change-input" type="email" name="new_email" placeholder="{{ admin_email }}" data-email-change-input {% if cooldown_remaining > 0 %}disabled{% endif %}>
-      <button class="sm-btn sm-pink email-change-save" type="submit" id="chg-btn" {% if cooldown_remaining > 0 %}disabled{% endif %}>Save</button>
-    </form>
-  </div>
-  {% if email_error %}<p class="msg-err">{{ email_error }}</p>{% endif %}
-  {% if cooldown_remaining > 0 %}
-  <p class="cd-note-sm" id="chg-cd">Available in <span id="chg-t"></span></p>
-  {% endif %}
-  {% endif %}
-  <form method="POST" action="/smartlock/logout">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button class="sm-btn sm-ghost sm-ghost-pink settings-action-btn settings-logout-btn" type="submit" data-confirm="Log out">👋 Log out</button>
-  </form>
 </div>
 
-<div class="zone zone-cyan panel-section" id="panel-people" data-panel-section="people">
-  <div class="zone-title"><div class="zone-title-left"><span>👥</span> Users</div></div>
+<div class="panel-stack">
+<div class="zone zone-cyan panel-section active" id="panel-people" data-panel-section="people">
+  <div class="zone-title"><div class="zone-title-left"><span>👥</span> <span>Users</span></div></div>
   <div class="user-search-row">
     <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search names, passcodes, RFID or fingerprint IDs">
   </div>
@@ -128,7 +134,7 @@
 
 <div class="zone zone-green panel-section" id="panel-access" data-panel-section="access">
   <div class="zone-title">
-    <div class="zone-title-left"><span>📡</span> Logs</div>
+    <div class="zone-title-left"><span>📡</span> <span>Logs</span></div>
   </div>
   <div class="log-search-row">
     <input class="app-input log-search-input" type="search" id="log-search" placeholder="Search devices, IPs, timestamps or states">

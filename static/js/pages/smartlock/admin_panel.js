@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const activateTab = function (name) {
     const tabExists = tabs.some(function (tab) { return tab.dataset.panelTab === name; });
-    const nextTab = tabExists ? name : "settings";
+    const nextTab = tabExists ? name : "people";
     tabs.forEach(function (tab) {
       const isActive = tab.dataset.panelTab === nextTab;
       tab.classList.toggle("active", isActive);
@@ -42,7 +42,10 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   if (tabs.length && sections.length) {
-    let initialTab = storage.get(tabStorageKey) || "settings";
+    let initialTab = storage.get(tabStorageKey) || "people";
+    if (initialTab === "settings") {
+      initialTab = "people";
+    }
     activateTab(initialTab);
   }
 
