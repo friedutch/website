@@ -32,11 +32,7 @@ body {
 .landing-logo-link {
   position: relative;
   z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: min(56vw, 320px);
-  min-width: 180px;
+  display: inline-block;
   transition: transform 0.18s ease, filter 0.18s ease;
 }
 
@@ -50,7 +46,8 @@ body {
 }
 
 .landing-logo {
-  width: 100%;
+  width: min(56vw, 320px);
+  min-width: 180px;
   height: auto;
   display: block;
 }
