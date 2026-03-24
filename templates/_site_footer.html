@@ -1,3 +1,7 @@
 <footer class="universal-footer">
+  {% if request.path != '/about' %}
+  <a class="universal-footer-link" href="/about">About</a>
+  {% endif %}
+  <button class="universal-footer-link" data-theme-toggle data-theme-label="Theme" data-theme-text-only="true" type="button">Theme</button>
   <a class="universal-footer-link" href="{{ config.GITHUB_REPO_URL }}" target="_blank" rel="noreferrer">GitHub Repository</a>
 </footer>

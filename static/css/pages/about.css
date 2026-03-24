@@ -32,10 +32,3 @@ body {
 .about-card {
   margin-bottom: 20px;
 }
-
-.about-footer {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}

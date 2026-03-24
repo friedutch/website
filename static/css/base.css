@@ -936,7 +936,10 @@ h1,
 .universal-footer {
   margin-top: 28px;
   padding-top: 8px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .universal-footer-link {

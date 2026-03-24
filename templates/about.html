@@ -42,10 +42,7 @@
     <span class="project-tag tag-live">✅ Live</span>
   </a>
 </div>
-<footer class="universal-footer about-footer">
-  <button class="universal-footer-link" data-theme-toggle data-theme-label="Theme" data-theme-text-only="true" type="button">Theme</button>
-  <a class="universal-footer-link" href="{{ config.GITHUB_REPO_URL }}" target="_blank" rel="noreferrer">GitHub Repository</a>
-</footer>
+{% include "_site_footer.html" %}
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
