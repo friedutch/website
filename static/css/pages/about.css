@@ -9,8 +9,20 @@ body {
   margin-bottom: 18px;
 }
 
+.app-brand .brand-icon-logo {
+  width: 46px;
+  height: 46px;
+}
+
 .site-logo {
   align-items: center;
+  gap: 12px;
+  font-size: clamp(28px, 4.2vw, 46px);
+}
+
+.site-logo-mark {
+  width: clamp(52px, 6vw, 72px);
+  height: clamp(52px, 6vw, 72px);
 }
 
 .projects-label {
@@ -22,27 +34,10 @@ body {
   margin-bottom: 22px;
 }
 
-.about-intro {
+.about-card {
   margin-bottom: 20px;
-  padding: 22px 24px;
 }
 
-.about-kicker {
-  margin: 0 0 8px;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.about-intro h1 {
-  margin: 0 0 10px;
-  font-size: clamp(1.5rem, 2.6vw, 2rem);
-  line-height: 1.08;
-}
-
-.about-intro p:last-child {
-  margin: 0;
+.about-card .project-desc {
   max-width: 70ch;
 }

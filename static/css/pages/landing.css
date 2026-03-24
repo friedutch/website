@@ -8,6 +8,7 @@ body {
 }
 
 .landing-shell {
+  --landing-gradient-angle: 160deg;
   position: relative;
   overflow: hidden;
   min-height: 100vh;
@@ -24,7 +25,7 @@ body {
     radial-gradient(circle at 50% 42%, rgba(23, 192, 181, 0.42), transparent 23%),
     radial-gradient(circle at 56% 46%, rgba(240, 100, 73, 0.34), transparent 17%),
     radial-gradient(circle at 47% 53%, rgba(242, 193, 74, 0.18), transparent 20%),
-    linear-gradient(160deg, rgba(34, 209, 198, 0.18), rgba(20, 96, 106, 0.5), rgba(8, 24, 29, 0.92));
+    linear-gradient(var(--landing-gradient-angle), rgba(34, 209, 198, 0.18), rgba(20, 96, 106, 0.5), rgba(8, 24, 29, 0.92));
   opacity: 0;
   transition: opacity 0.28s ease;
   pointer-events: none;
@@ -42,13 +43,13 @@ body {
 }
 
 .landing-logo-link:hover {
-  transform: scale(1.02);
+  transform: scale(1.14);
   filter: drop-shadow(0 18px 34px rgba(23, 192, 181, 0.2));
 }
 
 .landing-logo {
-  width: min(50vw, 310px);
-  min-width: 180px;
+  width: min(34vw, 220px);
+  min-width: 130px;
   height: auto;
   display: block;
 }
