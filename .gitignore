@@ -6,7 +6,6 @@ __pycache__/
 *.db-shm
 *.db-wal
 projects/smartlock/smartlock.db
-projects/footprint/footprint.db
 projects/cloud_storage/cloud_storage.db
 
 # Never commit a live Minecraft server instance or world snapshot.

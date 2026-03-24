@@ -31,7 +31,6 @@ def create_app():
     from projects.cloud_storage import init_cloud_storage
     from projects.minecraft import init_minecraft
     from projects.smartlock import init_smartlock
-    from projects.footprint import init_footprint
 
     flask_app = Flask(
         __name__,
@@ -52,7 +51,6 @@ def create_app():
 
     init_minecraft(flask_app, csrf)
     init_smartlock(flask_app)
-    init_footprint(flask_app, csrf)
     init_cloud_storage(flask_app)
 
     @flask_app.errorhandler(CSRFError)
@@ -114,8 +112,6 @@ def create_app():
 def init_project_dbs():
     from projects.cloud_storage import init_cloud_storage_db
     from projects.smartlock import init_db
-    from projects.footprint import init_footprint_db
 
     init_db()
-    init_footprint_db()
     init_cloud_storage_db()
