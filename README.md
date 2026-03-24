@@ -1,7 +1,7 @@
 # Friedutch Plus
 
 ## Human Summary
-- This repo powers a personal website with a homepage plus two internal tools: Smart Lock and Footprint.
+- This repo powers a personal website with a homepage plus three internal tools: Smart Lock, Footprint, and Cloud Storage.
 - `run.py` starts the site, `app/__init__.py` wires everything together, and each feature lives in its own project folder.
 - The site is self-hosted on macOS and restarted through a LaunchAgent when deployments happen.
 - If the site goes down, the most likely cause is the LaunchAgent-managed process not running.
@@ -14,10 +14,12 @@
 - The repo contains one main Flask app shell plus feature modules:
   - Smart Lock
   - Footprint
+  - Cloud Storage
   - Minecraft public landing page
 - The home page currently links to:
   - Smart Lock
   - Footprint
+  - Cloud Storage
   - Minecraft Server
 
 ### Entrypoints
@@ -69,6 +71,7 @@
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): Smart Lock feature owner
 - [`projects/footprint/footprint.py`](/Users/administrator/Sites/friedutchplus/projects/footprint/footprint.py): Footprint feature owner
+- [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py): Cloud Storage feature owner
 - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py): Minecraft landing page feature owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates): Jinja templates
 - [`static/`](/Users/administrator/Sites/friedutchplus/static): CSS and JS assets
@@ -86,6 +89,12 @@
   - [`templates/footprint.html`](/Users/administrator/Sites/friedutchplus/templates/footprint.html)
   - [`static/css/pages/footprint.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/footprint.css)
   - [`static/js/pages/footprint.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/footprint.js)
+- Cloud Storage owns:
+  - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
+  - [`projects/cloud_storage/cloud_storage.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.db)
+  - [`templates/cloud_storage.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_storage.html)
+  - [`static/css/pages/cloud_storage.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/cloud_storage.css)
+  - [`static/js/pages/cloud_storage.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/cloud_storage.js)
 - Minecraft owns:
   - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
   - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html)
@@ -94,12 +103,18 @@
   - one browser/device should not block another from requesting its own magic link
   - the current actor identity is a browser-session token stored in the Flask session cookie
   - cooldown settings are keyed per browser session, not per IP
+- Cloud Storage is a single-admin private drop zone:
+  - it reuses Smart Lock admin sessions instead of introducing a separate login system
+  - uploaded files stay available until manually deleted
+  - file contents live outside the repo in `CLOUD_STORAGE_ROOT`
 
 ### Databases
 - Smart Lock database:
   - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
 - Footprint database:
   - [`projects/footprint/footprint.db`](/Users/administrator/Sites/friedutchplus/projects/footprint/footprint.db)
+- Cloud Storage database:
+  - [`projects/cloud_storage/cloud_storage.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.db)
 - These are SQLite files committed/used as local runtime state.
 - Do not rename or migrate DB tables casually. There are already legacy names in use, especially in Smart Lock.
 
@@ -111,6 +126,7 @@
   - `MAIL_FROM`
   - `MAIL_TO`
   - `HIBP_API_KEY`
+  - `CLOUD_STORAGE_ROOT`
   - `MINECRAFT_JOIN_HOST`
   - `MINECRAFT_JOIN_PORT`
   - `MINECRAFT_SERVER_ROOT`
@@ -168,6 +184,7 @@
 - Then read:
   - [`projects/smartlock/README.md`](/Users/administrator/Sites/friedutchplus/projects/smartlock/README.md)
   - [`projects/footprint/README.md`](/Users/administrator/Sites/friedutchplus/projects/footprint/README.md)
+  - [`projects/cloud_storage/README.md`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/README.md)
   - [`projects/minecraft/README.md`](/Users/administrator/Sites/friedutchplus/projects/minecraft/README.md)
 - For live/runtime issues, inspect:
   - [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh)

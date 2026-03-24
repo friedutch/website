@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{{ page_name or 'Cloud Storage — Friedutch Plus' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_storage.css', v=asset_version) }}">
+</head>
+<body>
+<div class="top-bar-unified">
+  <div class="app-brand">
+    <div class="brand-icon">☁️</div>
+    <div>
+      <div class="brand-name">Cloud Storage</div>
+      <div class="brand-sub">Friedutch Plus</div>
+    </div>
+  </div>
+  <div class="top-right">
+    <a class="top-icon-btn" href="/">🏠</a>
+    <form method="POST" action="/smartlock/logout" class="top-icon-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
+    </form>
+    <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
+  </div>
+</div>
+
+<h1>☁️ Cloud Storage</h1>
+<p class="page-sub">Drop a file on your Mac, then log in and pull it down from another device.</p>
+
+{% if message %}<p class="page-message page-message-ok">{{ message }}</p>{% endif %}
+{% if error %}<p class="page-message page-message-error">{{ error }}</p>{% endif %}
+
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-label">Files</div>
+    <div class="metric-val">{{ metrics.file_count }}</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Stored size</div>
+    <div class="metric-val metric-val-info">{{ metrics.total_size_label }}</div>
+  </div>
+  <div class="metric metric-wide">
+    <div class="metric-label">Latest upload</div>
+    <div class="metric-val metric-val-small">{{ metrics.latest_upload }}</div>
+  </div>
+</div>
+
+<div class="zone zone-cyan">
+  <div class="zone-title">
+    <div class="zone-title-left"><span>📤</span> Upload</div>
+    <span class="zone-title-note">Stored outside the repo</span>
+  </div>
+  <form class="upload-form" method="POST" action="/cloud-storage/upload" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label class="upload-drop" for="cloud-file-input">
+      <span class="upload-drop-icon">+</span>
+      <span class="upload-drop-title">Choose a file</span>
+      <span class="upload-drop-sub" id="cloud-file-name">No file selected yet</span>
+    </label>
+    <input class="upload-input" id="cloud-file-input" type="file" name="file" required>
+    <button class="big-btn btn-primary" type="submit">Upload file</button>
+  </form>
+  <p class="upload-hint">Storage root: <code>{{ storage_root }}</code></p>
+</div>
+
+<div class="zone zone-purple">
+  <div class="zone-title">
+    <div class="zone-title-left"><span>🗂️</span> Stored files</div>
+    <span class="zone-title-note">Available until deleted</span>
+  </div>
+
+  {% if files %}
+  <div class="file-list">
+    {% for file in files %}
+    <div class="file-card">
+      <div class="file-card-top">
+        <div class="file-icon">📄</div>
+        <div class="file-info">
+          <div class="file-name">{{ file.original_name }}</div>
+          <div class="file-meta">{{ file.size_label }} · {{ file.mime_type }} · {{ file.created_at }} UTC</div>
+        </div>
+      </div>
+      <div class="file-actions">
+        <a class="sm-btn sm-cyan" href="/cloud-storage/download/{{ file.id }}">Download</a>
+        <form method="POST" action="/cloud-storage/delete/{{ file.id }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="sm-btn sm-ghost delete-file-btn" type="submit" data-confirm="Delete {{ file.original_name }}">Delete</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">📭</div>
+    <div class="empty-text">No files uploaded yet.</div>
+  </div>
+  {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<script src="{{ url_for('static', filename='js/pages/cloud_storage.js', v=asset_version) }}"></script>
+</body>
+</html>
