@@ -12,14 +12,16 @@
 <div class="top-bar-unified">
   <div class="top-bar-main">
     <div class="app-brand">
-      <div class="brand-icon">🏠</div>
+      <div class="brand-icon brand-icon-logo">
+        <img src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
+      </div>
       <div>
         <div class="brand-name">Friedutch Plus</div>
         <div class="brand-sub">friedutch.plus</div>
       </div>
     </div>
     <div class="top-right">
-      <a class="top-icon-btn" href="/">🏠</a>
+      <a class="top-icon-btn" href="/home">🏠</a>
       {% if show_logout_button %}
       <form method="POST" action="/smartlock/logout" class="top-icon-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -31,7 +33,10 @@
   </div>
 </div>
 <div class="site-header">
-  <div class="site-logo">🏠 <span>Friedutch Plus</span></div>
+  <div class="site-logo">
+    <img class="site-logo-mark" src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
+    <span>Friedutch Plus</span>
+  </div>
   <div class="site-sub">Personal projects & tools</div>
 </div>
 <p class="projects-label">Projects</p>
@@ -55,7 +60,7 @@
     <span class="project-tag tag-live">✅ Live</span>
   </a>
 </div>
-<div class="footer">Friedutch Plus · self-hosted on macOS</div>
+{% include "_site_footer.html" %}
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

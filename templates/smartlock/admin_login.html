@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="top-right">
-      <a class="top-icon-btn" href="/">🏠</a>
+      <a class="top-icon-btn" href="/home">🏠</a>
       {% if show_logout_button %}
       <form method="POST" action="/smartlock/logout" class="top-icon-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -66,6 +66,8 @@
     {% if message %}<p class="msg-err msg-err-spaced">{{ message }}</p>{% endif %}
   </section>
 </main>
+
+{% include "_site_footer.html" %}
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

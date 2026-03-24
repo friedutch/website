@@ -107,6 +107,10 @@ def create_app():
         return jsonify({"status": "deploying"}), 200
 
     @flask_app.route("/")
+    def landing():
+        return render_page("landing.html", page_name="Friedutch Plus")
+
+    @flask_app.route("/home")
     def home():
         return render_page("home.html", page_name="Friedutch Plus")
 

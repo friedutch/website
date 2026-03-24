@@ -9,6 +9,10 @@ body {
   margin-bottom: 24px;
 }
 
+.site-logo {
+  align-items: center;
+}
+
 .projects-label {
   margin-bottom: 14px;
 }

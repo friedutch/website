@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="top-right">
-      <a class="top-icon-btn" href="/">🏠</a>
+      <a class="top-icon-btn" href="/home">🏠</a>
       {% if show_logout_button %}
       <form method="POST" action="/smartlock/logout" class="top-icon-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -40,6 +40,8 @@
   <div class="project-desc">{{ description or 'Closing this verification page and returning to your login screen.' }}</div>
   <p class="msg-err msg-err-spaced" id="verification-complete-fallback">{{ fallback_copy or 'If this page stays open, continue here.' }} <a href="{{ redirect_url }}">Continue</a>.</p>
 </div>
+
+{% include "_site_footer.html" %}
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{{ page_name or 'Friedutch Plus' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/landing.css', v=asset_version) }}">
+</head>
+<body>
+<main class="landing-shell">
+  <a class="landing-logo-link" href="/home" aria-label="Open Friedutch Plus home">
+    <img class="landing-logo" src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
+  </a>
+</main>
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+</body>
+</html>

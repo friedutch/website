@@ -25,7 +25,7 @@
         <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
       </div>
       <div class="top-right">
-        <a class="top-icon-btn" href="/">🏠</a>
+        <a class="top-icon-btn" href="/home">🏠</a>
         {% if show_logout_button %}
         <form method="POST" action="/smartlock/logout" class="top-icon-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -198,6 +198,8 @@
   </form>
 </div>
 </div>
+
+{% include "_site_footer.html" %}
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

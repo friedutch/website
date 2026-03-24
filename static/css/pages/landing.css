@@ -1,0 +1,35 @@
+html,
+body {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+}
+
+.landing-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.landing-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(56vw, 320px);
+  min-width: 180px;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.landing-logo-link:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 18px 34px rgba(23, 192, 181, 0.2));
+}
+
+.landing-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
