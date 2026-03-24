@@ -234,6 +234,8 @@ body {
   overflow: hidden;
   background: transparent;
   box-shadow: none;
+  width: 56px;
+  height: 56px;
 }
 
 .brand-icon-logo img {
@@ -325,8 +327,8 @@ body {
 }
 
 .site-logo-mark {
-  width: clamp(56px, 7vw, 74px);
-  height: clamp(56px, 7vw, 74px);
+  width: clamp(72px, 8vw, 96px);
+  height: clamp(72px, 8vw, 96px);
   flex-shrink: 0;
 }
 

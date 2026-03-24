@@ -1,0 +1,48 @@
+body {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 34px 24px 88px;
+}
+
+.site-header {
+  margin-top: 36px;
+  margin-bottom: 18px;
+}
+
+.site-logo {
+  align-items: center;
+}
+
+.projects-label {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.projects-grid {
+  margin-bottom: 22px;
+}
+
+.about-intro {
+  margin-bottom: 20px;
+  padding: 22px 24px;
+}
+
+.about-kicker {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.about-intro h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.08;
+}
+
+.about-intro p:last-child {
+  margin: 0;
+  max-width: 70ch;
+}

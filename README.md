@@ -15,8 +15,8 @@
   - Smart Lock
   - Cloud Storage
   - Minecraft public landing page
-- The root page `/` is a minimal logo landing screen that links into `/home`.
-- The home page at `/home` links to:
+- The root page `/` is a minimal logo landing screen that links into `/about`.
+- The about page at `/about` links to:
   - Smart Lock
   - Cloud Storage
   - Minecraft Server
@@ -64,7 +64,7 @@
   - RFID/fingerprint toggles
 
 ### Repo structure
-- [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/home`, `/deploy`
+- [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/about`, `/deploy`
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the page title and asset version
 - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html): public landing page for the self-hosted Minecraft server
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
