@@ -15,6 +15,10 @@
   - Smart Lock
   - Footprint
   - Minecraft public landing page
+- The home page currently links to:
+  - Smart Lock
+  - Footprint
+  - Minecraft Server
 
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
