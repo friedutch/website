@@ -28,24 +28,50 @@
     </div>
   </div>
 </div>
-<div class="wrap">
-  <div class="hero">
-    <div class="app-icon">🎯</div>
-    <h1>Solve the captcha!</h1>
-    <p>Which captcha code is showing on your screen? 👀</p>
-  </div>
-  <div class="num-grid">
-  {% for opt in options %}
-  <form class="contents-form" method="POST" action="{{ '/smartlock/verify-email-captcha' if mode == 'email_change' else '/smartlock/join-captcha' if mode == 'join' else '/smartlock/verify-captcha' }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="token" value="{{ token }}">
-    <input type="hidden" name="captcha_code" value="{{ opt }}">
-    <button class="num-btn" type="submit">{{ opt }}</button>
-  </form>
-  {% endfor %}
-  </div>
-  {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
-</div>
+<main class="captcha-layout">
+  <section class="zone zone-cyan captcha-hero-card">
+    <div class="hero">
+      <div class="app-icon">🎯</div>
+      <p class="projects-label">Smart Lock Verification</p>
+      <h1>Pick the code you already see.</h1>
+      <p>Use the code shown on the page that requested access. One correct tap keeps the flow moving.</p>
+    </div>
+    <div class="captcha-tip-row">
+      <div class="captcha-tip-card">
+        <span>1</span>
+        <div>Look at the original Smart Lock page on your current device.</div>
+      </div>
+      <div class="captcha-tip-card">
+        <span>2</span>
+        <div>Find the displayed captcha code.</div>
+      </div>
+      <div class="captcha-tip-card">
+        <span>3</span>
+        <div>Choose the same code below.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="zone zone-pink captcha-choice-card">
+    <div class="captcha-choice-head">
+      <div>
+        <p class="projects-label">Choose One</p>
+        <h2>Available codes</h2>
+      </div>
+    </div>
+    <div class="num-grid">
+    {% for opt in options %}
+    <form class="contents-form" method="POST" action="{{ '/smartlock/verify-email-captcha' if mode == 'email_change' else '/smartlock/join-captcha' if mode == 'join' else '/smartlock/verify-captcha' }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="token" value="{{ token }}">
+      <input type="hidden" name="captcha_code" value="{{ opt }}">
+      <button class="num-btn" type="submit">{{ opt }}</button>
+    </form>
+    {% endfor %}
+    </div>
+    {% if error %}<p class="msg-err captcha-error">{{ error }}</p>{% endif %}
+  </section>
+</main>
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

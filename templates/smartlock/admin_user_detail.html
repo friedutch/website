@@ -28,118 +28,154 @@
     </div>
   </div>
 </div>
-<div class="detail-header">
-  <div class="detail-avatar">👤</div>
-  <div>
-    <div class="detail-name">{{ "New user" if is_new_user else user['name'] }}</div>
-    <div class="detail-sub">{{ "Create access profile" if is_new_user else "Access profile" }}</div>
-  </div>
-</div>
-
-{% if error %}<p class="msg-err detail-error">{{ error }}</p>{% endif %}
-
-{% if is_new_user %}
-<form method="POST" action="/smartlock/users/create">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <div class="method-zone">
-  <div class="method-head">
-      <span class="method-emoji">👤</span>
-      <span class="method-label">Name</span>
-      <span class="method-toggle locked">One-time</span>
+<main class="user-detail-layout">
+  <section class="zone zone-cyan detail-overview">
+    <div class="detail-header">
+      <div class="detail-avatar">{{ "✨" if is_new_user else "👤" }}</div>
+      <div>
+        <p class="projects-label">Smart Lock User</p>
+        <div class="detail-name">{{ "New user" if is_new_user else user['name'] }}</div>
+        <div class="detail-sub">{{ "Create access profile" if is_new_user else "Manage access profile" }}</div>
+      </div>
     </div>
-    <input class="app-input" type="text" name="name" placeholder="User name" value="{{ user['name'] or '' }}" required>
-  </div>
+    <div class="detail-summary-grid">
+      <div class="detail-summary-card">
+        <span>🔢</span>
+        <div>
+          <div class="detail-summary-label">Passcode</div>
+          <div class="detail-summary-copy">{{ "Generated on save" if is_new_user else user['passcode'] }}</div>
+        </div>
+      </div>
+      <div class="detail-summary-card">
+        <span>💳</span>
+        <div>
+          <div class="detail-summary-label">RFID</div>
+          <div class="detail-summary-copy">{{ "Ready to configure" if is_new_user else ("Enabled" if user['rfid_enabled'] else "Disabled") }}</div>
+        </div>
+      </div>
+      <div class="detail-summary-card">
+        <span>🖐️</span>
+        <div>
+          <div class="detail-summary-label">Fingerprint</div>
+          <div class="detail-summary-copy">{{ "Ready to configure" if is_new_user else ("Enabled" if user['fingerprint_enabled'] else "Disabled") }}</div>
+        </div>
+      </div>
+    </div>
+    {% if error %}<p class="msg-err detail-error">{{ error }}</p>{% endif %}
+  </section>
 
+  <section class="detail-form-stack">
+  {% if is_new_user %}
+  <form method="POST" action="/smartlock/users/create" class="detail-form-stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="method-zone">
+      <div class="method-head">
+        <span class="method-emoji">👤</span>
+        <span class="method-label">Identity</span>
+        <span class="method-toggle locked">Required</span>
+      </div>
+      <p class="method-copy">Create the person first, then add the access methods they should carry.</p>
+      <input class="app-input" type="text" name="name" placeholder="User name" value="{{ user['name'] or '' }}" required>
+    </div>
+
+    <div class="method-zone">
+      <div class="method-head">
+        <span class="method-emoji">🔢</span>
+        <span class="method-label">Passcode</span>
+        <span class="method-toggle locked">Generated</span>
+      </div>
+      <p class="method-copy">Smart Lock creates the passcode automatically when the user is saved.</p>
+      <div class="code-big code-big-muted">Created on save</div>
+    </div>
+
+    <div class="method-zone">
+      <div class="method-head">
+        <span class="method-emoji">💳</span>
+        <span class="method-label">RFID Badge</span>
+        <label class="method-switch">
+          <input type="checkbox" name="rfid_enabled" {% if user['rfid_enabled'] %}checked{% endif %}>
+          <span class="method-switch-copy">Enable</span>
+        </label>
+      </div>
+      <p class="method-copy">Add the badge identifier now, or leave it empty and fill it in later.</p>
+      <input class="app-input" type="text" name="rfid_id" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+    </div>
+
+    <div class="method-zone">
+      <div class="method-head">
+        <span class="method-emoji">🖐️</span>
+        <span class="method-label">Fingerprint</span>
+        <label class="method-switch">
+          <input type="checkbox" name="fingerprint_enabled" {% if user['fingerprint_enabled'] %}checked{% endif %}>
+          <span class="method-switch-copy">Enable</span>
+        </label>
+      </div>
+      <p class="method-copy">Set a fingerprint slot now if you already know the device-side identifier.</p>
+      <input class="app-input" type="text" name="fingerprint_id" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
+    </div>
+
+    <button class="big-btn create-user-btn" type="submit">Create user</button>
+  </form>
+  {% else %}
   <div class="method-zone">
-  <div class="method-head">
+    <div class="method-head">
       <span class="method-emoji">🔢</span>
       <span class="method-label">Passcode</span>
-      <span class="method-toggle locked">Generated</span>
+      <span class="method-toggle locked">Default ✓</span>
     </div>
-    <div class="code-big code-big-muted">Created on save</div>
+    <p class="method-copy">This passcode is currently the baseline way for this user to unlock access.</p>
+    <div class="code-big">{{ user['passcode'] }}</div>
   </div>
 
   <div class="method-zone">
     <div class="method-head">
       <span class="method-emoji">💳</span>
       <span class="method-label">RFID Badge</span>
-      <label class="method-switch">
-        <input type="checkbox" name="rfid_enabled" {% if user['rfid_enabled'] %}checked{% endif %}>
-        <span class="method-switch-copy">Enable</span>
-      </label>
+      <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/rfid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="method-toggle {{ 'on' if user['rfid_enabled'] else 'off' }}" type="submit">
+          {{ 'Enabled ✓' if user['rfid_enabled'] else 'Disabled' }}
+        </button>
+      </form>
     </div>
-    <input class="app-input" type="text" name="rfid_id" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+    <p class="method-copy">Keep the badge active for this user, or update the ID tied to their card.</p>
+    {% if user['rfid_id'] %}<div class="current-id">Current: {{ user['rfid_id'] }}</div>{% endif %}
+    <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+      <button class="sm-btn sm-cyan" type="submit">💾 Save</button>
+    </form>
   </div>
 
   <div class="method-zone">
     <div class="method-head">
       <span class="method-emoji">🖐️</span>
       <span class="method-label">Fingerprint</span>
-      <label class="method-switch">
-        <input type="checkbox" name="fingerprint_enabled" {% if user['fingerprint_enabled'] %}checked{% endif %}>
-        <span class="method-switch-copy">Enable</span>
-      </label>
+      <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/fingerprint">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="method-toggle {{ 'on' if user['fingerprint_enabled'] else 'off' }}" type="submit">
+          {{ 'Enabled ✓' if user['fingerprint_enabled'] else 'Disabled' }}
+        </button>
+      </form>
     </div>
-    <input class="app-input" type="text" name="fingerprint_id" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
-  </div>
-
-  <button class="big-btn create-user-btn" type="submit">Create user</button>
-</form>
-{% else %}
-<div class="method-zone">
-  <div class="method-head">
-    <span class="method-emoji">🔢</span>
-    <span class="method-label">Passcode</span>
-    <span class="method-toggle locked">Default ✓</span>
-  </div>
-  <div class="code-big">{{ user['passcode'] }}</div>
-</div>
-
-<div class="method-zone">
-  <div class="method-head">
-    <span class="method-emoji">💳</span>
-    <span class="method-label">RFID Badge</span>
-    <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/rfid">
+    <p class="method-copy">Use this section to keep the stored fingerprint slot aligned with the physical lock.</p>
+    {% if user['fingerprint_id'] %}<div class="current-id">Current: {{ user['fingerprint_id'] }}</div>{% endif %}
+    <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/fingerprint">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="method-toggle {{ 'on' if user['rfid_enabled'] else 'off' }}" type="submit">
-        {{ 'Enabled ✓' if user['rfid_enabled'] else 'Disabled' }}
-      </button>
+      <input class="app-input" type="text" name="id_value" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
+      <button class="sm-btn sm-green" type="submit">💾 Save</button>
     </form>
   </div>
-  {% if user['rfid_id'] %}<div class="current-id">Current: {{ user['rfid_id'] }}</div>{% endif %}
-  <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
-    <button class="sm-btn sm-cyan" type="submit">💾 Save</button>
-  </form>
-</div>
 
-<div class="method-zone">
-  <div class="method-head">
-    <span class="method-emoji">🖐️</span>
-    <span class="method-label">Fingerprint</span>
-    <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/fingerprint">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="method-toggle {{ 'on' if user['fingerprint_enabled'] else 'off' }}" type="submit">
-        {{ 'Enabled ✓' if user['fingerprint_enabled'] else 'Disabled' }}
-      </button>
-    </form>
-  </div>
-  {% if user['fingerprint_id'] %}<div class="current-id">Current: {{ user['fingerprint_id'] }}</div>{% endif %}
-  <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/fingerprint">
+  <form method="POST" action="/smartlock/users/delete/{{ user['id'] }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input class="app-input" type="text" name="id_value" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
-    <button class="sm-btn sm-green" type="submit">💾 Save</button>
+    <button class="big-btn delete-user-btn" type="submit" data-confirm="Delete {{ user['name'] }}">
+      🗑️ Delete {{ user['name'] }}
+    </button>
   </form>
-</div>
-
-<form method="POST" action="/smartlock/users/delete/{{ user['id'] }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button class="big-btn delete-user-btn" type="submit" data-confirm="Delete {{ user['name'] }}">
-    🗑️ Delete {{ user['name'] }}
-  </button>
-</form>
-{% endif %}
+  {% endif %}
+  </section>
+</main>
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

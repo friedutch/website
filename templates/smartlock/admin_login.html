@@ -28,35 +28,78 @@
     </div>
   </div>
 </div>
-<div class="site-header">
-  <div class="site-logo">🏠 <span>Friedutch Plus</span></div>
-  <div class="site-sub">Personal projects & tools</div>
-</div>
-<p class="projects-label">Smart Lock · Admin Access</p>
-<div class="project-card">
-  <span class="project-icon">🔐</span>
-  <div class="project-name">Smart Lock</div>
-  <div class="project-desc">Access control panel · magic link login</div>
-  {% if captcha_code %}
-  <div class="number-box">
-    <div class="number-label">✨ Your captcha code</div>
-    <div class="number-display">{{ captcha_code }}</div>
-    <div class="number-hint">Select this captcha in the email flow 👆</div>
-  </div>
-  {% endif %}
-  {% if not admin_sent %}
-  <form method="POST" action="/smartlock/login">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button class="big-btn btn-primary" type="submit" {% if link_cooldown > 0 %}disabled{% endif %}>
-      📧 Send magic link
-    </button>
-  </form>
-  {% endif %}
-  {% if link_cooldown > 0 %}
-  <p class="cd-note">Resend in <span id="lk-timer"></span></p>
-  {% endif %}
-  {% if message %}<p class="msg-err msg-err-spaced">{{ message }}</p>{% endif %}
-</div>
+<main class="access-layout">
+  <section class="zone zone-cyan access-intro">
+    <div class="access-hero">
+      <div class="access-hero-icon">🔐</div>
+      <div>
+        <p class="projects-label">Smart Lock</p>
+        <h1>Admin access, without the clutter.</h1>
+        <p class="access-copy">Request your secure magic link, confirm the captcha on the other side, and land back in the control panel.</p>
+      </div>
+    </div>
+    <div class="access-feature-grid">
+      <div class="access-feature-card">
+        <span class="access-feature-emoji">📧</span>
+        <div>
+          <div class="access-feature-title">Magic link only</div>
+          <div class="access-feature-copy">No password field, no public login form, no extra account surface.</div>
+        </div>
+      </div>
+      <div class="access-feature-card">
+        <span class="access-feature-emoji">🧩</span>
+        <div>
+          <div class="access-feature-title">Captcha confirmation</div>
+          <div class="access-feature-copy">The email flow still checks the code already visible in this browser.</div>
+        </div>
+      </div>
+      <div class="access-feature-card">
+        <span class="access-feature-emoji">🍪</span>
+        <div>
+          <div class="access-feature-title">Session-aware</div>
+          <div class="access-feature-copy">Cookies keep the same browser in sync during verification and admin access.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="zone zone-pink access-panel">
+    <div class="access-panel-head">
+      <div>
+        <p class="projects-label">Admin Access</p>
+        <h2>Open Smart Lock</h2>
+      </div>
+      <div class="access-status-chip">{{ "Link sent" if admin_sent else "Ready" }}</div>
+    </div>
+
+    {% if captcha_code %}
+    <div class="access-code-card">
+      <div class="number-label">Current captcha code</div>
+      <div class="number-display">{{ captcha_code }}</div>
+      <div class="number-hint">Choose this same code during verification.</div>
+    </div>
+    {% endif %}
+
+    {% if not admin_sent %}
+    <form method="POST" action="/smartlock/login" class="access-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="big-btn btn-primary" type="submit" {% if link_cooldown > 0 %}disabled{% endif %}>
+        📧 Send magic link
+      </button>
+    </form>
+    {% else %}
+    <div class="access-note-card">
+      <div class="access-note-title">Check your inbox</div>
+      <div class="access-note-copy">Open the latest Smart Lock email and complete the captcha step to continue.</div>
+    </div>
+    {% endif %}
+
+    {% if link_cooldown > 0 %}
+    <p class="cd-note">Resend in <span id="lk-timer"></span></p>
+    {% endif %}
+    {% if message %}<p class="msg-err msg-err-spaced">{{ message }}</p>{% endif %}
+  </section>
+</main>
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

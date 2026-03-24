@@ -1,38 +1,130 @@
 body {
-  max-width: 760px;
-  margin: 0 auto;
   padding: 24px 24px 88px;
 }
 
-.site-header {
-  margin-top: 32px;
-  margin-bottom: 18px;
+.access-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 16px;
+  align-items: start;
 }
 
-.projects-label {
-  margin-bottom: 14px;
+.access-intro,
+.access-panel {
+  min-height: 100%;
 }
 
-.project-card {
-  max-width: 520px;
+.access-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 20px;
 }
 
-.project-icon {
-  width: 72px;
-  height: 72px;
-  font-size: 30px;
+.access-hero-icon {
+  width: 82px;
+  height: 82px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: white;
+  font-size: 36px;
+  box-shadow: 0 18px 36px rgba(23, 192, 181, 0.22);
 }
 
-.project-desc {
-  margin-bottom: 16px;
+.access-copy {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.7;
 }
 
-.number-box {
-  margin-bottom: 16px;
-  padding: 22px;
-  border-radius: var(--radius-lg);
+.access-feature-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.access-feature-card,
+.access-note-card,
+.access-code-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--surface-3);
+}
+
+.access-feature-card {
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.access-feature-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.access-feature-title,
+.access-note-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.access-feature-copy,
+.access-note-copy {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.access-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.access-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.access-panel-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1;
+}
+
+.access-status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-3);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.access-form {
+  display: grid;
+}
+
+.access-code-card {
+  text-align: center;
 }
 
 .number-display {
@@ -40,11 +132,11 @@ body {
 }
 
 .cd-note {
-  margin-top: 12px;
+  margin-top: -4px;
 }
 
 .msg-err-spaced {
-  margin-top: 12px;
+  margin-top: -2px;
 }
 
 .login-success-message {
@@ -53,4 +145,16 @@ body {
   color: var(--success);
   font-size: 16px;
   font-weight: 800;
+}
+
+@media (max-width: 860px) {
+  .access-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .access-hero {
+    grid-template-columns: 1fr;
+  }
 }
