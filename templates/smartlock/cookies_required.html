@@ -19,10 +19,12 @@
     </div>
     <div class="top-right">
       <a class="top-icon-btn" href="/">🏠</a>
+      {% if show_logout_button %}
       <form method="POST" action="/smartlock/logout" class="top-icon-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
       </form>
+      {% endif %}
       <button class="top-icon-btn" data-theme-toggle id="theme-btn" type="button">🔄</button>
     </div>
   </div>

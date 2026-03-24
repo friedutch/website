@@ -30,7 +30,7 @@ def create_app():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     from projects.cloud_storage import init_cloud_storage
     from projects.minecraft import init_minecraft
-    from projects.smartlock import init_smartlock
+    from projects.smartlock import init_smartlock, is_admin
 
     flask_app = Flask(
         __name__,
@@ -48,6 +48,10 @@ def create_app():
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
     )
+
+    @flask_app.context_processor
+    def inject_nav_state():
+        return {"show_logout_button": is_admin()}
 
     init_minecraft(flask_app, csrf)
     init_smartlock(flask_app)
