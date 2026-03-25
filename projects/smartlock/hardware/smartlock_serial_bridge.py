@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import glob
 import json
 import os
 import sys
@@ -10,6 +11,7 @@ from urllib.request import Request, urlopen
 
 try:
     import serial
+    from serial.tools import list_ports
 except ImportError as exc:
     raise SystemExit("pyserial is required. Install it with: python3 -m pip install pyserial") from exc
 
@@ -99,11 +101,42 @@ class SmartLockSerialBridge:
             pass
 
 
+def detect_serial_port():
+    preferred_ports = []
+    fallback_ports = []
+
+    for port in list_ports.comports():
+        description = f"{port.description or ''} {port.manufacturer or ''} {port.product or ''}".lower()
+        device = port.device or ""
+        if "arduino" in description and "uno" in description:
+            preferred_ports.append(device)
+            continue
+        if "arduino" in description:
+            fallback_ports.append(device)
+            continue
+        if device.startswith("/dev/cu.usbmodem") or device.startswith("/dev/tty.usbmodem"):
+            fallback_ports.append(device)
+
+    for candidate in preferred_ports + fallback_ports:
+        if candidate:
+            return candidate
+
+    for pattern in ("/dev/cu.usbmodem*", "/dev/tty.usbmodem*"):
+        matches = sorted(glob.glob(pattern))
+        if matches:
+            return matches[0]
+    return ""
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Bridge an Arduino Uno smart lock over USB to the Friedutch Plus Smart Lock API."
     )
-    parser.add_argument("--port", required=True, help="Serial device path, for example /dev/cu.usbmodem1101")
+    parser.add_argument(
+        "--port",
+        default=os.getenv("SMARTLOCK_ARDUINO_PORT", "").strip(),
+        help="Serial device path. If omitted, the bridge auto-detects the connected Arduino Uno.",
+    )
     parser.add_argument("--baudrate", type=int, default=115200, help="Arduino serial baud rate")
     parser.add_argument(
         "--api-url",
@@ -122,15 +155,33 @@ def parse_args():
 
 def main():
     args = parse_args()
-    bridge = SmartLockSerialBridge(
-        port=args.port,
-        baudrate=args.baudrate,
-        api_url=args.api_url,
-        api_key=args.api_key,
-        timeout=args.timeout,
-        event_log_path=args.event_log,
-    )
     while True:
+        port = args.port or detect_serial_port()
+        if not port:
+            payload = {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "kind": "bridge_error",
+                "line": "serial port unavailable",
+                "detail": "No Arduino Uno serial port detected",
+            }
+            try:
+                os.makedirs(os.path.dirname(args.event_log), exist_ok=True)
+                with open(args.event_log, "a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(payload, ensure_ascii=True) + "\n")
+            except Exception:
+                pass
+            print("serial error: no Arduino Uno serial port detected", file=sys.stderr, flush=True)
+            time.sleep(2)
+            continue
+
+        bridge = SmartLockSerialBridge(
+            port=port,
+            baudrate=args.baudrate,
+            api_url=args.api_url,
+            api_key=args.api_key,
+            timeout=args.timeout,
+            event_log_path=args.event_log,
+        )
         try:
             bridge.run()
         except serial.SerialException as exc:

@@ -198,6 +198,7 @@
 - RFID checks only allow rows where `rfid_enabled = 1` and `rfid_id` matches.
 - Fingerprint checks only allow rows where `fingerprint_enabled = 1` and `fingerprint_id` matches.
 - The bridge appends those events to `/tmp/friedutchplus_smartlock_hardware_events.jsonl`.
+- The serial bridge can auto-detect the current Arduino Uno port when `--port` is omitted, and it retries detection after serial disconnects so replugging the Uno does not require hardcoding a new `/dev/cu.usbmodemXXXX` path.
 
 ### External dependencies / services
 - Resend email API:

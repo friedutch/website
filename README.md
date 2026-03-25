@@ -152,6 +152,7 @@
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 - The Smart Lock hardware bridge expects the Arduino to stay on USB serial while the macOS bridge forwards `passcode`, `rfid`, and `fingerprint` checks into the Smart Lock API.
+- The Smart Lock serial bridge can now auto-detect the connected Arduino Uno serial port, so it does not need a fixed `/dev/cu.usbmodemXXXX` path after every replug.
 - The current Smart Lock Uno pin plan is:
   - `D2`: relay
   - `D3-D9`: keypad
