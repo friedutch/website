@@ -47,12 +47,16 @@ if [[ $UPLOAD_STATUS -ne 0 ]]; then
 Upload failed.
 
 The sketch compiled successfully, so this is likely a bootloader/reset/serial issue rather than a sketch syntax issue.
+This Smart Lock sketch does not use D0/D1 in code, so if upload works only after
+unplugging the lock hardware, an attached relay/keypad/RFID/fingerprint/power path
+is probably loading the board during reset.
 
 Check these before retrying:
 1. Stop anything holding the serial port, including the Smart Lock serial bridge and Serial Monitor.
 2. Disconnect any wiring from pins D0/RX and D1/TX while uploading.
-3. Retry once while pressing reset just before the "Uploading to $PORT..." step.
-4. If this is not actually an Uno bootloader target, override the board with ARDUINO_FQBN.
+3. If upload still fails, unplug the Smart Lock peripherals from D2-D9 and A0-A3, upload, then reconnect one subsystem at a time.
+4. Retry once while pressing reset just before the "Uploading to $PORT..." step.
+5. If this is not actually an Uno bootloader target, override the board with ARDUINO_FQBN.
 
 Examples:
   ARDUINO_PORT=/dev/cu.usbmodem1201 $0

@@ -151,6 +151,13 @@
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 - The Smart Lock hardware bridge expects the Arduino to stay on USB serial while the macOS bridge forwards `passcode`, `rfid`, and `fingerprint` checks into the Smart Lock API.
+- The current Smart Lock Uno pin plan is:
+  - `D2`: relay
+  - `D3-D9`: keypad
+  - `A0`: RFID receive
+  - `A1/A2`: fingerprint sensor SoftwareSerial
+  - `A3`: unused RFID SoftwareSerial transmit reserve
+- If the Uno only uploads when the Smart Lock hardware is unplugged, the board and sketch are usually fine and one of the attached peripherals is loading reset, power, or an active Smart Lock I/O pin during upload.
 - The bridge also writes a live NDJSON event feed at `/tmp/friedutchplus_smartlock_hardware_events.jsonl` for the Smart Lock admin `Arduino` tab.
 
 ### Minecraft landing page

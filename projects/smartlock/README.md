@@ -207,9 +207,22 @@
 ### Arduino upload notes
 - The Uno sketch compiles for `arduino:avr:uno`.
 - The repo now includes [`upload_arduino_uno.sh`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/upload_arduino_uno.sh) to compile with the installed Arduino IDE tooling and upload using a temp build directory.
+- The current Smart Lock Uno wiring map is:
+  - `D2`: lock relay
+  - `D3-D9`: keypad
+  - `A0`: RFID reader receive line
+  - `A1/A2`: fingerprint sensor SoftwareSerial
+  - `A3`: reserved as the unused RFID SoftwareSerial transmit pin
+- The sketch does not use the Uno hardware UART pins `D0/D1`, so if upload only succeeds after unplugging everything, the attached Smart Lock hardware is likely loading reset, power, or one of the active Smart Lock pins during bootloader entry.
+- The practical recovery workflow is:
+  - stop the Smart Lock serial bridge and any Serial Monitor
+  - unplug Smart Lock peripherals
+  - upload the sketch
+  - reconnect the relay, keypad, RFID reader, and fingerprint sensor one subsystem at a time until the interfering connection is identified
 - If upload fails with `not in sync` or `programmer is not responding`, treat that as a bootloader/reset/serial-path issue first:
   - stop the Smart Lock serial bridge and any Serial Monitor
   - disconnect anything on pins `D0` and `D1`
+  - if that is not enough, disconnect the Smart Lock peripherals from `D2-D9` and `A0-A3`
   - retry with a manual reset just before upload starts
   - if the target is not actually using the Uno bootloader, override `ARDUINO_FQBN`
 

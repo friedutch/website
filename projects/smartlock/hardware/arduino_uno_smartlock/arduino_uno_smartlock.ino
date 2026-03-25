@@ -4,6 +4,15 @@
 #include <ctype.h>
 #include <string.h>
 
+// Smart Lock Uno wiring:
+// - Relay: D2
+// - Keypad: D3-D9
+// - RFID reader: A0 (RX), A3 reserved as unused SoftwareSerial TX
+// - Fingerprint sensor: A1/A2 SoftwareSerial
+// Uploads still use the Uno USB bootloader path, so if flashing only works with
+// peripherals unplugged, reconnect the relay, keypad, RFID, and fingerprint
+// hardware one subsystem at a time until the interfering load is found.
+
 const unsigned long ACCESS_RESULT_TIMEOUT_MS = 8000;
 const unsigned long ACCESS_COOLDOWN_MS = 1500;
 const unsigned long UNLOCK_DURATION_MS = 5000;
