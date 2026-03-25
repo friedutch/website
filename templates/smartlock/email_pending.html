@@ -48,8 +48,14 @@
   {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
   <p class="cd-row">Resend available in <span id="timer">5:00</span></p>
   <div class="actions">
-    <a id="resend-btn" class="sm-btn sm-ghost resend-btn-disabled" href="#">🔄 Resend</a>
-    <a class="sm-btn sm-ghost" href="/smartlock/change-email/cancel">❌ Wrong email?</a>
+    <form class="contents-form" method="POST" action="/smartlock/change-email/resend">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button id="resend-btn" class="sm-btn sm-ghost resend-btn-disabled" type="submit" disabled>🔄 Resend</button>
+    </form>
+    <form class="contents-form" method="POST" action="/smartlock/change-email/cancel">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="sm-btn sm-ghost" type="submit">❌ Wrong email?</button>
+    </form>
   </div>
 </div>
 

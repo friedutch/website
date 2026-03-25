@@ -8,7 +8,7 @@
 - The admin panel uses top tabs for Users and Logs, while the top header carries the persistent session-time island and the global Home, Log out, and Theme controls.
 - The admin panel now has top tabs for Users, Logs, and Arduino.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
-- Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
+- The feature now uses a lightweight bootstrap plus focused Smart Lock modules for auth, admin, hardware, DB/state, and page composition.
 - Another AI should read [`/Users/administrator/Sites/friedutchplus/AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) before changing this feature.
 
 ## AI Copilot
@@ -24,8 +24,23 @@
 - Includes a hardware integration path for a real Arduino Uno controller through a dedicated Smart Lock API plus a macOS serial bridge.
 
 ### Module ownership
-- Owning backend module:
+- Owning backend package:
+  - [`projects/smartlock/`](/Users/administrator/Sites/friedutchplus/projects/smartlock)
+- Lightweight entrypoint:
   - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
+- Route modules:
+  - [`projects/smartlock/routes_auth.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/routes_auth.py)
+  - [`projects/smartlock/routes_admin.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/routes_admin.py)
+  - [`projects/smartlock/routes_hardware.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/routes_hardware.py)
+- Internal support modules:
+  - [`projects/smartlock/config.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/config.py)
+  - [`projects/smartlock/db.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/db.py)
+  - [`projects/smartlock/activity.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/activity.py)
+  - [`projects/smartlock/helpers.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/helpers.py)
+  - [`projects/smartlock/session_state.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/session_state.py)
+  - [`projects/smartlock/mail.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/mail.py)
+  - [`projects/smartlock/hardware.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware.py)
+  - [`projects/smartlock/pages.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/pages.py)
 - Owning database:
   - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
 - Hardware bridge assets:
@@ -40,7 +55,7 @@
 
 ### Boundary rule
 - Other app modules should not open `smartlock.db` directly.
-- If another part of the app needs Smart Lock behavior or data, route it through functions or routes in [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py).
+- If another part of the app needs Smart Lock behavior or data, route it through the exported Smart Lock package helpers or Smart Lock routes instead of reaching into internal modules casually.
 - The Arduino bridge follows that same rule:
   - the macOS bridge calls `/smartlock/api/hardware/check`
   - only the Smart Lock module queries the `users` table
@@ -48,7 +63,10 @@
 ### Registration model
 - This feature is not a Flask `Blueprint`.
 - It is registered by calling `init_smartlock(app)` from [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py).
-- Route definitions live directly inside `init_smartlock(app)`.
+- [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py) now stays thin and wires route modules plus request hooks together.
+- Shared site-wide helpers live outside the feature in:
+  - [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py)
+  - [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py)
 
 ### Authentication model
 - Admin login flow:
@@ -58,7 +76,7 @@
   - receive admin session
   - when the link is completed in the same browser profile as the login screen, the verification page should close itself and the original login screen should refresh into the admin panel
 - Cross-device session flow:
-  - create add-session link
+  - submit add-session
   - open on other device
   - solve captcha challenge
   - create admin session on that device
@@ -113,17 +131,18 @@
   - `/smartlock/login`
   - `/smartlock/poll-status`
   - `/smartlock/verify`
-  - `/smartlock/verify-captcha`
+  - `POST /smartlock/verify-captcha`
 - Cross-device session:
+  - `POST /smartlock/add-session`
   - `/smartlock/join/<token>`
-  - `/smartlock/join-captcha`
+  - `POST /smartlock/join-captcha`
 - Email change:
-  - `/smartlock/change-email`
-  - `/smartlock/change-email/resend`
-  - `/smartlock/change-email/cancel`
+  - `POST /smartlock/change-email`
+  - `POST /smartlock/change-email/resend`
+  - `POST /smartlock/change-email/cancel`
   - `/smartlock/change-email/pending`
   - `/smartlock/verify-email-change`
-  - `/smartlock/verify-email-captcha`
+  - `POST /smartlock/verify-email-captcha`
 - Admin/session management:
   - `/smartlock/admin`
   - `POST /smartlock/session/logout/<session_token>`
@@ -134,8 +153,8 @@
   - `GET /smartlock/api/hardware/events`
 - User management:
   - `/smartlock/users/new`
-  - `/smartlock/users/add`
-  - `/smartlock/users/create`
+  - `POST /smartlock/users/add`
+  - `POST /smartlock/users/create`
   - `POST /smartlock/users/delete/<int:user_id>`
   - `/smartlock/user/<int:user_id>`
   - `POST /smartlock/user/<int:user_id>/toggle/<method>`
@@ -191,6 +210,7 @@
 - Cookies are `Secure`, `HttpOnly`, `SameSite=Lax`.
 - Admin login clears and rebuilds the Flask session before elevating it.
 - Admin-side destructive actions and toggles are POST-only and CSRF-protected.
+- Add-session and email-change resend/cancel actions are also POST-only and CSRF-protected.
 - Tokenized and user-id Smart Lock pages are marked `X-Robots-Tag: noindex, nofollow`.
 - Smart Lock should be treated as sensitive/admin-only functionality.
 - The hardware API is machine-facing and must stay protected by a strong `SMARTLOCK_HARDWARE_API_KEY`.

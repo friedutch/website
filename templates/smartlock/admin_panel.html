@@ -56,7 +56,10 @@
       <p class="pending-copy">Sent to <strong>{{ pending }}</strong></p>
       <div class="pending-actions">
         <a class="sm-btn sm-pink settings-action-btn" href="/smartlock/change-email/pending">View status</a>
-        <a class="sm-btn sm-ghost sm-ghost-pink settings-action-btn" href="/smartlock/change-email/cancel">Cancel</a>
+        <form class="contents-form" method="POST" action="/smartlock/change-email/cancel">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="sm-btn sm-ghost sm-ghost-pink settings-action-btn" type="submit">Cancel</button>
+        </form>
       </div>
     </div>
     {% else %}
@@ -140,10 +143,13 @@
   <div class="log-search-row">
     <input class="app-input log-search-input" type="search" id="log-search" placeholder="Search devices, IPs, timestamps or states">
   </div>
-  <a class="log-create-card" href="/smartlock/add-session" aria-label="Open add session" data-create-card="log">
-    <span class="log-create-plus">+</span>
-    <span class="log-create-copy">Add session</span>
-  </a>
+  <form class="contents-form" method="POST" action="/smartlock/add-session">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="log-create-card" type="submit" aria-label="Open add session" data-create-card="log">
+      <span class="log-create-plus">+</span>
+      <span class="log-create-copy">Add session</span>
+    </button>
+  </form>
   {% if join_invite %}
   <div class="log-invite-row">
     <button class="sm-btn sm-pink copy-join-url-btn" type="button" data-copy-text="{{ join_invite['join_url'] }}">Copy</button>
@@ -152,7 +158,10 @@
       <span class="log-invite-code-label">Code</span>
       <span class="log-invite-code-value">{{ join_invite['captcha_code'] }}</span>
     </div>
-    <a class="sm-btn sm-ghost" href="/smartlock/add-session">Regenerate</a>
+    <form class="contents-form" method="POST" action="/smartlock/add-session">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="sm-btn sm-ghost" type="submit">Regenerate</button>
+    </form>
   </div>
   <p class="cd-note-sm log-invite-note">Invite expires in <span id="join-invite-timer" data-remaining="{{ join_invite['remaining'] }}">{{ (join_invite['remaining'] // 60) ~ ':' ~ '%02d'|format(join_invite['remaining'] % 60) }}</span></p>
   {% endif %}

@@ -28,6 +28,8 @@
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): Flask app factory, homepage route, deploy webhook, and project registration.
+- [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py): site-wide CSRF template helper.
+- [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py): site-wide admin-session helpers shared by Smart Lock, Cloud Storage, and Minecraft.
 - [`AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md): repo operating guide for another AI coding agent.
 
 ### Runtime model
@@ -62,8 +64,10 @@
   - no-cookie browsers should be shown the minimal cookies-required page instead of login/admin UI
   - Smart Lock POST failures from missing CSRF session state should render that same cookies-required page
 - Smart Lock admin mutations are POST-only and CSRF-protected:
+  - add-session invite minting
   - session logout
   - session purge
+  - email-change resend/cancel
   - user deletion
   - RFID/fingerprint toggles
 - Smart Lock hardware checks do not use the admin UI or direct DB access from external tools:
@@ -74,9 +78,14 @@
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/about`, `/deploy`
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the page title and asset version
+- [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py): site-wide CSRF template helper
+- [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py): shared admin role helpers
 - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html): public landing page for the self-hosted Minecraft server
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
-- [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): Smart Lock feature owner
+- [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): lightweight Smart Lock bootstrap/registration entrypoint
+- [`projects/smartlock/routes_auth.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/routes_auth.py): Smart Lock login, verification, join, and email-change routes
+- [`projects/smartlock/routes_admin.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/routes_admin.py): Smart Lock admin, user, and session-management routes
+- [`projects/smartlock/routes_hardware.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/routes_hardware.py): Smart Lock hardware API routes
 - [`projects/smartlock/hardware/smartlock_serial_bridge.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/smartlock_serial_bridge.py): macOS USB-to-Smart-Lock bridge for the Arduino controller
 - [`projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino): merged Arduino Uno keypad/RFID/fingerprint sketch
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py): Cloud Storage feature owner
@@ -86,7 +95,7 @@
 
 ### Project ownership boundaries
 - Smart Lock owns:
-  - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
+  - [`projects/smartlock/`](/Users/administrator/Sites/friedutchplus/projects/smartlock)
   - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
   - [`templates/smartlock/`](/Users/administrator/Sites/friedutchplus/templates/smartlock)
   - `static/css/pages/smartlock/*`

@@ -10,7 +10,7 @@ from flask import abort, current_app, jsonify, redirect, request, send_file, url
 from werkzeug.utils import secure_filename
 
 from app.rendering import render_page
-from projects.smartlock.smartlock import require_admin_login
+from app.site_admin import require_site_admin
 
 
 CLOUD_STORAGE_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cloud_storage.db")
@@ -236,14 +236,14 @@ def _validate_upload_name(filename):
 def init_cloud_storage(app):
     @app.route("/cloud-storage/")
     def cloud_storage_index():
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
         return _render_cloud_storage()
 
     @app.route("/cloud-storage/upload", methods=["POST"])
     def cloud_storage_upload():
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
 
@@ -309,7 +309,7 @@ def init_cloud_storage(app):
 
     @app.route("/cloud-storage/upload/start", methods=["POST"])
     def cloud_storage_upload_start():
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return jsonify({"error": "login required"}), 401
 
@@ -355,7 +355,7 @@ def init_cloud_storage(app):
 
     @app.route("/cloud-storage/upload/chunk/<upload_id>", methods=["POST"])
     def cloud_storage_upload_chunk(upload_id):
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return jsonify({"error": "login required"}), 401
 
@@ -403,7 +403,7 @@ def init_cloud_storage(app):
 
     @app.route("/cloud-storage/upload/finish/<upload_id>", methods=["POST"])
     def cloud_storage_upload_finish(upload_id):
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return jsonify({"error": "login required"}), 401
 
@@ -460,7 +460,7 @@ def init_cloud_storage(app):
 
     @app.route("/cloud-storage/upload/cancel/<upload_id>", methods=["POST"])
     def cloud_storage_upload_cancel(upload_id):
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return jsonify({"error": "login required"}), 401
 
@@ -469,7 +469,7 @@ def init_cloud_storage(app):
 
     @app.route("/cloud-storage/download/<int:file_id>")
     def cloud_storage_download(file_id):
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
 
@@ -505,7 +505,7 @@ def init_cloud_storage(app):
 
     @app.route("/cloud-storage/delete/<int:file_id>", methods=["POST"])
     def cloud_storage_delete(file_id):
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
 

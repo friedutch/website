@@ -40,8 +40,12 @@
   - app factory, homepage, deploy webhook, project registration
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py)
   - shared render helper for template rendering and asset-version injection
+- [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py)
+  - site-wide CSRF template helper
+- [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py)
+  - site-wide admin-session helpers
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
-  - Smart Lock owner
+  - lightweight Smart Lock bootstrap
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
   - Cloud Storage owner
 - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
@@ -53,7 +57,7 @@
 
 ### Feature ownership
 - Smart Lock owns:
-  - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
+  - [`projects/smartlock/`](/Users/administrator/Sites/friedutchplus/projects/smartlock)
   - [`templates/smartlock/`](/Users/administrator/Sites/friedutchplus/templates/smartlock)
   - `static/css/pages/smartlock/*`
   - `static/js/pages/smartlock/*`
@@ -106,7 +110,7 @@
 
 ### Commands another AI will likely need
 - Validate Python syntax:
-  - `python3 -m py_compile run.py app/__init__.py app/rendering.py projects/smartlock/smartlock.py projects/cloud_storage/cloud_storage.py projects/minecraft/minecraft.py`
+  - `python3 -m py_compile run.py app/*.py projects/smartlock/*.py projects/cloud_storage/cloud_storage.py projects/minecraft/minecraft.py`
 - Inspect changed files:
   - `git status --short`
   - `git diff -- <paths>`

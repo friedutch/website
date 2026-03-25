@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Blueprint, redirect, url_for
 
 from app.rendering import render_page
-from projects.smartlock import is_admin, require_admin_login
+from app.site_admin import is_site_admin, require_site_admin
 
 
 DEFAULT_SERVER_ROOT = Path(os.getenv("MINECRAFT_SERVER_ROOT", "/Users/administrator/Servers/minecraft"))
@@ -244,7 +244,7 @@ def _launchctl(action):
 
 
 def _can_manage_server():
-    return is_admin()
+    return is_site_admin()
 
 
 def init_minecraft(flask_app, csrf):
@@ -256,7 +256,7 @@ def init_minecraft(flask_app, csrf):
 
     @minecraft_bp.route("/minecraft/server/start", methods=["POST"])
     def minecraft_server_start():
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
         _launchctl("start")
@@ -264,7 +264,7 @@ def init_minecraft(flask_app, csrf):
 
     @minecraft_bp.route("/minecraft/server/stop", methods=["POST"])
     def minecraft_server_stop():
-        admin_redirect = require_admin_login()
+        admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
         _launchctl("stop")

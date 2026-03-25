@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (button) {
         button.classList.remove("resend-btn-disabled");
-        button.href = "/smartlock/change-email/resend";
+        button.disabled = false;
       }
       clearInterval(intervalId);
       return;

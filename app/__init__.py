@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify, g
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
+from app.forms import inject_csrf_token
 from app.rendering import render_page
+from app.site_admin import is_site_admin
 
 
 load_dotenv()
@@ -30,7 +32,7 @@ def create_app():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     from projects.cloud_storage import init_cloud_storage
     from projects.minecraft import init_minecraft
-    from projects.smartlock import init_smartlock, is_admin
+    from projects.smartlock import init_smartlock, render_cookies_required
 
     flask_app = Flask(
         __name__,
@@ -51,7 +53,9 @@ def create_app():
 
     @flask_app.context_processor
     def inject_nav_state():
-        return {"show_logout_button": is_admin()}
+        return {"show_logout_button": is_site_admin()}
+
+    flask_app.context_processor(inject_csrf_token)
 
     init_minecraft(flask_app, csrf)
     init_smartlock(flask_app, csrf)
@@ -60,8 +64,6 @@ def create_app():
     @flask_app.errorhandler(CSRFError)
     def handle_csrf_error(error):
         if request.path.startswith("/smartlock"):
-            from projects.smartlock.smartlock import render_cookies_required
-
             return render_cookies_required(), 400
         return jsonify({"error": "bad request", "reason": error.description}), 400
 
