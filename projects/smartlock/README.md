@@ -46,6 +46,7 @@
 - Hardware bridge assets:
   - [`projects/smartlock/hardware/smartlock_serial_bridge.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/smartlock_serial_bridge.py)
   - [`projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino)
+  - [`projects/smartlock/hardware/upload_arduino_uno.sh`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/upload_arduino_uno.sh)
 - Owning templates:
   - [`templates/smartlock/`](/Users/administrator/Sites/friedutchplus/templates/smartlock)
 - Owning CSS:
@@ -201,6 +202,16 @@
 - Flask-WTF for CSRF
 - Bleach for sanitization
 - `pyserial` for the optional macOS USB bridge script
+- Arduino IDE or a compatible `arduino-cli` install for compiling/uploading the Uno sketch
+
+### Arduino upload notes
+- The Uno sketch compiles for `arduino:avr:uno`.
+- The repo now includes [`upload_arduino_uno.sh`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/upload_arduino_uno.sh) to compile with the installed Arduino IDE tooling and upload using a temp build directory.
+- If upload fails with `not in sync` or `programmer is not responding`, treat that as a bootloader/reset/serial-path issue first:
+  - stop the Smart Lock serial bridge and any Serial Monitor
+  - disconnect anything on pins `D0` and `D1`
+  - retry with a manual reset just before upload starts
+  - if the target is not actually using the Uno bootloader, override `ARDUINO_FQBN`
 
 ### Security notes
 - Magic links expire after 5 minutes.
