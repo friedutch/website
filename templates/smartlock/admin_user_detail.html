@@ -98,7 +98,11 @@
         </label>
       </div>
       <p class="method-copy">Add the badge identifier now, or leave it empty and fill it in later.</p>
-      <input class="app-input" type="text" name="rfid_id" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+      <div class="field-row rfid-scan-row">
+        <input class="app-input" type="text" name="rfid_id" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}" data-rfid-id-input>
+        <button class="sm-btn sm-cyan" type="button" data-rfid-scan-button>Scan</button>
+      </div>
+      <div class="rfid-scan-status" data-rfid-scan-status>Click Scan, then tap the badge on the reader.</div>
     </div>
 
     <div class="method-zone">
@@ -138,13 +142,15 @@
         </button>
       </form>
     </div>
-    <p class="method-copy">Keep the badge active for this user, or update the ID tied to their card.</p>
+    <p class="method-copy">Keep the badge active for this user, or update the ID tied to their card. Saving a scanned badge enables RFID automatically.</p>
     {% if user['rfid_id'] %}<div class="current-id">Current: {{ user['rfid_id'] }}</div>{% endif %}
-    <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid">
+    <form class="field-row rfid-scan-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/rfid" data-rfid-save-form>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}">
+      <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}" data-rfid-id-input>
+      <button class="sm-btn sm-cyan" type="button" data-rfid-scan-button>Scan</button>
       <button class="sm-btn sm-cyan" type="submit">💾 Save</button>
     </form>
+    <div class="rfid-scan-status" data-rfid-scan-status>Click Scan, then tap the badge on the reader.</div>
   </div>
 
   <div class="method-zone">
@@ -181,6 +187,11 @@
 
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<script
+  id="user-detail-script"
+  src="{{ url_for('static', filename='js/pages/smartlock/admin_user_detail.js', v=asset_version) }}"
+  data-arduino-events-url="{{ url_for('smartlock_hardware_events') }}"
+></script>
 
 </body>
 </html>

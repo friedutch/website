@@ -8,6 +8,7 @@
 - The admin panel uses top tabs for Users and Logs, while the top header carries the persistent session-time island and the global Home, Log out, and Theme controls.
 - The admin panel now has top tabs for Users, Logs, and Arduino.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
+- The user detail page now includes an RFID `Scan` button that listens for the next badge read from the Arduino bridge, fills the RFID field automatically, and shows live validation feedback inline.
 - The feature now uses a lightweight bootstrap plus focused Smart Lock modules for auth, admin, hardware, DB/state, and page composition.
 - Another AI should read [`/Users/administrator/Sites/friedutchplus/AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) before changing this feature.
 
@@ -107,6 +108,11 @@
 - The current session's remaining time lives in a persistent header island directly under the top action row.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
+- The user detail page's RFID save flow should stay badge-first and low-friction:
+  - `Scan` listens for the next `CHECK|rfid|...` event
+  - the scanned badge ID is copied into the form field automatically
+  - saving an RFID value for an existing user enables RFID for that user automatically
+  - later RFID allow/deny results can be surfaced inline from the same hardware event feed
 - The Users tab includes a client-side search bar for filtering cards by name, passcode, RFID id, or fingerprint id.
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new` and matches the visible user-card height.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.

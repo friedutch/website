@@ -74,6 +74,7 @@
   - `/smartlock/api/hardware/check` validates lock credentials against the existing `users` table
   - access is protected by `SMARTLOCK_HARDWARE_API_KEY`
 - Smart Lock admin now includes an `Arduino` tab with a live hardware console fed by the macOS bridge event log
+- Smart Lock user detail pages now include an RFID `Scan` action that listens for the next badge read from the Arduino event feed, fills the badge field, and can show live allow/deny feedback inline
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/about`, `/deploy`

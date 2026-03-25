@@ -177,7 +177,16 @@ def register_admin_routes(app):
             return redirect(url_for("smartlock_user_detail", user_id=user_id))
         _require_user(user_id)
         value = sanitize(request.form.get("id_value", ""))
-        get_db().execute(f"UPDATE users SET {method}_id = ? WHERE id = ?", (value or None, user_id))
+        if method == "rfid":
+            get_db().execute(
+                "UPDATE users SET rfid_id = ?, rfid_enabled = ? WHERE id = ?",
+                (value or None, 1 if value else 0, user_id),
+            )
+        else:
+            get_db().execute(
+                f"UPDATE users SET {method}_id = ? WHERE id = ?",
+                (value or None, user_id),
+            )
         get_db().commit()
         return redirect(url_for("smartlock_user_detail", user_id=user_id))
 

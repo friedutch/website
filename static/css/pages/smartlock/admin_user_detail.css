@@ -120,6 +120,34 @@ body {
   width: 100%;
 }
 
+.rfid-scan-row {
+  align-items: stretch;
+}
+
+.rfid-scan-row .app-input {
+  flex: 1;
+}
+
+.rfid-scan-status {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.rfid-scan-status.is-listening {
+  color: var(--cyan);
+}
+
+.rfid-scan-status.is-success {
+  color: var(--green);
+}
+
+.rfid-scan-status.is-error {
+  color: var(--red);
+}
+
 @media (max-width: 860px) {
   .user-detail-layout {
     grid-template-columns: 1fr;
