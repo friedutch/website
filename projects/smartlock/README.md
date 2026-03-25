@@ -6,6 +6,7 @@
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
 - The admin panel uses top tabs for Users and Logs, while the top header carries the persistent session-time island and the global Home, Log out, and Theme controls.
+- The admin panel now has top tabs for Users, Logs, and Arduino.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - Everything for this feature lives in one module, one SQLite database, and its own templates/static files.
 - Another AI should read [`/Users/administrator/Sites/friedutchplus/AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md) before changing this feature.
@@ -91,6 +92,7 @@
 - The Users tab places search first, then a dedicated add-user card that links to `/smartlock/users/new` and matches the visible user-card height.
 - New-user creation happens on the user detail screen in a draft mode; the name is editable only during creation, and the user row is only inserted when the create form is submitted.
 - The admin panel's Logs area includes a client-side search bar plus a small add-session card above the combined log feed, and when used it reveals the invite row directly in the admin panel.
+- The Arduino tab shows a live console of hardware bridge events so keypad, RFID, fingerprint, and API checks can be debugged without a physical lock actuator.
 - The email-change controls now live in their own Admin card above the tabbed panels; the idle state starts as a single wide `Change email` button and expands inline into a single-row editable form with the email field followed by cancel/save actions.
 - Log search also matches stored device aliases, so terms like phone, tablet, computer, pc, and browser can find matching entries.
 - The combined log feed merges active sessions with their corresponding successful login events, while still showing denied attempts as separate entries.
@@ -129,6 +131,7 @@
   - `POST /smartlock/logout`
 - Hardware integration:
   - `POST /smartlock/api/hardware/check`
+  - `GET /smartlock/api/hardware/events`
 - User management:
   - `/smartlock/users/new`
   - `/smartlock/users/add`
@@ -164,9 +167,11 @@
 - The route requires the `X-SmartLock-Hardware-Key` header to match `SMARTLOCK_HARDWARE_API_KEY`.
 - Successful checks return the matching Smart Lock user and `unlock_seconds`.
 - Failed checks return `allowed: false` and still write a hardware attempt into `login_logs`.
+- `GET /smartlock/api/hardware/events` is admin-session-only and returns recent bridge events for the Arduino console tab.
 - Passcodes are checked directly against `users.passcode`.
 - RFID checks only allow rows where `rfid_enabled = 1` and `rfid_id` matches.
 - Fingerprint checks only allow rows where `fingerprint_enabled = 1` and `fingerprint_id` matches.
+- The bridge appends those events to `/tmp/friedutchplus_smartlock_hardware_events.jsonl`.
 
 ### External dependencies / services
 - Resend email API:

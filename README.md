@@ -69,6 +69,7 @@
 - Smart Lock hardware checks do not use the admin UI or direct DB access from external tools:
   - `/smartlock/api/hardware/check` validates lock credentials against the existing `users` table
   - access is protected by `SMARTLOCK_HARDWARE_API_KEY`
+- Smart Lock admin now includes an `Arduino` tab with a live hardware console fed by the macOS bridge event log
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/about`, `/deploy`
@@ -141,6 +142,7 @@
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
 - The Smart Lock hardware bridge expects the Arduino to stay on USB serial while the macOS bridge forwards `passcode`, `rfid`, and `fingerprint` checks into the Smart Lock API.
+- The bridge also writes a live NDJSON event feed at `/tmp/friedutchplus_smartlock_hardware_events.jsonl` for the Smart Lock admin `Arduino` tab.
 
 ### Minecraft landing page
 - The Minecraft landing page is served from `https://friedutch.plus/minecraft/`.

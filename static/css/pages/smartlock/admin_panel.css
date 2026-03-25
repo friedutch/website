@@ -47,6 +47,39 @@ body {
   margin-bottom: 14px;
 }
 
+.arduino-console-card {
+  display: grid;
+  gap: 14px;
+}
+
+.arduino-console-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.arduino-console-copy {
+  margin: 0;
+}
+
+.arduino-console {
+  min-height: 320px;
+  max-height: 62vh;
+  margin: 0;
+  padding: 18px;
+  overflow: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: #101724;
+  color: #d9f3ff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  font: 500 13px/1.6 "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .email-change-form {
   display: flex;
   gap: 10px;

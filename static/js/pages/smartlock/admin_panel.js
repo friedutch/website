@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const script = document.getElementById("admin-panel-script");
   const cooldownRemaining = Number(script?.dataset.cooldownRemaining || "0");
+  const arduinoEventsUrl = script?.dataset.arduinoEventsUrl || "";
   const tabs = Array.from(document.querySelectorAll("[data-panel-tab]"));
   const sections = Array.from(document.querySelectorAll("[data-panel-section]"));
   const tabStorageKey = "smartlock-admin-active-tab";
@@ -57,6 +58,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const logSearchEmpty = document.getElementById("log-search-empty");
   const copyJoinUrlButton = document.querySelector(".copy-join-url-btn");
   const joinInviteTimer = document.getElementById("join-invite-timer");
+  const arduinoConsole = document.getElementById("arduino-console");
+  const arduinoRefreshButton = document.getElementById("arduino-refresh");
+  let arduinoPollInFlight = false;
+  let arduinoLastRendered = "";
   const syncCreateCardHeights = function () {
     document.querySelectorAll("[data-create-card]").forEach(function (card) {
       const group = card.dataset.createCard;
@@ -118,6 +123,65 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     tickJoinInvite();
     var joinInviteIntervalId = setInterval(tickJoinInvite, 1000);
+  }
+
+  const renderArduinoEvents = function (events) {
+    if (!arduinoConsole) {
+      return;
+    }
+    if (!Array.isArray(events) || !events.length) {
+      const emptyState = "Waiting for Arduino events...";
+      if (arduinoLastRendered !== emptyState) {
+        arduinoConsole.textContent = emptyState;
+        arduinoLastRendered = emptyState;
+      }
+      return;
+    }
+    const lines = events.map(function (entry) {
+      const timestamp = entry.timestamp || "unknown-time";
+      const kind = entry.kind || "event";
+      const line = entry.line || "";
+      return "[" + timestamp + "] " + kind + " " + line;
+    }).join("\n");
+    if (arduinoLastRendered === lines) {
+      return;
+    }
+    arduinoConsole.textContent = lines;
+    arduinoConsole.scrollTop = arduinoConsole.scrollHeight;
+    arduinoLastRendered = lines;
+  };
+
+  const loadArduinoEvents = async function () {
+    if (!arduinoEventsUrl || !arduinoConsole || arduinoPollInFlight) {
+      return;
+    }
+    arduinoPollInFlight = true;
+    try {
+      const response = await window.fetch(arduinoEventsUrl + "?limit=200", {
+        credentials: "same-origin",
+        cache: "no-store"
+      });
+      if (!response.ok) {
+        throw new Error("Request failed with " + response.status);
+      }
+      const payload = await response.json();
+      renderArduinoEvents(payload.events || []);
+    } catch (error) {
+      arduinoConsole.textContent = "Arduino console unavailable: " + error.message;
+    } finally {
+      arduinoPollInFlight = false;
+    }
+  };
+
+  if (arduinoRefreshButton) {
+    arduinoRefreshButton.addEventListener("click", function () {
+      loadArduinoEvents();
+    });
+  }
+
+  if (arduinoConsole && arduinoEventsUrl) {
+    loadArduinoEvents();
+    setInterval(loadArduinoEvents, 2000);
   }
 
   const emailChangeToggle = document.querySelector("[data-email-change-open]");

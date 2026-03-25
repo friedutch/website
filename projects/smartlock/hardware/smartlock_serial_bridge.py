@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import os
 import sys
 import time
+from datetime import datetime, UTC
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -13,12 +15,14 @@ except ImportError as exc:
 
 
 class SmartLockSerialBridge:
-    def __init__(self, port, baudrate, api_url, api_key, timeout):
+    def __init__(self, port, baudrate, api_url, api_key, timeout, event_log_path):
         self.api_url = api_url
         self.api_key = api_key
+        self.event_log_path = event_log_path
         self.serial_port = serial.Serial(port, baudrate, timeout=timeout)
 
     def run(self):
+        self.record_event("system", "bridge started", port=self.serial_port.port, baudrate=self.serial_port.baudrate)
         print(f"bridge listening on {self.serial_port.port} at {self.serial_port.baudrate} baud", flush=True)
         while True:
             raw_line = self.serial_port.readline()
@@ -27,11 +31,13 @@ class SmartLockSerialBridge:
             line = raw_line.decode("utf-8", errors="ignore").strip()
             if not line:
                 continue
+            self.record_event("arduino_rx", line)
             print(f"arduino -> {line}", flush=True)
             response = self.handle_line(line)
             if response:
                 self.serial_port.write((response + "\n").encode("utf-8"))
                 self.serial_port.flush()
+                self.record_event("arduino_tx", response)
                 print(f"arduino <- {response}", flush=True)
 
     def handle_line(self, line):
@@ -68,11 +74,29 @@ class SmartLockSerialBridge:
                 return json.loads(response.read().decode("utf-8"))
         except HTTPError as exc:
             body = exc.read().decode("utf-8", errors="ignore")
+            self.record_event("bridge_error", f"http {exc.code}", body=body[:300])
             return {"allowed": False, "reason": f"http {exc.code}: {body[:120] or 'request failed'}"}
         except URLError as exc:
+            self.record_event("bridge_error", "network error", detail=str(exc.reason))
             return {"allowed": False, "reason": f"network error: {exc.reason}"}
         except Exception as exc:
+            self.record_event("bridge_error", "bridge error", detail=str(exc))
             return {"allowed": False, "reason": f"bridge error: {exc}"}
+
+    def record_event(self, kind, line, **extra):
+        payload = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "kind": kind,
+            "line": line,
+        }
+        if extra:
+            payload.update(extra)
+        try:
+            os.makedirs(os.path.dirname(self.event_log_path), exist_ok=True)
+            with open(self.event_log_path, "a", encoding="utf-8") as handle:
+                handle.write(json.dumps(payload, ensure_ascii=True) + "\n")
+        except Exception:
+            pass
 
 
 def parse_args():
@@ -88,6 +112,11 @@ def parse_args():
     )
     parser.add_argument("--api-key", required=True, help="SMARTLOCK_HARDWARE_API_KEY value")
     parser.add_argument("--timeout", type=float, default=0.2, help="Serial read timeout in seconds")
+    parser.add_argument(
+        "--event-log",
+        default=os.getenv("SMARTLOCK_HARDWARE_EVENT_LOG", "/tmp/friedutchplus_smartlock_hardware_events.jsonl"),
+        help="NDJSON log file for Arduino bridge events",
+    )
     return parser.parse_args()
 
 
@@ -99,14 +128,17 @@ def main():
         api_url=args.api_url,
         api_key=args.api_key,
         timeout=args.timeout,
+        event_log_path=args.event_log,
     )
     while True:
         try:
             bridge.run()
         except serial.SerialException as exc:
+            bridge.record_event("bridge_error", "serial error", detail=str(exc))
             print(f"serial error: {exc}", file=sys.stderr, flush=True)
             time.sleep(2)
         except KeyboardInterrupt:
+            bridge.record_event("system", "bridge stopped")
             print("bridge stopped", flush=True)
             return 0
 

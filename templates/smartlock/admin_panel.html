@@ -23,6 +23,7 @@
       <div class="panel-tabs" role="tablist" aria-label="Admin sections">
         <button class="panel-tab active" type="button" data-panel-tab="people" aria-selected="true">Users</button>
         <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
+        <button class="panel-tab" type="button" data-panel-tab="arduino" aria-selected="false">Arduino</button>
       </div>
       <div class="top-right">
         {% if show_logout_button %}
@@ -195,6 +196,20 @@
     </button>
   </form>
 </div>
+
+<div class="zone zone-pink panel-section" id="panel-arduino" data-panel-section="arduino">
+  <div class="zone-title">
+    <div class="zone-title-left"><span>🧰</span> <span>Arduino</span></div>
+  </div>
+  <div class="arduino-console-card">
+    <div class="arduino-console-head">
+      <p class="arduino-console-copy">Live bridge events from the Arduino and Smart Lock hardware API.</p>
+      <button class="sm-btn sm-ghost" type="button" id="arduino-refresh">Refresh</button>
+    </div>
+    <pre class="arduino-console" id="arduino-console" data-arduino-console>{% if hardware_events %}{% for entry in hardware_events %}[{{ entry['timestamp'] }}] {{ entry['kind'] }} {{ entry['line'] }}
+{% endfor %}{% else %}Waiting for Arduino events...{% endif %}</pre>
+  </div>
+</div>
 </div>
 
 {% include "_site_footer.html" %}
@@ -202,6 +217,7 @@
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
 <script id="admin-panel-script" src="{{ url_for('static', filename='js/pages/smartlock/admin_panel.js', v=asset_version) }}"
-        data-cooldown-remaining="{{ cooldown_remaining }}"></script>
+        data-cooldown-remaining="{{ cooldown_remaining }}"
+        data-arduino-events-url="/smartlock/api/hardware/events"></script>
 </body>
 </html>

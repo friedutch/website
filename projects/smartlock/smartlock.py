@@ -7,8 +7,10 @@ import hashlib
 import datetime
 import uuid
 import hmac
+import json
 import bleach
 from collections import defaultdict
+from collections import deque
 from flask import request, redirect, url_for, session, g, jsonify, current_app
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -18,6 +20,10 @@ from app.rendering import render_page
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smartlock.db")
 SESSION_TIMEOUT = 3600
 HARDWARE_UNLOCK_SECONDS = 5
+HARDWARE_EVENT_LOG_PATH = os.getenv(
+    "SMARTLOCK_HARDWARE_EVENT_LOG",
+    "/tmp/friedutchplus_smartlock_hardware_events.jsonl",
+)
 _login_attempts = defaultdict(lambda: {"attempts": 0, "locked_until": None})
 serializer = None
 
@@ -357,6 +363,29 @@ def hardware_request_is_authorized():
     if not configured_key or not provided_key:
         return False
     return hmac.compare_digest(configured_key, provided_key)
+
+
+def get_hardware_event_log_path():
+    return os.getenv("SMARTLOCK_HARDWARE_EVENT_LOG", HARDWARE_EVENT_LOG_PATH)
+
+
+def read_hardware_events(limit=200):
+    path = get_hardware_event_log_path()
+    entries = deque(maxlen=max(1, min(limit, 500)))
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                entries.append(entry)
+    except FileNotFoundError:
+        return []
+    return list(entries)
 
 
 def create_admin_session():
@@ -993,7 +1022,7 @@ def init_smartlock(app, csrf=None):
                                       pending=pending, cooldown_remaining=email_cd,
                                       logs=logs, sessions=sessions, log_entries=log_entries, current_token=current_token,
                                       current_remaining=current_remaining, panel_message=panel_message,
-                                      join_invite=join_invite)
+                                      join_invite=join_invite, hardware_events=read_hardware_events())
 
     @app.route("/smartlock/api/hardware/check", methods=["POST"])
     def smartlock_hardware_check():
@@ -1028,6 +1057,16 @@ def init_smartlock(app, csrf=None):
         )
     if csrf is not None:
         csrf.exempt(smartlock_hardware_check)
+
+    @app.route("/smartlock/api/hardware/events")
+    def smartlock_hardware_events():
+        if not is_admin():
+            return jsonify({"error": "unauthorized"}), 401
+        try:
+            limit = int(request.args.get("limit", "200"))
+        except ValueError:
+            limit = 200
+        return jsonify({"events": read_hardware_events(limit=limit)})
     
     @app.route("/smartlock/users/new")
     def smartlock_new_user():
