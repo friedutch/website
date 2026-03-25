@@ -19,18 +19,7 @@ if [[ -z "$PORT" ]]; then
     [[ -n "$candidate" ]] || continue
     PORT="$candidate"
     break
-  done < <(
-    "$ARDUINO_CLI" board list --format json | awk '
-      /"address":/ {
-        gsub(/[",]/, "", $2)
-        address=$2
-      }
-      /"fqbn": "arduino:avr:uno"/ {
-        print address
-        exit
-      }
-    '
-  )
+  done < <("$ARDUINO_CLI" board list | awk '/Arduino UNO/ { print $1; exit }')
 fi
 
 if [[ -z "$PORT" ]]; then
