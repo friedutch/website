@@ -15,6 +15,10 @@
   - Smart Lock
   - Cloud Storage
   - Minecraft public landing page
+- Smart Lock now also includes a hardware bridge path for a real Arduino Uno lock controller:
+  - a hardware API route inside the Smart Lock module
+  - a macOS USB serial bridge script
+  - a merged Uno sketch for keypad, RFID, and fingerprint checks
 - The root page `/` is a minimal logo landing screen that links into `/about`.
 - The about page at `/about` links to:
   - Smart Lock
@@ -62,6 +66,9 @@
   - session purge
   - user deletion
   - RFID/fingerprint toggles
+- Smart Lock hardware checks do not use the admin UI or direct DB access from external tools:
+  - `/smartlock/api/hardware/check` validates lock credentials against the existing `users` table
+  - access is protected by `SMARTLOCK_HARDWARE_API_KEY`
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/about`, `/deploy`
@@ -69,6 +76,8 @@
 - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html): public landing page for the self-hosted Minecraft server
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): Smart Lock feature owner
+- [`projects/smartlock/hardware/smartlock_serial_bridge.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/smartlock_serial_bridge.py): macOS USB-to-Smart-Lock bridge for the Arduino controller
+- [`projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino): merged Arduino Uno keypad/RFID/fingerprint sketch
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py): Cloud Storage feature owner
 - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py): Minecraft landing page feature owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates): Jinja templates
@@ -116,6 +125,7 @@
   - `RESEND_API_KEY`
   - `MAIL_FROM`
   - `MAIL_TO`
+  - `SMARTLOCK_HARDWARE_API_KEY`
   - `CLOUD_STORAGE_ROOT`
   - `MINECRAFT_JOIN_HOST`
   - `MINECRAFT_JOIN_PORT`
@@ -130,6 +140,7 @@
 - `MAIL_TO` is only the bootstrap default for the Smart Lock admin email; after initialization, the live admin email is stored in the Smart Lock database settings.
 - `.env` loading happens at import time in [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) so project modules can see env config when initialized.
 - [`.env.example`](/Users/administrator/Sites/friedutchplus/.env.example) provides the non-secret key list for bootstrapping another environment.
+- The Smart Lock hardware bridge expects the Arduino to stay on USB serial while the macOS bridge forwards `passcode`, `rfid`, and `fingerprint` checks into the Smart Lock API.
 
 ### Minecraft landing page
 - The Minecraft landing page is served from `https://friedutch.plus/minecraft/`.

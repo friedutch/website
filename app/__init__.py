@@ -54,7 +54,7 @@ def create_app():
         return {"show_logout_button": is_admin()}
 
     init_minecraft(flask_app, csrf)
-    init_smartlock(flask_app)
+    init_smartlock(flask_app, csrf)
     init_cloud_storage(flask_app)
 
     @flask_app.errorhandler(CSRFError)

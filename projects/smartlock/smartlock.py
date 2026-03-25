@@ -6,6 +6,7 @@ import resend
 import hashlib
 import datetime
 import uuid
+import hmac
 import bleach
 from collections import defaultdict
 from flask import request, redirect, url_for, session, g, jsonify, current_app
@@ -16,6 +17,7 @@ from app.rendering import render_page
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smartlock.db")
 SESSION_TIMEOUT = 3600
+HARDWARE_UNLOCK_SECONDS = 5
 _login_attempts = defaultdict(lambda: {"attempts": 0, "locked_until": None})
 serializer = None
 
@@ -32,6 +34,10 @@ def get_resend_api_key():
 
 def get_mail_from_address():
     return os.getenv("MAIL_FROM", "").strip()
+
+
+def get_hardware_api_key():
+    return os.getenv("SMARTLOCK_HARDWARE_API_KEY", "").strip()
 
 
 def get_db():
@@ -284,6 +290,75 @@ def log_attempt(method, method_id=None, success=False, user_name=None):
     db.close()
 
 
+def mask_hardware_method_id(method, credential):
+    if not credential:
+        return None
+    if method == "passcode":
+        if len(credential) <= 2:
+            return "*" * len(credential)
+        return f"{'*' * (len(credential) - 2)}{credential[-2:]}"
+    if len(credential) <= 8:
+        return credential
+    return f"{credential[:4]}...{credential[-4:]}"
+
+
+def normalize_hardware_credential(method, raw_value):
+    value = (raw_value or "").strip()
+    if method == "passcode":
+        return "".join(ch for ch in value if ch.isdigit())[:12]
+    if method == "rfid":
+        return "".join(ch for ch in value.upper() if ch.isalnum())[:64]
+    if method == "fingerprint":
+        return "".join(ch for ch in value if ch.isdigit())[:32]
+    return ""
+
+
+def find_hardware_user(method, credential):
+    db = get_db()
+    if method == "passcode":
+        return db.execute(
+            "SELECT * FROM users WHERE passcode = ?",
+            (credential,),
+        ).fetchone()
+    if method == "rfid":
+        return db.execute(
+            "SELECT * FROM users WHERE rfid_enabled = 1 AND UPPER(COALESCE(rfid_id, '')) = ?",
+            (credential,),
+        ).fetchone()
+    if method == "fingerprint":
+        return db.execute(
+            "SELECT * FROM users WHERE fingerprint_enabled = 1 AND COALESCE(fingerprint_id, '') = ?",
+            (credential,),
+        ).fetchone()
+    return None
+
+
+def evaluate_hardware_access(method, raw_value):
+    credential = normalize_hardware_credential(method, raw_value)
+    if not credential:
+        return {
+            "allowed": False,
+            "credential": "",
+            "user": None,
+            "reason": "missing credential",
+        }
+    user = find_hardware_user(method, credential)
+    return {
+        "allowed": bool(user),
+        "credential": credential,
+        "user": user,
+        "reason": None if user else "not allowed",
+    }
+
+
+def hardware_request_is_authorized():
+    configured_key = get_hardware_api_key()
+    provided_key = request.headers.get("X-SmartLock-Hardware-Key", "").strip()
+    if not configured_key or not provided_key:
+        return False
+    return hmac.compare_digest(configured_key, provided_key)
+
+
 def create_admin_session():
     token = str(uuid.uuid4())
     ip = get_client_ip()
@@ -462,6 +537,8 @@ def ensure_smartlock_cookies():
         return None
     if request.endpoint == "static":
         return None
+    if request.path.startswith("/smartlock/api/"):
+        return None
     if cookies_enabled_for_smartlock():
         if "_smartlock_cookie_probe" in request.args:
             args = request.args.to_dict(flat=True)
@@ -549,7 +626,7 @@ def generate_passcode():
         db.close()
 
 
-def init_smartlock(app):
+def init_smartlock(app, csrf=None):
     init_smartlock_config(app.secret_key)
     app.teardown_appcontext(close_db)
     app.context_processor(inject_csrf)
@@ -917,6 +994,40 @@ def init_smartlock(app):
                                       logs=logs, sessions=sessions, log_entries=log_entries, current_token=current_token,
                                       current_remaining=current_remaining, panel_message=panel_message,
                                       join_invite=join_invite)
+
+    @app.route("/smartlock/api/hardware/check", methods=["POST"])
+    def smartlock_hardware_check():
+        api_key = get_hardware_api_key()
+        if not api_key:
+            return jsonify({"error": "hardware api disabled"}), 503
+        if not hardware_request_is_authorized():
+            return jsonify({"error": "unauthorized"}), 401
+        payload = request.get_json(silent=True) or {}
+        method = sanitize(payload.get("method", ""), max_length=32).lower().replace("-", "_")
+        if method not in ("passcode", "rfid", "fingerprint"):
+            return jsonify({"error": "unsupported method"}), 400
+        result = evaluate_hardware_access(method, payload.get("value", ""))
+        credential = result["credential"]
+        user = result["user"]
+        log_attempt(
+            f"hardware_{method}",
+            method_id=mask_hardware_method_id(method, credential),
+            success=result["allowed"],
+            user_name=user["name"] if user else None,
+        )
+        return jsonify(
+            {
+                "allowed": result["allowed"],
+                "method": method,
+                "credential": credential,
+                "user_id": user["id"] if user else None,
+                "user_name": user["name"] if user else None,
+                "unlock_seconds": HARDWARE_UNLOCK_SECONDS if result["allowed"] else 0,
+                "reason": result["reason"],
+            }
+        )
+    if csrf is not None:
+        csrf.exempt(smartlock_hardware_check)
     
     @app.route("/smartlock/users/new")
     def smartlock_new_user():

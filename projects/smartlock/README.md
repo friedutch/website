@@ -20,12 +20,16 @@
   - RFID badges
   - fingerprints
   - admin sessions
+- Includes a hardware integration path for a real Arduino Uno controller through a dedicated Smart Lock API plus a macOS serial bridge.
 
 ### Module ownership
 - Owning backend module:
   - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
 - Owning database:
   - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
+- Hardware bridge assets:
+  - [`projects/smartlock/hardware/smartlock_serial_bridge.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/smartlock_serial_bridge.py)
+  - [`projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino)
 - Owning templates:
   - [`templates/smartlock/`](/Users/administrator/Sites/friedutchplus/templates/smartlock)
 - Owning CSS:
@@ -36,6 +40,9 @@
 ### Boundary rule
 - Other app modules should not open `smartlock.db` directly.
 - If another part of the app needs Smart Lock behavior or data, route it through functions or routes in [`smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py).
+- The Arduino bridge follows that same rule:
+  - the macOS bridge calls `/smartlock/api/hardware/check`
+  - only the Smart Lock module queries the `users` table
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.
@@ -92,6 +99,11 @@
 - When an active session reaches its limit in the current page view, the card should flip to `Allowed` without removing the `THIS DEVICE` badge.
 - The add-session route mints the invite and returns to the admin panel, where the inline invite row shows copy first, a fixed join-link field, the captcha code, and a regenerate action.
 - Opening a join link on a device that already has an active admin session must close or leave the invite page and return to the admin panel without consuming the token.
+- The hardware integration is split into two layers:
+  - the Arduino sketch reads keypad, RFID, and fingerprint hardware and sends line-based checks over USB serial
+  - the macOS bridge forwards those checks to Smart Lock and returns allow/deny responses back to the Arduino
+- The merged Arduino sketch is currently tuned for a ZFM-708SA50H-style UART fingerprint sensor and tries `57600` first, then `9600`, during startup.
+- The current merged pin plan keeps the keypad on `D3-D9`, uses `D2` for the relay, reads a one-wire RFID signal on `A0`, and uses `A1/A2` for the fingerprint sensor UART. `A3` is reserved only as the unused SoftwareSerial TX pin for the RFID reader.
 
 ### Routes
 - Main:
@@ -115,6 +127,8 @@
   - `POST /smartlock/session/logout/<session_token>`
   - `POST /smartlock/session/logout-all`
   - `POST /smartlock/logout`
+- Hardware integration:
+  - `POST /smartlock/api/hardware/check`
 - User management:
   - `/smartlock/users/new`
   - `/smartlock/users/add`
@@ -143,6 +157,17 @@
 - `number_attempts`
   - currently present in schema; treat as reserved/internal
 
+### Hardware API behavior
+- `POST /smartlock/api/hardware/check` accepts JSON with:
+  - `method`: `passcode`, `rfid`, or `fingerprint`
+  - `value`: credential value coming from the Arduino bridge
+- The route requires the `X-SmartLock-Hardware-Key` header to match `SMARTLOCK_HARDWARE_API_KEY`.
+- Successful checks return the matching Smart Lock user and `unlock_seconds`.
+- Failed checks return `allowed: false` and still write a hardware attempt into `login_logs`.
+- Passcodes are checked directly against `users.passcode`.
+- RFID checks only allow rows where `rfid_enabled = 1` and `rfid_id` matches.
+- Fingerprint checks only allow rows where `fingerprint_enabled = 1` and `fingerprint_id` matches.
+
 ### External dependencies / services
 - Resend email API:
   - requires `RESEND_API_KEY`
@@ -151,6 +176,7 @@
   - after initialization, the active admin email lives in the Smart Lock `settings` table and can diverge from `.env`
 - Flask-WTF for CSRF
 - Bleach for sanitization
+- `pyserial` for the optional macOS USB bridge script
 
 ### Security notes
 - Magic links expire after 5 minutes.
@@ -162,6 +188,7 @@
 - Admin-side destructive actions and toggles are POST-only and CSRF-protected.
 - Tokenized and user-id Smart Lock pages are marked `X-Robots-Tag: noindex, nofollow`.
 - Smart Lock should be treated as sensitive/admin-only functionality.
+- The hardware API is machine-facing and must stay protected by a strong `SMARTLOCK_HARDWARE_API_KEY`.
 
 ### Known pitfalls for future changes
 - Do not rename `match_numbers` at the DB layer without an explicit migration.
@@ -173,3 +200,4 @@
   - log labels
   - README docs
 - `verify-captcha` must remain POST-only to avoid follow-up GET crashes.
+- If changing hardware credential behavior, keep the Arduino sketch, the serial bridge, the Smart Lock route, and this README in sync.
