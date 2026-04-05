@@ -37,9 +37,6 @@
   - shows server name `FP SMP`, join address, status, and player count
 - `Golden Rules`
   - public rules card
-- `Game Details`
-  - public metadata card
-  - currently shows host, edition, mod loader, version, and access
 - `Admin Controls`
   - only visible to Smart Lock admins
   - contains start/stop and placeholder operational actions

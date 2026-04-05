@@ -3,7 +3,7 @@
 ## Human Summary
 - Private Chat is a private username/password project zone with its own login at `/privatechat/login`.
 - Private Chat users are specific to this project and are managed by a Smart Lock admin.
-- The Private Chat login screen has a normal user login plus an admin path for managing users.
+- The Private Chat login screen is now a stripped centered auth card with a separate admin path for managing users.
 
 ## AI Copilot
 
@@ -14,7 +14,7 @@
 - [`templates/cloud_chat_admin.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_admin.html)
 - [`static/css/pages/cloud_chat.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/cloud_chat.css)
 - [`static/js/pages/cloud_chat.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/cloud_chat.js)
-- [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
+- local runtime database path [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
 
 ### Purpose
 - Provide a dedicated `/privatechat/` zone with project-specific username/password accounts.
@@ -24,6 +24,7 @@
 - Keep the selected DM thread updating live while both participants are signed in.
 - Present the signed-in app as a Discord-style DM client without server/channel features.
 - Render the project inside the same shared Discord-like shell used across the whole site.
+- Keep the login view visually minimal while leaving the shared rail available.
 
 ### Access model
 - Regular Private Chat users sign in with:
@@ -65,6 +66,9 @@
 - legacy `/cloudchat/*` routes still exist as compatibility redirects or aliases to the canonical `/privatechat/*` paths
 
 ### Database table
+- Local runtime database file:
+  - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
+  - this file is runtime state only and must stay untracked/ignored in git
 - `cloud_chat_users`
   - username, password hash, active state, and created timestamp
 - `cloud_chat_login_attempts`

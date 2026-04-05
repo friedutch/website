@@ -1,7 +1,7 @@
 # Friedutch Plus
 
 ## Human Summary
-- This repo powers a personal website with a homepage plus three internal tools: Smart Lock, Cloud Storage, and Private Chat.
+- This repo powers a personal website with an intentionally blank home route plus three internal tools: Smart Lock, Cloud Storage, and Private Chat.
 - `run.py` starts the site, `app/__init__.py` wires everything together, and each feature lives in its own project folder.
 - The site is self-hosted on macOS and restarted through a LaunchAgent when deployments happen.
 - If the site goes down, the most likely cause is the LaunchAgent-managed process not running.
@@ -21,7 +21,8 @@
   - a macOS USB serial bridge script
   - a merged Uno sketch for keypad, RFID, and fingerprint checks
 - The whole site now renders inside one shared Discord-like app shell.
-- The left rail works like Discord's server switcher, except each icon opens one site project.
+- The left rail works like Discord's server switcher, except each emoji icon opens one site project.
+- The home route `/` is intentionally empty aside from the shared shell and project rail.
 - The site-wide admin login is now `/login`, while project-scoped logins live inside their own zones such as `/privatechat/login`.
 
 ### Entrypoints
@@ -117,7 +118,7 @@
   - [`static/js/pages/cloud_storage.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/cloud_storage.js)
 - Private Chat owns:
   - [`projects/cloud_chat/cloud_chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.py)
-  - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
+  - local runtime database path [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
   - [`templates/cloud_chat_login.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_login.html)
   - [`templates/cloud_chat_app.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_app.html)
   - [`templates/cloud_chat_admin.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_admin.html)
@@ -155,7 +156,8 @@
   - [`projects/cloud_storage/cloud_storage.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.db)
 - Private Chat database:
   - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
-- These are SQLite files committed/used as local runtime state.
+- These are local runtime SQLite files.
+- They should remain untracked and ignored by git, and must never be committed.
 - Private Chat now uses a second internal table for login-attempt throttling in the same database.
 - Private Chat also stores direct messages in the same project database.
 - Private Chat message rows now represent private direct messages rather than a single shared room.
@@ -200,7 +202,6 @@
 - This page is currently a stacked card layout with:
   - a `Server ID` card for `FP SMP`
   - a public `Golden Rules` card
-  - a public `Game Details` card
   - an admin-only `Admin Controls` card
 - The page shows the live join hostname, online status, and live player count when the local server responds to a status ping.
 - Minecraft start and stop controls live in the admin-only controls block and require an authenticated Smart Lock admin session.

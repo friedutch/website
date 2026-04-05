@@ -3,6 +3,7 @@
 ## Human Summary
 - Smart Lock is the admin panel for managing people and access methods for a real smart lock setup.
 - The admin signs in using a magic link plus a captcha-like confirmation step.
+- The site-wide admin login at `/login` now uses a centered single-card auth screen inside the shared shell.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
 - The Smart Lock pages now render inside the shared Discord-like site shell, while the admin panel keeps its own Users, Logs, and Arduino tabs.
@@ -97,6 +98,9 @@
   - a cookie probe runs on Smart Lock requests
   - browsers with cookies disabled should only see the cookies-required page and the Home link
   - CSRF failures on Smart Lock routes should also fall back to that cookies-required page
+- The admin login page is intentionally separate from the Smart Lock project index:
+  - `/login` is the canonical site-wide admin entrypoint
+  - `/smartlock/login` remains only as a compatibility alias
 - Session expiry is fixed-duration from login.
 - Login cooldowns are stored in the `settings` table with browser-session-scoped keys.
 - Login cooldowns are intentionally not global; one browser session should not block another person's login request.
