@@ -733,6 +733,24 @@ h1,
 .panel-tab,
 .tab-btn,
 .filter-chip,
+.method-toggle,
+.num-btn,
+.universal-footer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.1;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+.big-btn,
+.sm-btn,
+.action-btn,
+.panel-tab,
+.tab-btn,
+.filter-chip,
 .method-toggle {
   min-height: 52px;
   padding: 14px 18px;
