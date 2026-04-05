@@ -6,13 +6,11 @@
 
 {% block header_kicker %}Admin Access{% endblock %}
 {% block header_title %}Verification complete{% endblock %}
-{% block header_subtitle %}Closing this verification step and returning you to the main admin flow.{% endblock %}
 
 {% block content %}
 <div class="project-card">
   <span class="project-icon">✅</span>
   <div class="project-name">{{ heading or 'Access granted' }}</div>
-  <div class="project-desc">{{ description or 'Closing this verification page and returning to your login screen.' }}</div>
   <p class="msg-err msg-err-spaced" id="verification-complete-fallback">{{ fallback_copy or 'If this page stays open, continue here.' }} <a href="{{ redirect_url }}">Continue</a>.</p>
 </div>
 {% endblock %}

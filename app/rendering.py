@@ -2,11 +2,11 @@ from flask import current_app, g, render_template, request
 
 
 SITE_PROJECTS = [
-    {"key": "home", "label": "Home", "short": "FP", "href": "/"},
-    {"key": "smartlock", "label": "Smart Lock", "short": "SL", "href": "/smartlock/"},
-    {"key": "cloud_storage", "label": "Cloud Storage", "short": "CS", "href": "/cloud-storage/"},
-    {"key": "privatechat", "label": "Private Chat", "short": "PC", "href": "/privatechat/"},
-    {"key": "minecraft", "label": "Minecraft", "short": "MC", "href": "/minecraft/"},
+    {"key": "home", "label": "Home", "short": "🏠", "href": "/"},
+    {"key": "smartlock", "label": "Smart Lock", "short": "🔐", "href": "/smartlock/"},
+    {"key": "cloud_storage", "label": "Cloud Storage", "short": "☁️", "href": "/cloud-storage/"},
+    {"key": "privatechat", "label": "Private Chat", "short": "💬", "href": "/privatechat/"},
+    {"key": "minecraft", "label": "Minecraft", "short": "⛏️", "href": "/minecraft/"},
 ]
 
 

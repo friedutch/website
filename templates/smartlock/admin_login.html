@@ -4,29 +4,29 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css', v=asset_version) }}">
 {% endblock %}
 
-{% block header_kicker %}Admin Access{% endblock %}
-{% block header_title %}Login{% endblock %}
-{% block header_subtitle %}Magic link plus captcha confirmation for site-wide admin access.{% endblock %}
+{% block body_class %} site-app-body-headerless{% endblock %}
+{% block content_class %}access-content{% endblock %}
 
 {% block content %}
-<main class="access-layout">
-  <section class="project-card access-card">
-    <span class="project-icon">🔐</span>
-    <div class="project-name">Admin Login</div>
-    <div class="project-desc">Smart Lock protects the site-wide admin session, but the login page now lives outside the project at <code>/login</code>.</div>
-
+<section class="access-shell">
+  <div class="project-card access-card access-card-elevated">
+    <div class="access-head">
+      <div class="access-icon">🔐</div>
+      <div>
+        <span class="access-kicker">Admin Access</span>
+        <h1 class="access-title">Login</h1>
+      </div>
+    </div>
     {% if captcha_code %}
     <div class="number-box access-code-card">
       <div class="number-label">Captcha code</div>
       <div class="number-display">{{ captcha_code }}</div>
-      <div class="number-hint">Choose this same code during verification.</div>
     </div>
     {% endif %}
 
     {% if admin_sent %}
     <div class="access-note-card">
-      <div class="access-note-title">Check your inbox</div>
-      <div class="access-note-copy">Open the latest Smart Lock email and continue from there.</div>
+      <div class="access-note-title">Inbox</div>
     </div>
     {% else %}
     <form method="POST" action="{{ url_for('smartlock_login') }}" class="access-form">
@@ -41,8 +41,8 @@
     <p class="cd-note">Resend in <span id="lk-timer"></span></p>
     {% endif %}
     {% if message %}<p class="msg-err msg-err-spaced">{{ message }}</p>{% endif %}
-  </section>
-</main>
+  </div>
+</section>
 {% endblock %}
 
 {% block page_scripts %}

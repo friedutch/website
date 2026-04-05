@@ -1,8 +1,7 @@
 {% extends "_app_frame.html" %}
 
 {% block header_kicker %}Friedutch Plus{% endblock %}
-{% block header_title %}About the workspace{% endblock %}
-{% block header_subtitle %}A self-hosted personal site organized like one unified app instead of a pile of disconnected tools.{% endblock %}
+{% block header_title %}Projects{% endblock %}
 
 {% block header_actions %}
 <a class="sm-btn sm-ghost" href="/">Home</a>
@@ -12,34 +11,25 @@
 {% endblock %}
 
 {% block content %}
-<section class="zone zone-purple">
-  <p class="project-desc">Friedutch Plus is the single place where the public pages, internal tools, and private admin flows for your setup live together. The left rail acts like Discord’s server switcher, but each icon opens one project instead of one community.</p>
-  <p class="project-desc">Some projects are public-facing, like the Minecraft page. Others are private operational surfaces backed by Smart Lock admin state or project-specific user accounts.</p>
-</section>
-
 <section class="projects-grid">
   <a class="project-card active" href="/smartlock/">
     <span class="project-icon">🔐</span>
     <div class="project-name">Smart Lock</div>
-    <div class="project-desc">Manage admin sessions, users, badges, fingerprints, and hardware events.</div>
     <span class="project-tag tag-live">Admin</span>
   </a>
   <a class="project-card active" href="/cloud-storage/">
     <span class="project-icon">☁️</span>
     <div class="project-name">Cloud Storage</div>
-    <div class="project-desc">Hand files to yourself privately with upload, download, and deletion controls.</div>
     <span class="project-tag tag-live">Private</span>
   </a>
   <a class="project-card active" href="/privatechat/login">
     <span class="project-icon">💬</span>
     <div class="project-name">Private Chat</div>
-    <div class="project-desc">One-to-one direct messages with project-scoped users and live sync.</div>
     <span class="project-tag tag-live">Live</span>
   </a>
   <a class="project-card active" href="/minecraft/">
     <span class="project-icon">⛏️</span>
     <div class="project-name">Minecraft Server</div>
-    <div class="project-desc">Public server identity page with real status and admin controls.</div>
     <span class="project-tag tag-live">Public</span>
   </a>
 </section>

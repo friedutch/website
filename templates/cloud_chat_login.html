@@ -4,31 +4,19 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
 {% endblock %}
 
-{% block header_kicker %}Private Chat{% endblock %}
-{% block header_title %}Project login{% endblock %}
-{% block header_subtitle %}Username and password access for this project, with separate admin management at /login.{% endblock %}
-
-{% block header_actions %}
-<a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_admin') }}">{{ 'Manage users' if admin_logged_in else 'Admin login' }}</a>
-{% endblock %}
+{% block body_class %} site-app-body-headerless{% endblock %}
+{% block content_class %}cloudchat-auth-content{% endblock %}
 
 {% block content %}
-<main class="cloudchat-auth-layout">
-  <section class="zone zone-cyan cloudchat-hero-zone">
-    <div class="hero">
-      <div class="app-icon">💬</div>
-      <p class="projects-label">Private Chat</p>
-      <h1>Sign in to direct messages.</h1>
+<section class="cloudchat-auth-shell">
+  <div class="zone zone-cyan cloudchat-auth-card">
+    <div class="cloudchat-auth-head">
+      <div class="cloudchat-auth-icon">💬</div>
+      <div class="cloudchat-auth-copy">
+        <span class="cloudchat-auth-kicker">Private Chat</span>
+        <h1>Login</h1>
+      </div>
     </div>
-    <div class="cloudchat-chip-row">
-      <span class="chip chip-on">Project-scoped users</span>
-      <span class="chip chip-on">Live DMs</span>
-      <span class="chip">Admin-managed</span>
-    </div>
-  </section>
-
-  <section class="zone zone-pink cloudchat-login-zone">
-    <p class="projects-label">User Login</p>
     <form class="cloudchat-auth-form" method="POST" action="{{ url_for('cloud_chat_login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label class="cloudchat-field">
@@ -39,12 +27,14 @@
         <span class="cloudchat-field-label">Password</span>
         <input class="app-input" type="password" name="password" autocomplete="current-password" placeholder="password" required>
       </label>
-      <button class="big-btn btn-primary" type="submit">Enter Private Chat</button>
+      <button class="big-btn btn-primary" type="submit">Enter</button>
     </form>
-
     {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
-  </section>
-</main>
+    <a class="sm-btn sm-ghost cloudchat-auth-admin-link" href="{{ url_for('cloud_chat_admin') }}">
+      {{ 'Manage users' if admin_logged_in else 'Admin login' }}
+    </a>
+  </div>
+</section>
 {% endblock %}
 
 {% block page_scripts %}

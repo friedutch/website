@@ -1,29 +1,55 @@
-body {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 34px 24px 88px;
+.access-content {
+  align-content: center;
 }
 
-.site-header {
-  margin-top: 36px;
-  margin-bottom: 24px;
-}
-
-.projects-label {
-  margin-bottom: 14px;
-}
-
-.access-layout {
-  max-width: 540px;
+.access-shell {
+  min-height: calc(100vh - 40px);
+  display: grid;
+  place-items: center;
 }
 
 .access-card {
-  gap: 14px;
+  width: min(460px, 100%);
+  padding: 30px;
+  gap: 18px;
 }
 
-.project-desc {
-  margin-top: -2px;
+.access-card-elevated {
+  box-shadow: var(--shadow-md);
+}
+
+.access-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.access-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #ffffff;
+  font-size: 31px;
+}
+
+.access-kicker {
+  display: block;
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   margin-bottom: 4px;
+}
+
+.access-title {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(28px, 5vw, 34px);
+  line-height: 1;
 }
 
 .access-form {
@@ -59,9 +85,10 @@ body {
 }
 
 .access-note-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--text);
+  text-align: center;
 }
 
 .access-note-copy {
@@ -96,4 +123,14 @@ body {
   color: var(--success);
   font-size: 16px;
   font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .access-card {
+    padding: 24px;
+  }
+
+  .access-head {
+    align-items: start;
+  }
 }

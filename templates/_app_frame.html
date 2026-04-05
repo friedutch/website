@@ -29,7 +29,7 @@
     <form method="POST" action="{{ url_for('smartlock_logout') }}" class="contents-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button class="site-project-link site-project-link-utility" type="submit" data-confirm="Log out of admin access" aria-label="Admin logout" title="Admin logout">
-        <span>AO</span>
+        <span>🚪</span>
       </button>
     </form>
     {% else %}
@@ -39,14 +39,14 @@
       aria-label="Admin login"
       title="Admin login"
     >
-      <span>LG</span>
+      <span>🗝️</span>
     </a>
     {% endif %}
 
-    <button class="site-project-link site-project-link-utility" data-theme-toggle data-theme-label="Theme" type="button" aria-label="Toggle theme" title="Toggle theme">TH</button>
+    <button class="site-project-link site-project-link-utility" data-theme-toggle data-theme-label="Theme" type="button" aria-label="Toggle theme" title="Toggle theme">◐</button>
     {% if config.GITHUB_REPO_URL %}
     <a class="site-project-link site-project-link-utility" href="{{ config.GITHUB_REPO_URL }}" target="_blank" rel="noreferrer" aria-label="GitHub repository" title="GitHub repository">
-      <span>GH</span>
+      <span>🐙</span>
     </a>
     {% endif %}
   </aside>

@@ -6,7 +6,6 @@
 
 {% block header_kicker %}Smart Lock{% endblock %}
 {% block header_title %}{{ "New user" if is_new_user else user['name'] }}{% endblock %}
-{% block header_subtitle %}{{ "Create access profile" if is_new_user else "Manage access profile" }}{% endblock %}
 
 {% block header_actions %}
 <a class="sm-btn sm-ghost" href="{{ url_for('smartlock_admin') }}">Back to panel</a>

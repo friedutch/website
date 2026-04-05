@@ -6,7 +6,6 @@
 
 {% block header_kicker %}Minecraft{% endblock %}
 {% block header_title %}{{ minecraft.server_name }}{% endblock %}
-{% block header_subtitle %}{{ minecraft.summary }}{% endblock %}
 
 {% block header_actions %}
 <div class="chip-row">
@@ -21,7 +20,6 @@
     <p class="card-label">Server ID</p>
     <div class="server-id-head">
       <h1>{{ minecraft.server_name }}</h1>
-      <p class="server-id-sub">{{ minecraft.summary }}</p>
     </div>
     <div class="address-line">
       <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
@@ -50,28 +48,6 @@
       <li>
         <span>Discuss calmly</span>
         <strong>No spam, harassment, or hate.</strong>
-      </li>
-    </ul>
-  </article>
-
-  <article class="detail-card">
-    <p class="card-label">Game Details</p>
-    <ul class="detail-list">
-      <li>
-        <span>Edition</span>
-        <strong>{{ minecraft.edition }}</strong>
-      </li>
-      <li>
-        <span>Mod Loader</span>
-        <strong>{{ minecraft.modloader }}</strong>
-      </li>
-      <li>
-        <span>Version</span>
-        <strong>{{ minecraft.version }}</strong>
-      </li>
-      <li>
-        <span>Access</span>
-        <strong>{{ minecraft.access }}</strong>
       </li>
     </ul>
   </article>

@@ -16,6 +16,64 @@
   gap: 18px;
 }
 
+.cloudchat-auth-content {
+  align-content: center;
+}
+
+.cloudchat-auth-shell {
+  min-height: calc(100vh - 40px);
+  display: grid;
+  place-items: center;
+}
+
+.cloudchat-auth-card {
+  width: min(440px, 100%);
+  padding: 28px;
+  display: grid;
+  gap: 18px;
+}
+
+.cloudchat-auth-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cloudchat-auth-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #5865f2, #7983f5);
+  color: #ffffff;
+  font-size: 30px;
+}
+
+.cloudchat-auth-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.cloudchat-auth-copy h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(28px, 5vw, 34px);
+  line-height: 1;
+}
+
+.cloudchat-auth-kicker {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cloudchat-auth-admin-link {
+  justify-content: center;
+}
+
 .cloudchat-auth-layout {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   margin-bottom: 20px;
@@ -603,5 +661,13 @@
 
   .cloudchat-compose-footer {
     align-items: stretch;
+  }
+
+  .cloudchat-auth-card {
+    padding: 24px;
+  }
+
+  .cloudchat-auth-head {
+    align-items: start;
   }
 }

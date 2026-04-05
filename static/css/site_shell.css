@@ -87,10 +87,10 @@ body.site-app-body {
   justify-content: center;
   background: #313338;
   color: #f2f3f5;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
   border: 0;
   cursor: pointer;
   transition:
@@ -137,6 +137,14 @@ body.site-app-body {
   gap: 18px;
 }
 
+.site-app-body-headerless .site-app-header {
+  display: none;
+}
+
+.site-app-body-headerless .site-app-main {
+  grid-template-rows: minmax(0, 1fr);
+}
+
 .site-app-header {
   display: flex;
   justify-content: space-between;
@@ -176,6 +184,11 @@ body.site-app-body {
   font-weight: 600;
 }
 
+.site-app-subtitle,
+.zone-title-note {
+  display: none;
+}
+
 .site-app-actions {
   display: flex;
   align-items: center;
@@ -188,6 +201,14 @@ body.site-app-body {
   min-width: 0;
   display: grid;
   gap: 18px;
+}
+
+.site-app-content:empty {
+  display: block;
+}
+
+.site-app-body-home .site-app-main {
+  background: var(--surface);
 }
 
 .site-app-content > :last-child {
