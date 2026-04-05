@@ -1,40 +1,47 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .cloudchat-auth-layout,
-.cloudchat-grid,
-.cloudchat-chat-layout {
+.cloudchat-grid {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .cloudchat-auth-layout {
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  margin-bottom: 20px;
 }
 
 .cloudchat-grid {
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  margin-bottom: 18px;
-}
-
-.cloudchat-chat-layout {
-  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
-  margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  margin-bottom: 20px;
 }
 
 .cloudchat-chip-row,
-.cloudchat-user-actions {
+.cloudchat-user-actions,
+.cloudchat-preview-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 
 .cloudchat-login-zone,
-.cloudchat-thread-zone,
 .cloudchat-admin-form,
 .cloudchat-auth-form,
 .cloudchat-message-form,
 .cloudchat-reset-form,
 .cloudchat-field,
-.cloudchat-user-list {
+.cloudchat-user-list,
+.cloudchat-password-preview-zone {
   display: grid;
   gap: 12px;
 }
@@ -54,7 +61,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 6px 0 2px;
+  margin: 8px 0 4px;
   color: var(--text-soft);
   font-size: 11px;
   font-weight: 800;
@@ -83,84 +90,6 @@
   margin-bottom: 14px;
 }
 
-.cloudchat-password-preview-zone {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.cloudchat-partner-list {
-  display: grid;
-  gap: 12px;
-}
-
-.cloudchat-partner-card {
-  display: grid;
-  gap: 10px;
-  padding: 16px 18px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface-3);
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
-}
-
-.cloudchat-partner-card:hover,
-.cloudchat-partner-card-selected {
-  border-color: color-mix(in srgb, var(--accent) 46%, var(--border));
-  box-shadow: var(--shadow-sm);
-}
-
-.cloudchat-partner-card:hover {
-  transform: translateY(-1px);
-}
-
-.cloudchat-partner-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.cloudchat-partner-preview {
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  word-break: break-word;
-}
-
-.cloudchat-message-input {
-  min-height: 120px;
-  resize: vertical;
-  line-height: 1.5;
-}
-
-.cloudchat-compose-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.cloudchat-compose-count,
-.cloudchat-message-time {
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudchat-preview-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 .cloudchat-preview-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
@@ -173,119 +102,550 @@
   gap: 14px;
 }
 
-.cloudchat-thread-shell {
-  border: 1px solid color-mix(in srgb, var(--border) 80%, var(--accent) 20%);
-  border-radius: calc(var(--radius-lg) + 2px);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-2) 94%, var(--accent-soft) 6%), var(--surface-3));
-  padding: 10px;
-}
-
-.cloudchat-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-height: 70vh;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.cloudchat-message-row {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: 12px;
-  align-items: start;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  transition: background 0.18s ease;
-}
-
-.cloudchat-message-row:hover {
-  background: color-mix(in srgb, var(--surface-1) 88%, transparent);
-}
-
-.cloudchat-message-row-compact {
-  padding-top: 2px;
-}
-
-.cloudchat-message-row-compact .cloudchat-message-avatar {
-  opacity: 0;
-}
-
-.cloudchat-message-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 15px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: var(--text);
-  background: color-mix(in srgb, var(--surface-1) 86%, var(--border));
-  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
-}
-
-.cloudchat-message-row-own .cloudchat-message-avatar {
-  background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface-1));
-  border-color: color-mix(in srgb, var(--accent) 44%, var(--border));
-}
-
-.cloudchat-message-row-peer .cloudchat-message-avatar {
-  background: color-mix(in srgb, var(--signal) 18%, var(--surface-1));
-  border-color: color-mix(in srgb, var(--signal) 28%, var(--border));
-}
-
-.cloudchat-message-content {
-  min-width: 0;
-}
-
-.cloudchat-message-head {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
-.cloudchat-message-author {
-  color: var(--text);
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.cloudchat-message-body {
-  color: var(--text);
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin: 0;
-}
-
-.cloudchat-thread-empty {
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  padding: 18px 16px;
-}
-
 .cloudchat-reset-form {
   grid-template-columns: minmax(180px, 1fr) auto;
   align-items: center;
   flex: 1 1 320px;
 }
 
+.cloudchat-discord-body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, color-mix(in srgb, var(--accent-soft) 18%, transparent), transparent 42%),
+    #1f2128;
+  color: #dbdee1;
+}
+
+.cloudchat-discord-app {
+  display: grid;
+  grid-template-columns: 72px 300px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.cloudchat-rail {
+  background: #1a1b20;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+}
+
+.cloudchat-rail-home,
+.cloudchat-rail-pill {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #f2f3f5;
+  background: #313338;
+  transition:
+    background 0.18s ease,
+    border-radius 0.18s ease,
+    transform 0.18s ease;
+}
+
+.cloudchat-rail-home:hover,
+.cloudchat-rail-home-active,
+.cloudchat-rail-pill:hover {
+  background: #5865f2;
+  border-radius: 14px;
+  transform: translateY(-1px);
+}
+
+.cloudchat-rail-pill-ghost:hover {
+  background: #3ba55d;
+}
+
+.cloudchat-sidebar {
+  background: #2b2d31;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-width: 0;
+}
+
+.cloudchat-sidebar-top {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.24);
+}
+
+.cloudchat-sidebar-search {
+  border-radius: 6px;
+  background: #1e1f22;
+  color: #949ba4;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 12px;
+}
+
+.cloudchat-sidebar-scroll {
+  overflow-y: auto;
+  padding: 10px 8px 12px;
+}
+
+.cloudchat-section-label {
+  color: #949ba4;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 8px 10px;
+}
+
+.cloudchat-dm-list {
+  display: grid;
+  gap: 2px;
+}
+
+.cloudchat-dm-link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 7px 8px;
+  color: #b5bac1;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.cloudchat-dm-link:hover {
+  background: #35373c;
+  color: #f2f3f5;
+}
+
+.cloudchat-dm-link-selected {
+  background: #404249;
+  color: #ffffff;
+}
+
+.cloudchat-dm-avatar-wrap,
+.cloudchat-thread-avatar-wrap {
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+
+.cloudchat-dm-avatar,
+.cloudchat-thread-avatar,
+.cloudchat-user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #5865f2, #7983f5);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.cloudchat-thread-avatar {
+  width: 48px;
+  height: 48px;
+  font-size: 15px;
+}
+
+.cloudchat-status-dot {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 3px solid #2b2d31;
+  background: #80848e;
+}
+
+.cloudchat-status-dot-online {
+  background: #23a55a;
+}
+
+.cloudchat-status-dot-idle {
+  background: #f0b232;
+}
+
+.cloudchat-status-dot-offline {
+  background: #80848e;
+}
+
+.cloudchat-dm-copy,
+.cloudchat-thread-copy,
+.cloudchat-user-copy {
+  min-width: 0;
+}
+
+.cloudchat-dm-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cloudchat-dm-name,
+.cloudchat-thread-copy h1,
+.cloudchat-user-copy strong {
+  color: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cloudchat-thread-copy h1 {
+  color: #f2f3f5;
+  font-size: 18px;
+}
+
+.cloudchat-dm-time,
+.cloudchat-thread-copy p,
+.cloudchat-user-copy span,
+.cloudchat-compose-count,
+.cloudchat-message-time {
+  color: #949ba4;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cloudchat-dm-preview {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #949ba4;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cloudchat-unread-badge {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #da373c;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cloudchat-sidebar-empty {
+  color: #949ba4;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 8px;
+}
+
+.cloudchat-user-panel {
+  background: #232428;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.cloudchat-user-panel-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cloudchat-user-actions-bar {
+  display: flex;
+  gap: 6px;
+}
+
+.cloudchat-panel-btn {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #3a3c43;
+  color: #dbdee1;
+  font-size: 12px;
+  font-weight: 800;
+  transition: background 0.18s ease;
+}
+
+.cloudchat-panel-btn:hover {
+  background: #4a4d55;
+}
+
+.cloudchat-main {
+  min-width: 0;
+  background: #313338;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-height: 100vh;
+}
+
+.cloudchat-thread-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #313338;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.24);
+}
+
+.cloudchat-thread-identity,
+.cloudchat-thread-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cloudchat-thread-count {
+  color: #b5bac1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cloudchat-inline-message {
+  margin: 12px 20px 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cloudchat-inline-message-ok {
+  background: rgba(59, 165, 93, 0.16);
+  color: #a7f3bf;
+}
+
+.cloudchat-inline-message-err {
+  background: rgba(218, 55, 60, 0.16);
+  color: #ffb3b6;
+}
+
+.cloudchat-thread-stage {
+  min-height: 0;
+  padding: 0 8px;
+}
+
+.cloudchat-thread-shell {
+  height: 100%;
+  padding: 12px 0 8px;
+}
+
+.cloudchat-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: calc(100vh - 230px);
+  min-height: 320px;
+  overflow-y: auto;
+  padding: 0 8px;
+}
+
+.cloudchat-message-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 2px 12px;
+  border-radius: 4px;
+  transition: background 0.14s ease;
+}
+
+.cloudchat-message-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cloudchat-message-row-compact {
+  padding-top: 0;
+}
+
+.cloudchat-message-row-compact .cloudchat-message-avatar {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cloudchat-message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #5865f2, #7c8af7);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.cloudchat-message-row-peer .cloudchat-message-avatar {
+  background: linear-gradient(135deg, #2fb2aa, #4fd1c5);
+}
+
+.cloudchat-message-content {
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.cloudchat-message-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.cloudchat-message-author {
+  color: #f2f3f5;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cloudchat-message-body {
+  margin: 0;
+  color: #dbdee1;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.375;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.cloudchat-thread-empty,
+.cloudchat-empty-state {
+  color: #b5bac1;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.cloudchat-thread-empty {
+  min-height: 100%;
+  padding: 24px 16px;
+  font-size: 15px;
+}
+
+.cloudchat-empty-state {
+  min-height: 100vh;
+}
+
+.cloudchat-empty-state h1 {
+  margin: 0;
+  color: #f2f3f5;
+  font-size: 28px;
+}
+
+.cloudchat-empty-state p {
+  margin: 0;
+  font-size: 15px;
+  color: #b5bac1;
+}
+
+.cloudchat-empty-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #5865f2, #7983f5);
+  font-size: 32px;
+}
+
+.cloudchat-composer-shell {
+  padding: 0 16px 24px;
+}
+
+.cloudchat-message-form {
+  gap: 8px;
+}
+
+.cloudchat-message-input {
+  min-height: 56px;
+  max-height: 42vh;
+  resize: none;
+  border: none;
+  border-radius: 8px;
+  background: #383a40;
+  color: #dbdee1;
+  line-height: 1.375;
+  padding: 16px 18px;
+  box-shadow: none;
+}
+
+.cloudchat-message-input:focus {
+  outline: 2px solid rgba(88, 101, 242, 0.34);
+  outline-offset: 0;
+}
+
+.cloudchat-compose-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+@media (max-width: 1100px) {
+  .cloudchat-discord-app {
+    grid-template-columns: 72px 260px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .cloudchat-discord-app {
+    grid-template-columns: 1fr;
+  }
+
+  .cloudchat-rail {
+    flex-direction: row;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .cloudchat-sidebar {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 280px;
+  }
+
+  .cloudchat-feed {
+    height: auto;
+    min-height: 320px;
+    max-height: 52vh;
+  }
+}
+
 @media (max-width: 720px) {
+  .cloudchat-auth-layout,
+  .cloudchat-grid,
   .cloudchat-preview-row,
   .cloudchat-reset-form {
     grid-template-columns: 1fr;
   }
 
-  .cloudchat-chat-layout {
+  .cloudchat-thread-header,
+  .cloudchat-user-panel {
     grid-template-columns: 1fr;
+  }
+
+  .cloudchat-thread-header {
+    align-items: start;
   }
 
   .cloudchat-compose-footer {

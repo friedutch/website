@@ -16,6 +16,8 @@ MAX_LOGIN_ATTEMPTS = 5
 LOGIN_LOCKOUT_SECONDS = 900
 CHAT_MESSAGE_MAX_LENGTH = 2000
 CHAT_THREAD_LIMIT = 120
+PRESENCE_ONLINE_WINDOW_SECONDS = 90
+PRESENCE_IDLE_WINDOW_SECONDS = 900
 
 
 def _get_db():
@@ -65,6 +67,26 @@ def init_cloud_chat_db():
         CREATE INDEX IF NOT EXISTS idx_cloud_chat_messages_thread
         ON cloud_chat_messages (user_id, recipient_user_id, id)
         """
+    )
+    db.execute(
+        """CREATE TABLE IF NOT EXISTS cloud_chat_thread_state (
+        user_id INTEGER NOT NULL,
+        partner_user_id INTEGER NOT NULL,
+        last_read_message_id INTEGER NOT NULL DEFAULT 0,
+        opened_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, partner_user_id),
+        FOREIGN KEY(user_id) REFERENCES cloud_chat_users(id),
+        FOREIGN KEY(partner_user_id) REFERENCES cloud_chat_users(id)
+    )"""
+    )
+    db.execute(
+        """CREATE TABLE IF NOT EXISTS cloud_chat_presence (
+        user_id INTEGER PRIMARY KEY,
+        last_seen_at TEXT NOT NULL,
+        open_partner_id INTEGER,
+        FOREIGN KEY(user_id) REFERENCES cloud_chat_users(id),
+        FOREIGN KEY(open_partner_id) REFERENCES cloud_chat_users(id)
+    )"""
     )
     db.commit()
     db.close()
@@ -182,6 +204,128 @@ def _normalize_message_text(raw_value):
     return value[:CHAT_MESSAGE_MAX_LENGTH]
 
 
+def _utcnow():
+    return datetime.datetime.utcnow()
+
+
+def _utc_iso():
+    return _utcnow().replace(microsecond=0).isoformat()
+
+
+def _parse_iso_datetime(value):
+    if not value:
+        return None
+    try:
+        return datetime.datetime.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def _format_timestamp(value):
+    return value[:19].replace("T", " ") if value else ""
+
+
+def _presence_status(last_seen_at):
+    seen = _parse_iso_datetime(last_seen_at)
+    if not seen:
+        return "offline"
+
+    age_seconds = (_utcnow() - seen).total_seconds()
+    if age_seconds <= PRESENCE_ONLINE_WINDOW_SECONDS:
+        return "online"
+    if age_seconds <= PRESENCE_IDLE_WINDOW_SECONDS:
+        return "idle"
+    return "offline"
+
+
+def _touch_presence(user_id, open_partner_id=None):
+    if not user_id:
+        return
+
+    db = _get_db()
+    try:
+        db.execute(
+            """
+            INSERT INTO cloud_chat_presence (user_id, last_seen_at, open_partner_id)
+            VALUES (?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                last_seen_at = excluded.last_seen_at,
+                open_partner_id = excluded.open_partner_id
+            """,
+            (user_id, _utc_iso(), open_partner_id),
+        )
+        db.commit()
+    finally:
+        db.close()
+
+
+def _presence_map(db, user_ids):
+    ids = [int(user_id) for user_id in user_ids if user_id]
+    if not ids:
+        return {}
+
+    placeholders = ", ".join("?" for _ in ids)
+    rows = db.execute(
+        f"""
+        SELECT user_id, last_seen_at, open_partner_id
+        FROM cloud_chat_presence
+        WHERE user_id IN ({placeholders})
+        """,
+        ids,
+    ).fetchall()
+
+    presence = {}
+    for row in rows:
+        presence[row["user_id"]] = {
+            "status": _presence_status(row["last_seen_at"]),
+            "last_seen_at": _format_timestamp(row["last_seen_at"]),
+            "open_partner_id": row["open_partner_id"],
+        }
+    return presence
+
+
+def _latest_thread_message_id(db, current_user_id, partner_id):
+    row = db.execute(
+        """
+        SELECT id
+        FROM cloud_chat_messages
+        WHERE recipient_user_id IS NOT NULL
+          AND (
+            (user_id = ? AND recipient_user_id = ?)
+            OR
+            (user_id = ? AND recipient_user_id = ?)
+          )
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+        (current_user_id, partner_id, partner_id, current_user_id),
+    ).fetchone()
+    return row["id"] if row else 0
+
+
+def _mark_thread_read(user_id, partner_id):
+    if not user_id or not partner_id:
+        return 0
+
+    db = _get_db()
+    try:
+        latest_message_id = _latest_thread_message_id(db, user_id, partner_id)
+        db.execute(
+            """
+            INSERT INTO cloud_chat_thread_state (user_id, partner_user_id, last_read_message_id, opened_at)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(user_id, partner_user_id) DO UPDATE SET
+                last_read_message_id = excluded.last_read_message_id,
+                opened_at = excluded.opened_at
+            """,
+            (user_id, partner_id, latest_message_id, _utc_iso()),
+        )
+        db.commit()
+        return latest_message_id
+    finally:
+        db.close()
+
+
 def _get_current_user():
     user_id = session.get("cloudchat_user_id")
     if not user_id:
@@ -219,7 +363,7 @@ def _get_active_chat_user(user_id):
         return None
     db = _get_db()
     try:
-        return db.execute(
+        row = db.execute(
             """
             SELECT id, username, is_active, created_at
             FROM cloud_chat_users
@@ -229,6 +373,15 @@ def _get_active_chat_user(user_id):
         ).fetchone()
     finally:
         db.close()
+
+    if not row:
+        return None
+
+    return {
+        "id": row["id"],
+        "username": row["username"],
+        "created_at": _format_timestamp(row["created_at"]),
+    }
 
 
 def _list_dm_partners(current_user_id):
@@ -243,16 +396,25 @@ def _list_dm_partners(current_user_id):
             """,
             (current_user_id,),
         ).fetchall()
-    finally:
-        db.close()
+        presence = _presence_map(db, [row["id"] for row in rows])
+        state_rows = db.execute(
+            """
+            SELECT partner_user_id, last_read_message_id
+            FROM cloud_chat_thread_state
+            WHERE user_id = ?
+            """,
+            (current_user_id,),
+        ).fetchall()
+        state_map = {
+            row["partner_user_id"]: row["last_read_message_id"]
+            for row in state_rows
+        }
 
-    partners = []
-    for row in rows:
-        db = _get_db()
-        try:
+        partners = []
+        for row in rows:
             latest = db.execute(
                 """
-                SELECT message_text, created_at, user_id
+                SELECT id, message_text, created_at, user_id
                 FROM cloud_chat_messages
                 WHERE recipient_user_id IS NOT NULL
                   AND (
@@ -265,27 +427,59 @@ def _list_dm_partners(current_user_id):
                 """,
                 (current_user_id, row["id"], row["id"], current_user_id),
             ).fetchone()
-        finally:
-            db.close()
 
-        preview = ""
-        latest_at = ""
-        latest_from_current = False
-        if latest:
-            preview = latest["message_text"][:72]
-            latest_at = latest["created_at"][:19].replace("T", " ")
-            latest_from_current = latest["user_id"] == current_user_id
+            unread_row = db.execute(
+                """
+                SELECT COUNT(*) AS unread_count
+                FROM cloud_chat_messages
+                WHERE user_id = ?
+                  AND recipient_user_id = ?
+                  AND id > ?
+                """,
+                (row["id"], current_user_id, state_map.get(row["id"], 0)),
+            ).fetchone()
 
-        partners.append(
-            {
-                "id": row["id"],
-                "username": row["username"],
-                "created_at": row["created_at"][:19].replace("T", " "),
-                "latest_preview": preview,
-                "latest_at": latest_at,
-                "latest_from_current": latest_from_current,
-            }
+            preview = ""
+            latest_at = ""
+            latest_from_current = False
+            latest_message_id = 0
+            if latest:
+                preview = latest["message_text"][:72]
+                latest_at = _format_timestamp(latest["created_at"])
+                latest_from_current = latest["user_id"] == current_user_id
+                latest_message_id = latest["id"]
+
+            partner_presence = presence.get(row["id"], {"status": "offline", "last_seen_at": "", "open_partner_id": None})
+            unread_count = unread_row["unread_count"] if unread_row else 0
+            sort_key = latest_message_id or 0
+
+            partners.append(
+                {
+                    "id": row["id"],
+                    "username": row["username"],
+                    "created_at": _format_timestamp(row["created_at"]),
+                    "latest_preview": preview,
+                    "latest_at": latest_at,
+                    "latest_from_current": latest_from_current,
+                    "latest_message_id": latest_message_id,
+                    "unread_count": unread_count,
+                    "status": partner_presence["status"],
+                    "last_seen_at": partner_presence["last_seen_at"],
+                    "is_watching_thread": partner_presence["open_partner_id"] == current_user_id,
+                    "sort_key": sort_key,
+                }
+            )
+    finally:
+        db.close()
+
+    partners.sort(
+        key=lambda item: (
+            item["latest_message_id"] == 0,
+            -(item["unread_count"] > 0),
+            -item["sort_key"],
+            item["username"],
         )
+    )
     return partners
 
 
@@ -333,7 +527,7 @@ def _list_dm_messages(current_user_id, partner_id, limit=CHAT_THREAD_LIMIT):
             {
                 "id": row["id"],
                 "message_text": row["message_text"],
-                "created_at": row["created_at"][:19].replace("T", " "),
+                "created_at": _format_timestamp(row["created_at"]),
                 "author_id": row["author_id"],
                 "author_username": row["author_username"],
             }
@@ -360,6 +554,13 @@ def _render_cloud_chat_login(error=None):
 
 def _render_cloud_chat_app(user, error=None, draft_message="", requested_partner_id=None):
     selected_partner, partners = _select_dm_partner(user["id"], requested_partner_id)
+    selected_partner_id = selected_partner["id"] if selected_partner else None
+
+    _touch_presence(user["id"], selected_partner_id)
+    if selected_partner_id:
+        _mark_thread_read(user["id"], selected_partner_id)
+        selected_partner, partners = _select_dm_partner(user["id"], selected_partner_id)
+
     messages = _list_dm_messages(user["id"], selected_partner["id"] if selected_partner else None)
     return render_page(
         "cloud_chat_app.html",
@@ -373,6 +574,7 @@ def _render_cloud_chat_app(user, error=None, draft_message="", requested_partner
         chat_messages=messages,
         chat_message_limit=CHAT_MESSAGE_MAX_LENGTH,
         chat_message_count=len(messages),
+        current_user_status="online",
         can_manage=is_site_admin(),
         noindex=True,
     )
@@ -514,6 +716,8 @@ def init_cloud_chat(app):
         if not partner:
             return _render_cloud_chat_app(user, error="That Private Chat user is unavailable for direct messages.")
 
+        _touch_presence(user["id"], partner_id)
+
         message_text = _normalize_message_text(request.form.get("message", ""))
         if not message_text:
             return _render_cloud_chat_app(
@@ -533,6 +737,7 @@ def init_cloud_chat(app):
         )
         db.commit()
         db.close()
+        _mark_thread_read(user["id"], partner_id)
         session["cloudchat_app_message"] = f"Message sent to {partner['username']}."
         return redirect(url_for("cloud_chat_index", dm=partner_id))
 
@@ -550,6 +755,12 @@ def init_cloud_chat(app):
         if not partner:
             return _json_no_store({"error": "partner_unavailable"}, status=404)
 
+        _touch_presence(user["id"], partner_id)
+        _mark_thread_read(user["id"], partner_id)
+        partners = _list_dm_partners(user["id"])
+        partner = next((item for item in partners if item["id"] == partner_id), None)
+        if not partner:
+            return _json_no_store({"error": "partner_unavailable"}, status=404)
         messages = _list_dm_messages(user["id"], partner_id)
         latest_message_id = messages[-1]["id"] if messages else 0
         return _json_no_store(
@@ -557,9 +768,13 @@ def init_cloud_chat(app):
                 "messages": messages,
                 "message_count": len(messages),
                 "latest_message_id": latest_message_id,
+                "partners": partners,
                 "partner": {
                     "id": partner["id"],
                     "username": partner["username"],
+                    "status": partner["status"],
+                    "last_seen_at": partner["last_seen_at"],
+                    "unread_count": 0,
                 },
             }
         )

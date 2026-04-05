@@ -136,6 +136,7 @@
   - Private Chat users sign in with a username and password at `/privatechat/`
   - signed-in Private Chat users can open private one-to-one DM threads with other registered Private Chat users
   - the open DM thread now refreshes live for signed-in participants
+  - the DM client now tracks lightweight presence and unread state to behave more like a Discord-style direct-message app
   - the `Admin login` path on that screen leads to Smart Lock admin-managed user administration
   - created and reset passwords are shown once in the immediate admin response, then only stored as hashes
   - that one-time reveal response is marked `no-store`
@@ -154,6 +155,7 @@
 - Private Chat now uses a second internal table for login-attempt throttling in the same database.
 - Private Chat also stores direct messages in the same project database.
 - Private Chat message rows now represent private direct messages rather than a single shared room.
+- Private Chat also stores per-thread read markers and lightweight presence state in the same project database.
 - Do not rename or migrate DB tables casually. There are already legacy names in use, especially in Smart Lock.
 
 ### Environment variables

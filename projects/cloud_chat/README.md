@@ -22,6 +22,7 @@
 - Require a Smart Lock admin session for Private Chat user administration.
 - Provide private authenticated direct messages for signed-in Private Chat users.
 - Keep the selected DM thread updating live while both participants are signed in.
+- Present the signed-in app as a Discord-style DM client without server/channel features.
 
 ### Access model
 - Regular Private Chat users sign in with:
@@ -67,6 +68,10 @@
   - failed-login counters and temporary lockout windows keyed by username plus client IP
 - `cloud_chat_messages`
   - direct messages with sender user id, recipient user id, message text, and created timestamp
+- `cloud_chat_thread_state`
+  - per-user read markers for unread-count tracking in each DM thread
+- `cloud_chat_presence`
+  - lightweight live-presence state for the active DM client
 
 ### Security notes
 - Passwords are stored as Werkzeug password hashes, not plaintext.
@@ -76,6 +81,7 @@
 - Private Chat login attempts are throttled per username and client IP after repeated failures.
 - Direct messages are posted through normal CSRF-protected form submissions inside the authenticated `/privatechat/` zone.
 - Live DM polling stays same-origin, authenticated, and marked `no-store`.
+- Unread counts are derived from server-side thread read markers instead of client-only state.
 - Private Chat admin actions are POST-only and CSRF-protected.
 - Private Chat private pages should remain `noindex`.
 
