@@ -26,6 +26,11 @@
 ### Hard safety rules
 - Do not delete, recreate, replace, or directly edit the live SQLite databases unless explicitly asked:
   - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
+- Never stage or commit runtime databases or other live state files:
+  - `*.db`
+  - `*.sqlite`
+  - `*.sqlite3`
+  - local caches, logs, upload payloads, temp files, or machine-specific runtime artifacts
 - Do not move HTML/CSS/JS back into Python strings.
 - Do not rename DB tables casually.
 - Do not assume LaunchAgent changes are normal code changes.
@@ -134,6 +139,8 @@
 - Inspect changed files:
   - `git status --short`
   - `git diff -- <paths>`
+- Check that no database files are tracked before committing:
+  - `git ls-files '*.db' '*.sqlite' '*.sqlite3'`
 - Search code:
   - `rg "pattern"`
 

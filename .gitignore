@@ -3,11 +3,15 @@ __pycache__/
 .DS_Store
 *.pyc
 *.pyo
+*.db
+*.sqlite
+*.sqlite3
 *.db-shm
 *.db-wal
-projects/smartlock/smartlock.db
-projects/cloud_storage/cloud_storage.db
-projects/cloud_chat/cloud_chat.db
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3-shm
+*.sqlite3-wal
 
 # Never commit a live Minecraft server instance or world snapshot.
 **/eula.txt

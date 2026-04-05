@@ -55,6 +55,11 @@
   - HTML in `templates/`
   - CSS in `static/css/`
   - JavaScript in `static/js/`
+- Never commit runtime databases or other live state:
+  - `*.db`
+  - `*.sqlite`
+  - `*.sqlite3`
+  - caches, temp files, logs, or machine-specific artifacts
 - Do not move frontend code back into embedded Python strings.
 - Prefer updating [`run.py`](/Users/administrator/Sites/friedutchplus/run.py) and the app factory.
 - Treat LaunchAgent changes as operational changes, not normal app-code changes.
@@ -239,5 +244,7 @@
   - [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh)
   - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)
   - LaunchAgent logs
+- Before any commit, verify that no runtime database files are tracked:
+  - `git ls-files '*.db' '*.sqlite' '*.sqlite3'`
 - For normal feature work, do not operate any `friedutch.plus` LaunchAgent; make the repo change, commit it, and push it.
 - For feature work, stay inside the owning module and its templates/static files.
