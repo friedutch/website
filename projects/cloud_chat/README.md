@@ -1,9 +1,9 @@
-# Cloud Chat
+# Private Chat
 
 ## Human Summary
-- Cloud Chat is a private username/password project zone under `/cloudchat/`.
-- Cloud Chat users are specific to this project and are managed by a Smart Lock admin.
-- The Cloud Chat login screen has a normal user login plus an admin path for managing users.
+- Private Chat is a private username/password project zone under `/cloudchat/`.
+- Private Chat users are specific to this project and are managed by a Smart Lock admin.
+- The Private Chat login screen has a normal user login plus an admin path for managing users.
 
 ## AI Copilot
 
@@ -18,18 +18,19 @@
 
 ### Purpose
 - Provide a dedicated `/cloudchat/` zone with project-specific username/password accounts.
-- Keep Cloud Chat account management inside the Cloud Chat project instead of reusing Smart Lock users directly.
-- Require a Smart Lock admin session for Cloud Chat user administration.
+- Keep Private Chat account management inside the Private Chat project instead of reusing Smart Lock users directly.
+- Require a Smart Lock admin session for Private Chat user administration.
+- Provide private authenticated direct messages for signed-in Private Chat users.
 
 ### Access model
-- Regular Cloud Chat users sign in with:
+- Regular Private Chat users sign in with:
   - username
   - password
-- Cloud Chat admin access is separate:
+- Private Chat admin access is separate:
   - the `Admin login` path uses the existing Smart Lock admin session
-  - the Cloud Chat admin screen is under `/cloudchat/admin`
+  - the Private Chat admin screen is under `/cloudchat/admin`
 - New and reset passwords are revealed only in the immediate admin response and are not shown again later.
-- Cloud Chat user accounts only apply to the Cloud Chat project zone.
+- Private Chat user accounts only apply to the Private Chat project zone.
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.
@@ -37,38 +38,43 @@
 
 ### Routes
 - `/cloudchat/`
-  - login screen for Cloud Chat users
-  - logged-in app page for active Cloud Chat users
+  - login screen for Private Chat users
+  - logged-in direct-message view for active Private Chat users
 - `POST /cloudchat/login`
   - username/password login
 - `POST /cloudchat/logout`
-  - logout the current Cloud Chat user session
+  - logout the current Private Chat user session
+- `POST /cloudchat/messages/send/<int:partner_id>`
+  - post a new direct message to the selected Private Chat user
 - `/cloudchat/admin`
   - Smart Lock admin-only user management screen
 - `POST /cloudchat/admin/users/create`
-  - create a Cloud Chat user
+  - create a Private Chat user
 - `POST /cloudchat/admin/users/password/<int:user_id>`
-  - reset a Cloud Chat user's password
+  - reset a Private Chat user's password
 - `POST /cloudchat/admin/users/toggle/<int:user_id>`
-  - disable or re-enable a Cloud Chat user
+  - disable or re-enable a Private Chat user
 - `POST /cloudchat/admin/users/delete/<int:user_id>`
-  - delete a Cloud Chat user
+  - delete a Private Chat user
 
 ### Database table
 - `cloud_chat_users`
   - username, password hash, active state, and created timestamp
 - `cloud_chat_login_attempts`
   - failed-login counters and temporary lockout windows keyed by username plus client IP
+- `cloud_chat_messages`
+  - direct messages with sender user id, recipient user id, message text, and created timestamp
 
 ### Security notes
 - Passwords are stored as Werkzeug password hashes, not plaintext.
 - Passwords are only revealed once, immediately after create/reset, and are not recoverable later from storage.
 - The one-time password reveal is rendered directly in the admin response and marked `Cache-Control: no-store`.
-- Cloud Chat requires at least 12 characters for newly created or reset passwords.
-- Cloud Chat login attempts are throttled per username and client IP after repeated failures.
-- Cloud Chat admin actions are POST-only and CSRF-protected.
-- Cloud Chat private pages should remain `noindex`.
+- Private Chat requires at least 12 characters for newly created or reset passwords.
+- Private Chat login attempts are throttled per username and client IP after repeated failures.
+- Direct messages are posted through normal CSRF-protected form submissions inside the authenticated `/cloudchat/` zone.
+- Private Chat admin actions are POST-only and CSRF-protected.
+- Private Chat private pages should remain `noindex`.
 
 ### Boundary rule
 - Smart Lock remains the site-wide admin authority.
-- Cloud Chat owns its own project users and should not store them inside Smart Lock tables.
+- Private Chat owns its own project users and should not store them inside Smart Lock tables.

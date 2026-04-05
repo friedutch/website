@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Cloud Chat — Friedutch Plus' }}</title>
+<title>{{ page_name or 'Private Chat — Friedutch Plus' }}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
 </head>
@@ -15,7 +15,7 @@
       <div class="app-brand">
         <div class="brand-icon">💬</div>
         <div>
-          <div class="brand-name">Cloud Chat</div>
+          <div class="brand-name">Private Chat</div>
           <div class="brand-sub">Friedutch Plus</div>
         </div>
       </div>
@@ -38,19 +38,112 @@
   </div>
 
   {% if app_message %}<p class="page-message page-message-ok">{{ app_message }}</p>{% endif %}
+  {% if app_error %}<p class="msg-err">{{ app_error }}</p>{% endif %}
 
   <section class="zone zone-cyan cloudchat-app-hero">
     <div class="hero">
       <div class="app-icon">☁️</div>
-      <p class="projects-label">Cloud Chat Zone</p>
+      <p class="projects-label">Private Chat Direct Messages</p>
       <h1>{{ current_user['username'] }}</h1>
-      <p>This project zone is now protected by Cloud Chat users managed from the Smart Lock admin path.</p>
+      <p>Private Chat uses private one-to-one conversations. Pick a registered user to open your direct message thread.</p>
     </div>
     <div class="cloudchat-chip-row">
       <span class="chip chip-on">Signed in</span>
       <span class="chip">{{ current_user['created_at'][:19].replace('T', ' ') }} UTC</span>
+      {% if selected_partner %}
+      <span class="chip">{{ chat_message_count }} message{{ '' if chat_message_count == 1 else 's' }} with {{ selected_partner['username'] }}</span>
+      {% else %}
+      <span class="chip">Choose a DM</span>
+      {% endif %}
     </div>
   </section>
+
+  <div class="cloudchat-chat-layout">
+    <section class="zone zone-purple cloudchat-sidebar-zone">
+      <div class="zone-title">
+        <div class="zone-title-left"><span>👥</span> <span>Registered Users</span></div>
+        <span class="zone-title-note">Private DMs</span>
+      </div>
+      {% if dm_partners %}
+      <div class="cloudchat-partner-list">
+        {% for partner in dm_partners %}
+        <a class="cloudchat-partner-card{% if partner['selected'] %} cloudchat-partner-card-selected{% endif %}" href="{{ url_for('cloud_chat_index', dm=partner['id']) }}">
+          <div class="cloudchat-partner-head">
+            <span class="chip {% if partner['selected'] %}chip-on{% endif %}">{{ partner['username'] }}</span>
+            {% if partner['latest_at'] %}
+            <span class="cloudchat-message-time">{{ partner['latest_at'] }} UTC</span>
+            {% endif %}
+          </div>
+          <p class="cloudchat-partner-preview">
+            {% if partner['latest_preview'] %}
+            {% if partner['latest_from_current'] %}You: {% endif %}{{ partner['latest_preview'] }}
+            {% else %}
+            No messages yet. Start the DM.
+            {% endif %}
+          </p>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty">
+        <div class="empty-icon">👥</div>
+        <div class="empty-text">No other active Private Chat users are available yet.</div>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="zone zone-green cloudchat-thread-zone">
+      <div class="zone-title">
+        <div class="zone-title-left"><span>💬</span> <span>{% if selected_partner %}DM with {{ selected_partner['username'] }}{% else %}Direct Messages{% endif %}</span></div>
+        {% if selected_partner %}
+        <span class="zone-title-note">Max {{ chat_message_limit }} characters</span>
+        {% endif %}
+      </div>
+      {% if selected_partner %}
+      <form class="cloudchat-message-form" method="POST" action="/cloudchat/messages/send/{{ selected_partner['id'] }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <textarea
+          class="app-input cloudchat-message-input"
+          name="message"
+          rows="5"
+          maxlength="{{ chat_message_limit }}"
+          placeholder="Write privately to {{ selected_partner['username'] }}..."
+          data-cloudchat-message-input
+        >{{ draft_message }}</textarea>
+        <div class="cloudchat-compose-footer">
+          <span class="cloudchat-compose-count" data-cloudchat-message-count>{{ (draft_message or '')|length }} / {{ chat_message_limit }}</span>
+          <button class="big-btn btn-primary" type="submit">Send DM</button>
+        </div>
+      </form>
+
+      {% if chat_messages %}
+      <div class="cloudchat-feed" data-cloudchat-feed>
+        {% for message in chat_messages %}
+        <article class="cloudchat-message-card {% if message['author_id'] == current_user['id'] %}cloudchat-message-card-own{% else %}cloudchat-message-card-peer{% endif %}">
+          <div class="cloudchat-message-meta">
+            <span class="chip {% if message['author_id'] == current_user['id'] %}chip-on{% endif %}">
+              {{ message['author_username'] }}{% if message['author_id'] == current_user['id'] %} · You{% endif %}
+            </span>
+            <span class="cloudchat-message-time">{{ message['created_at'] }} UTC</span>
+          </div>
+          <p class="cloudchat-message-body">{{ message['message_text'] }}</p>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty">
+        <div class="empty-icon">💬</div>
+        <div class="empty-text">No messages yet. Start the DM with the first private message.</div>
+      </div>
+      {% endif %}
+      {% else %}
+      <div class="empty">
+        <div class="empty-icon">💬</div>
+        <div class="empty-text">Choose a registered Private Chat user to open a direct message thread.</div>
+      </div>
+      {% endif %}
+    </section>
+  </div>
 
   <div class="cloudchat-grid">
     <section class="zone zone-purple">
@@ -64,7 +157,7 @@
         </li>
         <li>
           <span>Project</span>
-          <strong>Cloud Chat</strong>
+          <strong>Private Chat</strong>
         </li>
         <li>
           <span>Admin Path</span>
@@ -75,9 +168,9 @@
 
     <section class="zone zone-green">
       <div class="zone-title">
-        <div class="zone-title-left"><span>🧭</span> <span>Next Step</span></div>
+        <div class="zone-title-left"><span>🧭</span> <span>DM Notes</span></div>
       </div>
-      <p class="project-desc">The user and admin access model is in place. This page is the authenticated Cloud Chat landing zone where the actual chat experience can be added next.</p>
+      <p class="project-desc">Each conversation is private to its two participants. Smart Lock still controls who can access Private Chat, but message threads are no longer shared across the full user list.</p>
     </section>
   </div>
 

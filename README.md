@@ -1,7 +1,7 @@
 # Friedutch Plus
 
 ## Human Summary
-- This repo powers a personal website with a homepage plus three internal tools: Smart Lock, Cloud Storage, and Cloud Chat.
+- This repo powers a personal website with a homepage plus three internal tools: Smart Lock, Cloud Storage, and Private Chat.
 - `run.py` starts the site, `app/__init__.py` wires everything together, and each feature lives in its own project folder.
 - The site is self-hosted on macOS and restarted through a LaunchAgent when deployments happen.
 - If the site goes down, the most likely cause is the LaunchAgent-managed process not running.
@@ -14,7 +14,7 @@
 - The repo contains one main Flask app shell plus feature modules:
   - Smart Lock
   - Cloud Storage
-  - Cloud Chat
+  - Private Chat
   - Minecraft public landing page
 - Smart Lock now also includes a hardware bridge path for a real Arduino Uno lock controller:
   - a hardware API route inside the Smart Lock module
@@ -24,14 +24,14 @@
 - The about page at `/about` links to:
   - Smart Lock
   - Cloud Storage
-  - Cloud Chat
+  - Private Chat
   - Minecraft Server
 
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): Flask app factory, homepage route, deploy webhook, and project registration.
 - [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py): site-wide CSRF template helper.
-- [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py): site-wide admin-session helpers shared by Smart Lock, Cloud Storage, Cloud Chat, and Minecraft.
+- [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py): site-wide admin-session helpers shared by Smart Lock, Cloud Storage, Private Chat, and Minecraft.
 - [`AGENTS.md`](/Users/administrator/Sites/friedutchplus/AGENTS.md): repo operating guide for another AI coding agent.
 
 ### Runtime model
@@ -93,7 +93,7 @@
 - [`projects/smartlock/hardware/smartlock_serial_bridge.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/smartlock_serial_bridge.py): macOS USB-to-Smart-Lock bridge for the Arduino controller
 - [`projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino`](/Users/administrator/Sites/friedutchplus/projects/smartlock/hardware/arduino_uno_smartlock/arduino_uno_smartlock.ino): merged Arduino Uno keypad/RFID/fingerprint sketch
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py): Cloud Storage feature owner
-- [`projects/cloud_chat/cloud_chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.py): Cloud Chat feature owner
+- [`projects/cloud_chat/cloud_chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.py): Private Chat feature owner
 - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py): Minecraft landing page feature owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates): Jinja templates
 - [`static/`](/Users/administrator/Sites/friedutchplus/static): CSS and JS assets
@@ -111,7 +111,7 @@
   - [`templates/cloud_storage.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_storage.html)
   - [`static/css/pages/cloud_storage.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/cloud_storage.css)
   - [`static/js/pages/cloud_storage.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/cloud_storage.js)
-- Cloud Chat owns:
+- Private Chat owns:
   - [`projects/cloud_chat/cloud_chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.py)
   - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
   - [`templates/cloud_chat_login.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_login.html)
@@ -132,24 +132,27 @@
   - uploaded files stay available until manually deleted
   - large uploads use chunked background requests instead of one giant blocking form post
   - file contents live outside the repo in `CLOUD_STORAGE_ROOT`
-- Cloud Chat is a project-specific private zone:
-  - Cloud Chat users sign in with a username and password at `/cloudchat/`
+- Private Chat is a project-specific private zone:
+  - Private Chat users sign in with a username and password at `/cloudchat/`
+  - signed-in Private Chat users can open private one-to-one DM threads with other registered Private Chat users
   - the `Admin login` path on that screen leads to Smart Lock admin-managed user administration
   - created and reset passwords are shown once in the immediate admin response, then only stored as hashes
   - that one-time reveal response is marked `no-store`
-  - Cloud Chat now requires at least 12 characters for new or reset passwords
+  - Private Chat now requires at least 12 characters for new or reset passwords
   - repeated failed login attempts are throttled per username and client IP
-  - Cloud Chat users live in their own database table instead of reusing Smart Lock users
+  - Private Chat users live in their own database table instead of reusing Smart Lock users
 
 ### Databases
 - Smart Lock database:
   - [`projects/smartlock/smartlock.db`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.db)
 - Cloud Storage database:
   - [`projects/cloud_storage/cloud_storage.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.db)
-- Cloud Chat database:
+- Private Chat database:
   - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
 - These are SQLite files committed/used as local runtime state.
-- Cloud Chat now uses a second internal table for login-attempt throttling in the same database.
+- Private Chat now uses a second internal table for login-attempt throttling in the same database.
+- Private Chat also stores direct messages in the same project database.
+- Private Chat message rows now represent private direct messages rather than a single shared room.
 - Do not rename or migrate DB tables casually. There are already legacy names in use, especially in Smart Lock.
 
 ### Environment variables

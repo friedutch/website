@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("cloudchat-user-search");
   const userCards = Array.from(document.querySelectorAll("[data-cloudchat-user-card]"));
   const emptyState = document.getElementById("cloudchat-user-search-empty");
+  const messageInput = document.querySelector("[data-cloudchat-message-input]");
+  const messageCount = document.querySelector("[data-cloudchat-message-count]");
+  const chatFeed = document.querySelector("[data-cloudchat-feed]");
   const passwordPreviewInput = document.querySelector("[data-password-preview-input]");
   const passwordPreviewToggle = document.querySelector("[data-password-preview-toggle]");
   const passwordPreviewCopy = document.querySelector("[data-password-preview-copy]");
@@ -29,6 +32,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1400);
       }
     });
+  }
+
+  if (messageInput && messageCount) {
+    const syncMessageCount = function () {
+      const limit = Number(messageInput.getAttribute("maxlength") || "0");
+      const used = messageInput.value.length;
+      messageCount.textContent = used + " / " + limit;
+    };
+
+    messageInput.addEventListener("input", syncMessageCount);
+    syncMessageCount();
+  }
+
+  if (chatFeed) {
+    chatFeed.scrollTop = chatFeed.scrollHeight;
   }
 
   if (!searchInput || !userCards.length) {

@@ -3,7 +3,7 @@
 ## Human Summary
 - This file tells an AI coding agent how to safely operate inside the Friedutch Plus repo.
 - Read this first, then read the feature README for the area you are changing.
-- The app is a self-hosted personal Flask site with three internal tools: Smart Lock, Cloud Storage, and Cloud Chat.
+- The app is a self-hosted personal Flask site with three internal tools: Smart Lock, Cloud Storage, and Private Chat.
 - The app also contains a public Minecraft landing page module.
 
 ## AI Copilot
@@ -13,7 +13,7 @@
 2. Read [`README.md`](/Users/administrator/Sites/friedutchplus/README.md).
 3. If touching Smart Lock, read [`projects/smartlock/README.md`](/Users/administrator/Sites/friedutchplus/projects/smartlock/README.md).
 4. If touching Cloud Storage, read [`projects/cloud_storage/README.md`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/README.md).
-5. If touching Cloud Chat, read [`projects/cloud_chat/README.md`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/README.md).
+5. If touching Private Chat, read [`projects/cloud_chat/README.md`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/README.md).
 6. If touching Minecraft, read [`projects/minecraft/README.md`](/Users/administrator/Sites/friedutchplus/projects/minecraft/README.md).
 
 ### Primary goals
@@ -50,7 +50,7 @@
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
   - Cloud Storage owner
 - [`projects/cloud_chat/cloud_chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.py)
-  - Cloud Chat owner
+  - Private Chat owner
 - [`projects/minecraft/minecraft.py`](/Users/administrator/Sites/friedutchplus/projects/minecraft/minecraft.py)
   - Minecraft landing page owner
 - [`templates/`](/Users/administrator/Sites/friedutchplus/templates)
@@ -69,7 +69,7 @@
   - [`templates/cloud_storage.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_storage.html)
   - [`static/css/pages/cloud_storage.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/cloud_storage.css)
   - [`static/js/pages/cloud_storage.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/cloud_storage.js)
-- Cloud Chat owns:
+- Private Chat owns:
   - [`projects/cloud_chat/`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat)
   - [`templates/cloud_chat_login.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_login.html)
   - [`templates/cloud_chat_app.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_app.html)
@@ -122,7 +122,7 @@
 
 ### Commands another AI will likely need
 - Validate Python syntax:
-  - `python3 -m py_compile run.py app/*.py projects/smartlock/*.py projects/cloud_storage/cloud_storage.py projects/minecraft/minecraft.py`
+  - `python3 -m py_compile run.py app/*.py projects/smartlock/*.py projects/cloud_storage/cloud_storage.py projects/cloud_chat/cloud_chat.py projects/minecraft/minecraft.py`
 - Inspect changed files:
   - `git status --short`
   - `git diff -- <paths>`

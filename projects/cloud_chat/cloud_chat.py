@@ -14,6 +14,8 @@ USERNAME_MAX_LENGTH = 32
 PASSWORD_MIN_LENGTH = 12
 MAX_LOGIN_ATTEMPTS = 5
 LOGIN_LOCKOUT_SECONDS = 900
+CHAT_MESSAGE_MAX_LENGTH = 2000
+CHAT_THREAD_LIMIT = 120
 
 
 def _get_db():
@@ -43,6 +45,26 @@ def init_cloud_chat_db():
         locked_until TEXT,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )"""
+    )
+    db.execute(
+        """CREATE TABLE IF NOT EXISTS cloud_chat_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        recipient_user_id INTEGER,
+        message_text TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES cloud_chat_users(id),
+        FOREIGN KEY(recipient_user_id) REFERENCES cloud_chat_users(id)
+    )"""
+    )
+    existing_columns = {row[1] for row in db.execute("PRAGMA table_info(cloud_chat_messages)").fetchall()}
+    if "recipient_user_id" not in existing_columns:
+        db.execute("ALTER TABLE cloud_chat_messages ADD COLUMN recipient_user_id INTEGER")
+    db.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_cloud_chat_messages_thread
+        ON cloud_chat_messages (user_id, recipient_user_id, id)
+        """
     )
     db.commit()
     db.close()
@@ -154,6 +176,12 @@ def _reset_failed_login(username):
         db.close()
 
 
+def _normalize_message_text(raw_value):
+    value = (raw_value or "").replace("\r\n", "\n").replace("\r", "\n").strip()
+    value = "\n".join(line.rstrip() for line in value.split("\n"))
+    return value[:CHAT_MESSAGE_MAX_LENGTH]
+
+
 def _get_current_user():
     user_id = session.get("cloudchat_user_id")
     if not user_id:
@@ -178,22 +206,166 @@ def _get_current_user():
     return row
 
 
+def _require_cloud_chat_user():
+    user = _get_current_user()
+    if user:
+        return user, None
+    session["cloudchat_login_error"] = "Sign in to continue in Private Chat."
+    return None, redirect(url_for("cloud_chat_index"))
+
+
+def _get_active_chat_user(user_id):
+    if not user_id:
+        return None
+    db = _get_db()
+    try:
+        return db.execute(
+            """
+            SELECT id, username, is_active, created_at
+            FROM cloud_chat_users
+            WHERE id = ? AND is_active = 1
+            """,
+            (user_id,),
+        ).fetchone()
+    finally:
+        db.close()
+
+
+def _list_dm_partners(current_user_id):
+    db = _get_db()
+    try:
+        rows = db.execute(
+            """
+            SELECT id, username, created_at
+            FROM cloud_chat_users
+            WHERE is_active = 1 AND id != ?
+            ORDER BY username COLLATE NOCASE ASC, id ASC
+            """,
+            (current_user_id,),
+        ).fetchall()
+    finally:
+        db.close()
+
+    partners = []
+    for row in rows:
+        db = _get_db()
+        try:
+            latest = db.execute(
+                """
+                SELECT message_text, created_at, user_id
+                FROM cloud_chat_messages
+                WHERE recipient_user_id IS NOT NULL
+                  AND (
+                    (user_id = ? AND recipient_user_id = ?)
+                    OR
+                    (user_id = ? AND recipient_user_id = ?)
+                  )
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (current_user_id, row["id"], row["id"], current_user_id),
+            ).fetchone()
+        finally:
+            db.close()
+
+        preview = ""
+        latest_at = ""
+        latest_from_current = False
+        if latest:
+            preview = latest["message_text"][:72]
+            latest_at = latest["created_at"][:19].replace("T", " ")
+            latest_from_current = latest["user_id"] == current_user_id
+
+        partners.append(
+            {
+                "id": row["id"],
+                "username": row["username"],
+                "created_at": row["created_at"][:19].replace("T", " "),
+                "latest_preview": preview,
+                "latest_at": latest_at,
+                "latest_from_current": latest_from_current,
+            }
+        )
+    return partners
+
+
+def _select_dm_partner(current_user_id, requested_partner_id):
+    partners = _list_dm_partners(current_user_id)
+    partner = None
+    if requested_partner_id:
+        partner = next((item for item in partners if item["id"] == requested_partner_id), None)
+    if partner is None and partners:
+        partner = partners[0]
+    for item in partners:
+        item["selected"] = bool(partner and item["id"] == partner["id"])
+    return partner, partners
+
+
+def _list_dm_messages(current_user_id, partner_id, limit=CHAT_THREAD_LIMIT):
+    if not partner_id:
+        return []
+
+    db = _get_db()
+    try:
+        rows = db.execute(
+            """
+            SELECT messages.id, messages.message_text, messages.created_at,
+                   messages.user_id AS author_id, author.username AS author_username
+            FROM cloud_chat_messages AS messages
+            JOIN cloud_chat_users AS author ON author.id = messages.user_id
+            WHERE messages.recipient_user_id IS NOT NULL
+              AND (
+                (messages.user_id = ? AND messages.recipient_user_id = ?)
+                OR
+                (messages.user_id = ? AND messages.recipient_user_id = ?)
+              )
+            ORDER BY messages.id DESC
+            LIMIT ?
+            """,
+            (current_user_id, partner_id, partner_id, current_user_id, max(1, min(limit, 200))),
+        ).fetchall()
+    finally:
+        db.close()
+
+    messages = []
+    for row in reversed(rows):
+        messages.append(
+            {
+                "id": row["id"],
+                "message_text": row["message_text"],
+                "created_at": row["created_at"][:19].replace("T", " "),
+                "author_id": row["author_id"],
+                "author_username": row["author_username"],
+            }
+        )
+    return messages
+
+
 def _render_cloud_chat_login(error=None):
     return render_page(
         "cloud_chat_login.html",
-        page_name="Cloud Chat — Login",
+        page_name="Private Chat — Login",
         error=error or _pop_notice("cloudchat_login_error"),
         admin_logged_in=is_site_admin(),
         noindex=True,
     )
 
 
-def _render_cloud_chat_app(user):
+def _render_cloud_chat_app(user, error=None, draft_message="", requested_partner_id=None):
+    selected_partner, partners = _select_dm_partner(user["id"], requested_partner_id)
+    messages = _list_dm_messages(user["id"], selected_partner["id"] if selected_partner else None)
     return render_page(
         "cloud_chat_app.html",
-        page_name="Cloud Chat — Friedutch Plus",
+        page_name="Private Chat — Friedutch Plus",
         current_user=user,
         app_message=_pop_notice("cloudchat_app_message"),
+        app_error=error,
+        draft_message=draft_message,
+        dm_partners=partners,
+        selected_partner=selected_partner,
+        chat_messages=messages,
+        chat_message_limit=CHAT_MESSAGE_MAX_LENGTH,
+        chat_message_count=len(messages),
         can_manage=is_site_admin(),
         noindex=True,
     )
@@ -229,7 +401,7 @@ def _render_cloud_chat_admin(error=None, username_value="", admin_message=None, 
     response = make_response(
         render_page(
         "cloud_chat_admin.html",
-        page_name="Cloud Chat — Admin",
+        page_name="Private Chat — Admin",
         users=_list_cloud_chat_users(),
         admin_message=admin_message if admin_message is not None else _pop_notice("cloudchat_admin_message"),
         password_preview=password_preview,
@@ -269,7 +441,8 @@ def init_cloud_chat(app):
     def cloud_chat_index():
         user = _get_current_user()
         if user:
-            return _render_cloud_chat_app(user)
+            requested_partner_id = request.args.get("dm", type=int)
+            return _render_cloud_chat_app(user, requested_partner_id=requested_partner_id)
         return _render_cloud_chat_login()
 
     @app.route("/cloudchat/login", methods=["POST"])
@@ -297,7 +470,7 @@ def init_cloud_chat(app):
 
         if not row or not row["is_active"] or not check_password_hash(row["password_hash"], password):
             _record_failed_login(username)
-            return _render_cloud_chat_login(error="Invalid Cloud Chat credentials.")
+            return _render_cloud_chat_login(error="Invalid Private Chat credentials.")
 
         _reset_failed_login(username)
         session["cloudchat_user_id"] = row["id"]
@@ -308,8 +481,43 @@ def init_cloud_chat(app):
     @app.route("/cloudchat/logout", methods=["POST"])
     def cloud_chat_logout():
         _clear_cloud_chat_session()
-        session["cloudchat_login_error"] = "You have been logged out of Cloud Chat."
+        session["cloudchat_login_error"] = "You have been logged out of Private Chat."
         return redirect(url_for("cloud_chat_index"))
+
+    @app.route("/cloudchat/messages/send/<int:partner_id>", methods=["POST"])
+    def cloud_chat_send_message(partner_id):
+        user, redirect_response = _require_cloud_chat_user()
+        if redirect_response:
+            return redirect_response
+
+        if partner_id == user["id"]:
+            return _render_cloud_chat_app(user, error="You cannot open a direct message with yourself.")
+
+        partner = _get_active_chat_user(partner_id)
+        if not partner:
+            return _render_cloud_chat_app(user, error="That Private Chat user is unavailable for direct messages.")
+
+        message_text = _normalize_message_text(request.form.get("message", ""))
+        if not message_text:
+            return _render_cloud_chat_app(
+                user,
+                error="Write a message before sending it.",
+                draft_message=request.form.get("message", ""),
+                requested_partner_id=partner_id,
+            )
+
+        db = _get_db()
+        db.execute(
+            """
+            INSERT INTO cloud_chat_messages (user_id, recipient_user_id, message_text)
+            VALUES (?, ?, ?)
+            """,
+            (user["id"], partner_id, message_text),
+        )
+        db.commit()
+        db.close()
+        session["cloudchat_app_message"] = f"Message sent to {partner['username']}."
+        return redirect(url_for("cloud_chat_index", dm=partner_id))
 
     @app.route("/cloudchat/admin")
     def cloud_chat_admin():
@@ -350,12 +558,12 @@ def init_cloud_chat(app):
         except sqlite3.IntegrityError:
             db.close()
             return _render_cloud_chat_admin(
-                error="That Cloud Chat username already exists.",
+                error="That Private Chat username already exists.",
                 username_value=username,
             )
         db.close()
         return _render_cloud_chat_admin(
-            admin_message=f"Created Cloud Chat user {username}.",
+            admin_message=f"Created Private Chat user {username}.",
             password_preview={
                 "username": username,
                 "password": password,
@@ -439,5 +647,5 @@ def init_cloud_chat(app):
         if session.get("cloudchat_user_id") == user_id:
             _clear_cloud_chat_session()
 
-        session["cloudchat_admin_message"] = f"Deleted {user['username']} from Cloud Chat."
+        session["cloudchat_admin_message"] = f"Deleted {user['username']} from Private Chat."
         return redirect(url_for("cloud_chat_admin"))
