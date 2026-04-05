@@ -1,7 +1,7 @@
 # Private Chat
 
 ## Human Summary
-- Private Chat is a private username/password project zone under `/cloudchat/`.
+- Private Chat is a private username/password project zone under `/privatechat/`.
 - Private Chat users are specific to this project and are managed by a Smart Lock admin.
 - The Private Chat login screen has a normal user login plus an admin path for managing users.
 
@@ -17,10 +17,11 @@
 - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
 
 ### Purpose
-- Provide a dedicated `/cloudchat/` zone with project-specific username/password accounts.
+- Provide a dedicated `/privatechat/` zone with project-specific username/password accounts.
 - Keep Private Chat account management inside the Private Chat project instead of reusing Smart Lock users directly.
 - Require a Smart Lock admin session for Private Chat user administration.
 - Provide private authenticated direct messages for signed-in Private Chat users.
+- Keep the selected DM thread updating live while both participants are signed in.
 
 ### Access model
 - Regular Private Chat users sign in with:
@@ -28,7 +29,7 @@
   - password
 - Private Chat admin access is separate:
   - the `Admin login` path uses the existing Smart Lock admin session
-  - the Private Chat admin screen is under `/cloudchat/admin`
+  - the Private Chat admin screen is under `/privatechat/admin`
 - New and reset passwords are revealed only in the immediate admin response and are not shown again later.
 - Private Chat user accounts only apply to the Private Chat project zone.
 
@@ -37,24 +38,26 @@
 - It is registered by calling `init_cloud_chat(app)` from [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py).
 
 ### Routes
-- `/cloudchat/`
+- `/privatechat/`
   - login screen for Private Chat users
   - logged-in direct-message view for active Private Chat users
-- `POST /cloudchat/login`
+- `POST /privatechat/login`
   - username/password login
-- `POST /cloudchat/logout`
+- `POST /privatechat/logout`
   - logout the current Private Chat user session
-- `POST /cloudchat/messages/send/<int:partner_id>`
+- `POST /privatechat/messages/send/<int:partner_id>`
   - post a new direct message to the selected Private Chat user
-- `/cloudchat/admin`
+- `/privatechat/messages/live/<int:partner_id>`
+  - return the currently selected DM thread as authenticated no-store JSON for live refresh
+- `/privatechat/admin`
   - Smart Lock admin-only user management screen
-- `POST /cloudchat/admin/users/create`
+- `POST /privatechat/admin/users/create`
   - create a Private Chat user
-- `POST /cloudchat/admin/users/password/<int:user_id>`
+- `POST /privatechat/admin/users/password/<int:user_id>`
   - reset a Private Chat user's password
-- `POST /cloudchat/admin/users/toggle/<int:user_id>`
+- `POST /privatechat/admin/users/toggle/<int:user_id>`
   - disable or re-enable a Private Chat user
-- `POST /cloudchat/admin/users/delete/<int:user_id>`
+- `POST /privatechat/admin/users/delete/<int:user_id>`
   - delete a Private Chat user
 
 ### Database table
@@ -71,7 +74,8 @@
 - The one-time password reveal is rendered directly in the admin response and marked `Cache-Control: no-store`.
 - Private Chat requires at least 12 characters for newly created or reset passwords.
 - Private Chat login attempts are throttled per username and client IP after repeated failures.
-- Direct messages are posted through normal CSRF-protected form submissions inside the authenticated `/cloudchat/` zone.
+- Direct messages are posted through normal CSRF-protected form submissions inside the authenticated `/privatechat/` zone.
+- Live DM polling stays same-origin, authenticated, and marked `no-store`.
 - Private Chat admin actions are POST-only and CSRF-protected.
 - Private Chat private pages should remain `noindex`.
 

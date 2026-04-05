@@ -2,7 +2,7 @@ import datetime
 import os
 import sqlite3
 
-from flask import abort, make_response, redirect, request, session, url_for
+from flask import abort, jsonify, make_response, redirect, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.rendering import render_page
@@ -341,6 +341,13 @@ def _list_dm_messages(current_user_id, partner_id, limit=CHAT_THREAD_LIMIT):
     return messages
 
 
+def _json_no_store(payload, status=200):
+    response = make_response(jsonify(payload), status)
+    response.headers["Cache-Control"] = "no-store, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    return response
+
+
 def _render_cloud_chat_login(error=None):
     return render_page(
         "cloud_chat_login.html",
@@ -438,6 +445,13 @@ def _require_cloud_chat_admin_user(user_id):
 
 def init_cloud_chat(app):
     @app.route("/cloudchat/")
+    def legacy_cloud_chat_index():
+        requested_partner_id = request.args.get("dm", type=int)
+        if requested_partner_id:
+            return redirect(url_for("cloud_chat_index", dm=requested_partner_id), code=302)
+        return redirect(url_for("cloud_chat_index"), code=302)
+
+    @app.route("/privatechat/")
     def cloud_chat_index():
         user = _get_current_user()
         if user:
@@ -446,6 +460,7 @@ def init_cloud_chat(app):
         return _render_cloud_chat_login()
 
     @app.route("/cloudchat/login", methods=["POST"])
+    @app.route("/privatechat/login", methods=["POST"])
     def cloud_chat_login():
         username = _normalize_username(request.form.get("username", ""))
         password = request.form.get("password", "")
@@ -479,12 +494,14 @@ def init_cloud_chat(app):
         return redirect(url_for("cloud_chat_index"))
 
     @app.route("/cloudchat/logout", methods=["POST"])
+    @app.route("/privatechat/logout", methods=["POST"])
     def cloud_chat_logout():
         _clear_cloud_chat_session()
         session["cloudchat_login_error"] = "You have been logged out of Private Chat."
         return redirect(url_for("cloud_chat_index"))
 
     @app.route("/cloudchat/messages/send/<int:partner_id>", methods=["POST"])
+    @app.route("/privatechat/messages/send/<int:partner_id>", methods=["POST"])
     def cloud_chat_send_message(partner_id):
         user, redirect_response = _require_cloud_chat_user()
         if redirect_response:
@@ -519,7 +536,39 @@ def init_cloud_chat(app):
         session["cloudchat_app_message"] = f"Message sent to {partner['username']}."
         return redirect(url_for("cloud_chat_index", dm=partner_id))
 
+    @app.route("/cloudchat/messages/live/<int:partner_id>")
+    @app.route("/privatechat/messages/live/<int:partner_id>")
+    def cloud_chat_live_messages(partner_id):
+        user = _get_current_user()
+        if not user:
+            return _json_no_store({"error": "auth_required"}, status=401)
+
+        if partner_id == user["id"]:
+            return _json_no_store({"error": "invalid_partner"}, status=400)
+
+        partner = _get_active_chat_user(partner_id)
+        if not partner:
+            return _json_no_store({"error": "partner_unavailable"}, status=404)
+
+        messages = _list_dm_messages(user["id"], partner_id)
+        latest_message_id = messages[-1]["id"] if messages else 0
+        return _json_no_store(
+            {
+                "messages": messages,
+                "message_count": len(messages),
+                "latest_message_id": latest_message_id,
+                "partner": {
+                    "id": partner["id"],
+                    "username": partner["username"],
+                },
+            }
+        )
+
     @app.route("/cloudchat/admin")
+    def legacy_cloud_chat_admin():
+        return redirect(url_for("cloud_chat_admin"), code=302)
+
+    @app.route("/privatechat/admin")
     def cloud_chat_admin():
         admin_redirect = require_site_admin()
         if admin_redirect:
@@ -527,6 +576,7 @@ def init_cloud_chat(app):
         return _render_cloud_chat_admin()
 
     @app.route("/cloudchat/admin/users/create", methods=["POST"])
+    @app.route("/privatechat/admin/users/create", methods=["POST"])
     def cloud_chat_create_user():
         admin_redirect = require_site_admin()
         if admin_redirect:
@@ -572,6 +622,7 @@ def init_cloud_chat(app):
         )
 
     @app.route("/cloudchat/admin/users/password/<int:user_id>", methods=["POST"])
+    @app.route("/privatechat/admin/users/password/<int:user_id>", methods=["POST"])
     def cloud_chat_reset_user_password(user_id):
         admin_redirect = require_site_admin()
         if admin_redirect:
@@ -605,6 +656,7 @@ def init_cloud_chat(app):
         )
 
     @app.route("/cloudchat/admin/users/toggle/<int:user_id>", methods=["POST"])
+    @app.route("/privatechat/admin/users/toggle/<int:user_id>", methods=["POST"])
     def cloud_chat_toggle_user(user_id):
         admin_redirect = require_site_admin()
         if admin_redirect:
@@ -633,6 +685,7 @@ def init_cloud_chat(app):
         return redirect(url_for("cloud_chat_admin"))
 
     @app.route("/cloudchat/admin/users/delete/<int:user_id>", methods=["POST"])
+    @app.route("/privatechat/admin/users/delete/<int:user_id>", methods=["POST"])
     def cloud_chat_delete_user(user_id):
         admin_redirect = require_site_admin()
         if admin_redirect:

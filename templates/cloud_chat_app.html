@@ -21,9 +21,9 @@
       </div>
       <div class="top-right">
         {% if can_manage %}
-        <a class="sm-btn sm-ghost" href="/cloudchat/admin">Manage users</a>
+        <a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_admin') }}">Manage users</a>
         {% endif %}
-        <form method="POST" action="/cloudchat/logout" class="contents-form">
+        <form method="POST" action="{{ url_for('cloud_chat_logout') }}" class="contents-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="sm-btn sm-cyan" type="submit">Log out</button>
         </form>
@@ -45,13 +45,12 @@
       <div class="app-icon">☁️</div>
       <p class="projects-label">Private Chat Direct Messages</p>
       <h1>{{ current_user['username'] }}</h1>
-      <p>Private Chat uses private one-to-one conversations. Pick a registered user to open your direct message thread.</p>
     </div>
     <div class="cloudchat-chip-row">
       <span class="chip chip-on">Signed in</span>
       <span class="chip">{{ current_user['created_at'][:19].replace('T', ' ') }} UTC</span>
       {% if selected_partner %}
-      <span class="chip">{{ chat_message_count }} message{{ '' if chat_message_count == 1 else 's' }} with {{ selected_partner['username'] }}</span>
+      <span class="chip" data-cloudchat-thread-count>{{ chat_message_count }} message{{ '' if chat_message_count == 1 else 's' }} with {{ selected_partner['username'] }}</span>
       {% else %}
       <span class="chip">Choose a DM</span>
       {% endif %}
@@ -100,7 +99,7 @@
         {% endif %}
       </div>
       {% if selected_partner %}
-      <form class="cloudchat-message-form" method="POST" action="/cloudchat/messages/send/{{ selected_partner['id'] }}">
+      <form class="cloudchat-message-form" method="POST" action="{{ url_for('cloud_chat_send_message', partner_id=selected_partner['id']) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <textarea
           class="app-input cloudchat-message-input"
@@ -116,26 +115,46 @@
         </div>
       </form>
 
-      {% if chat_messages %}
-      <div class="cloudchat-feed" data-cloudchat-feed>
-        {% for message in chat_messages %}
-        <article class="cloudchat-message-card {% if message['author_id'] == current_user['id'] %}cloudchat-message-card-own{% else %}cloudchat-message-card-peer{% endif %}">
-          <div class="cloudchat-message-meta">
-            <span class="chip {% if message['author_id'] == current_user['id'] %}chip-on{% endif %}">
-              {{ message['author_username'] }}{% if message['author_id'] == current_user['id'] %} · You{% endif %}
-            </span>
-            <span class="cloudchat-message-time">{{ message['created_at'] }} UTC</span>
-          </div>
-          <p class="cloudchat-message-body">{{ message['message_text'] }}</p>
-        </article>
-        {% endfor %}
+      <div
+        class="cloudchat-thread-shell"
+        data-cloudchat-thread
+        data-cloudchat-live-url="{{ url_for('cloud_chat_live_messages', partner_id=selected_partner['id']) }}"
+        data-cloudchat-current-user-id="{{ current_user['id'] }}"
+        data-cloudchat-partner-name="{{ selected_partner['username'] }}"
+        data-cloudchat-last-message-id="{{ chat_messages[-1]['id'] if chat_messages else 0 }}"
+      >
+        <div class="cloudchat-feed" data-cloudchat-feed>
+          {% if chat_messages %}
+          {% set thread = namespace(last_author_id=None) %}
+          {% for message in chat_messages %}
+          {% set compact = thread.last_author_id == message['author_id'] %}
+          <article
+            class="cloudchat-message-row{% if message['author_id'] == current_user['id'] %} cloudchat-message-row-own{% else %} cloudchat-message-row-peer{% endif %}{% if compact %} cloudchat-message-row-compact{% endif %}"
+            data-message-id="{{ message['id'] }}"
+            data-author-id="{{ message['author_id'] }}"
+          >
+            <div class="cloudchat-message-avatar" aria-hidden="true">
+              {{ ('Y' if message['author_id'] == current_user['id'] else message['author_username'][:1])|upper }}
+            </div>
+            <div class="cloudchat-message-content">
+              {% if not compact %}
+              <div class="cloudchat-message-head">
+                <span class="cloudchat-message-author">
+                  {{ message['author_username'] }}{% if message['author_id'] == current_user['id'] %} · You{% endif %}
+                </span>
+                <span class="cloudchat-message-time">{{ message['created_at'] }} UTC</span>
+              </div>
+              {% endif %}
+              <p class="cloudchat-message-body">{{ message['message_text'] }}</p>
+            </div>
+          </article>
+          {% set thread.last_author_id = message['author_id'] %}
+          {% endfor %}
+          {% else %}
+          <div class="cloudchat-thread-empty" data-cloudchat-thread-empty>No messages yet. Start the DM.</div>
+          {% endif %}
+        </div>
       </div>
-      {% else %}
-      <div class="empty">
-        <div class="empty-icon">💬</div>
-        <div class="empty-text">No messages yet. Start the DM with the first private message.</div>
-      </div>
-      {% endif %}
       {% else %}
       <div class="empty">
         <div class="empty-icon">💬</div>
@@ -164,13 +183,6 @@
           <strong>{{ 'Available' if can_manage else 'Smart Lock required' }}</strong>
         </li>
       </ul>
-    </section>
-
-    <section class="zone zone-green">
-      <div class="zone-title">
-        <div class="zone-title-left"><span>🧭</span> <span>DM Notes</span></div>
-      </div>
-      <p class="project-desc">Each conversation is private to its two participants. Smart Lock still controls who can access Private Chat, but message threads are no longer shared across the full user list.</p>
     </section>
   </div>
 

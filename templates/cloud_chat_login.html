@@ -36,7 +36,6 @@
         <div class="app-icon">☁️</div>
         <p class="projects-label">Private Chat</p>
         <h1>Private project access with its own users.</h1>
-        <p>Sign in with a Private Chat username and password, or use the admin path to manage project users through Smart Lock.</p>
       </div>
       <div class="cloudchat-chip-row">
         <span class="chip chip-on">Project-specific accounts</span>
@@ -46,7 +45,7 @@
 
     <section class="zone zone-pink cloudchat-login-zone">
       <p class="projects-label">User Login</p>
-      <form class="cloudchat-auth-form" method="POST" action="/cloudchat/login">
+      <form class="cloudchat-auth-form" method="POST" action="{{ url_for('cloud_chat_login') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="cloudchat-field">
           <span class="cloudchat-field-label">Username</span>
@@ -60,10 +59,9 @@
       </form>
 
       <div class="cloudchat-divider"><span>Admin</span></div>
-      <a class="sm-btn sm-ghost cloudchat-admin-link" href="/cloudchat/admin">
+      <a class="sm-btn sm-ghost cloudchat-admin-link" href="{{ url_for('cloud_chat_admin') }}">
         {{ 'Manage users' if admin_logged_in else 'Admin login' }}
       </a>
-      <p class="page-sub">Use Smart Lock admin access to create, disable, delete, and reset Private Chat users.</p>
 
       {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
     </section>

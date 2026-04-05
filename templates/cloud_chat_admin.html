@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="top-right">
-        <a class="sm-btn sm-ghost" href="/cloudchat/">Private Chat</a>
+        <a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_index') }}">Private Chat</a>
         <form method="POST" action="/smartlock/logout" class="contents-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="sm-btn sm-ghost" type="submit" data-confirm="Log out of Smart Lock">Admin out</button>
@@ -36,7 +36,6 @@
     <div class="zone-title">
       <div class="zone-title-left"><span>🔐</span> <span>One-Time Password</span></div>
     </div>
-    <p class="project-desc">This password is shown only once, immediately after the account was {{ password_preview['action'] }}. Save it now.</p>
     <div class="cloudchat-preview-meta">
       <span class="chip chip-on">User {{ password_preview['username'] }}</span>
       <span class="chip">One-time reveal</span>
@@ -54,8 +53,7 @@
       <div class="zone-title">
         <div class="zone-title-left"><span>➕</span> <span>Create User</span></div>
       </div>
-      <p class="project-desc">Create project-specific Private Chat accounts here. These credentials only apply inside the `/cloudchat/` zone.</p>
-      <form class="cloudchat-admin-form" method="POST" action="/cloudchat/admin/users/create">
+      <form class="cloudchat-admin-form" method="POST" action="{{ url_for('cloud_chat_create_user') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="cloudchat-field">
           <span class="cloudchat-field-label">Username</span>
@@ -114,20 +112,20 @@
         </div>
 
         <div class="cloudchat-user-actions">
-          <form method="POST" action="/cloudchat/admin/users/toggle/{{ user.id }}" class="contents-form">
+          <form method="POST" action="{{ url_for('cloud_chat_toggle_user', user_id=user.id) }}" class="contents-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="sm-btn {{ 'sm-ghost' if user.is_active else 'sm-cyan' }}" type="submit">
               {{ 'Disable' if user.is_active else 'Re-enable' }}
             </button>
           </form>
 
-          <form method="POST" action="/cloudchat/admin/users/password/{{ user.id }}" class="cloudchat-reset-form">
+          <form method="POST" action="{{ url_for('cloud_chat_reset_user_password', user_id=user.id) }}" class="cloudchat-reset-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input class="app-input" type="password" name="password" placeholder="New password ({{ password_min_length }}+ chars)" minlength="{{ password_min_length }}" required>
             <button class="sm-btn sm-cyan" type="submit">Reset password</button>
           </form>
 
-          <form method="POST" action="/cloudchat/admin/users/delete/{{ user.id }}" class="contents-form">
+          <form method="POST" action="{{ url_for('cloud_chat_delete_user', user_id=user.id) }}" class="contents-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="sm-btn action-btn-danger" type="submit" data-confirm="Delete {{ user.username }} from Private Chat">Delete</button>
           </form>

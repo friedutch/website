@@ -133,8 +133,9 @@
   - large uploads use chunked background requests instead of one giant blocking form post
   - file contents live outside the repo in `CLOUD_STORAGE_ROOT`
 - Private Chat is a project-specific private zone:
-  - Private Chat users sign in with a username and password at `/cloudchat/`
+  - Private Chat users sign in with a username and password at `/privatechat/`
   - signed-in Private Chat users can open private one-to-one DM threads with other registered Private Chat users
+  - the open DM thread now refreshes live for signed-in participants
   - the `Admin login` path on that screen leads to Smart Lock admin-managed user administration
   - created and reset passwords are shown once in the immediate admin response, then only stored as hashes
   - that one-time reveal response is marked `no-store`
