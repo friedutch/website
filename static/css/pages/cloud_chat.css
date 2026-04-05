@@ -75,6 +75,25 @@
   margin-bottom: 14px;
 }
 
+.cloudchat-password-preview-zone {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.cloudchat-preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cloudchat-preview-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+}
+
 .cloudchat-user-card {
   display: grid;
   gap: 14px;
@@ -87,6 +106,7 @@
 }
 
 @media (max-width: 720px) {
+  .cloudchat-preview-row,
   .cloudchat-reset-form {
     grid-template-columns: 1fr;
   }

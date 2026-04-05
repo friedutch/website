@@ -2,6 +2,34 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("cloudchat-user-search");
   const userCards = Array.from(document.querySelectorAll("[data-cloudchat-user-card]"));
   const emptyState = document.getElementById("cloudchat-user-search-empty");
+  const passwordPreviewInput = document.querySelector("[data-password-preview-input]");
+  const passwordPreviewToggle = document.querySelector("[data-password-preview-toggle]");
+  const passwordPreviewCopy = document.querySelector("[data-password-preview-copy]");
+
+  if (passwordPreviewInput && passwordPreviewToggle) {
+    passwordPreviewToggle.addEventListener("click", function () {
+      const revealing = passwordPreviewInput.type === "text";
+      passwordPreviewInput.type = revealing ? "password" : "text";
+      passwordPreviewToggle.textContent = revealing ? "Reveal" : "Hide";
+    });
+  }
+
+  if (passwordPreviewInput && passwordPreviewCopy) {
+    passwordPreviewCopy.addEventListener("click", async function () {
+      try {
+        await window.navigator.clipboard.writeText(passwordPreviewInput.value);
+        passwordPreviewCopy.textContent = "Copied";
+        window.setTimeout(function () {
+          passwordPreviewCopy.textContent = "Copy";
+        }, 1400);
+      } catch (error) {
+        passwordPreviewCopy.textContent = "Copy failed";
+        window.setTimeout(function () {
+          passwordPreviewCopy.textContent = "Copy";
+        }, 1400);
+      }
+    });
+  }
 
   if (!searchInput || !userCards.length) {
     return;

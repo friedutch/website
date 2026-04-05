@@ -99,6 +99,9 @@ def create_app():
     def deploy():
         sig = request.headers.get("X-Hub-Signature-256", "")
         secret = os.getenv("GITHUB_WEBHOOK_SECRET", "").encode()
+        if not secret:
+            flask_app.logger.error("Deploy webhook rejected because GITHUB_WEBHOOK_SECRET is missing.")
+            return jsonify({"error": "deploy unavailable"}), 503
         body = request.get_data()
         expected = "sha256=" + hmac.new(secret, body, "sha256").hexdigest()
         if not hmac.compare_digest(sig, expected):

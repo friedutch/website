@@ -59,6 +59,8 @@
 
 ### Security notes
 - Passwords are stored as Werkzeug password hashes, not plaintext.
+- Passwords are only revealed once, immediately after create/reset, and are not recoverable later from storage.
+- Cloud Chat login attempts are throttled per username and client IP after repeated failures.
 - Cloud Chat admin actions are POST-only and CSRF-protected.
 - Cloud Chat private pages should remain `noindex`.
 

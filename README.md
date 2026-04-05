@@ -45,6 +45,7 @@
 ### How code becomes live
 - GitHub webhook hits `POST /deploy`.
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py) verifies `X-Hub-Signature-256` using `GITHUB_WEBHOOK_SECRET`.
+- If `GITHUB_WEBHOOK_SECRET` is missing, the deploy route fails closed instead of accepting requests with an empty secret.
 - On success it launches [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh).
 - [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh) does:
   - `git pull origin main`
@@ -134,6 +135,8 @@
 - Cloud Chat is a project-specific private zone:
   - Cloud Chat users sign in with a username and password at `/cloudchat/`
   - the `Admin login` path on that screen leads to Smart Lock admin-managed user administration
+  - created and reset passwords are shown once right after the admin action, then only stored as hashes
+  - repeated failed login attempts are throttled per username and client IP
   - Cloud Chat users live in their own database table instead of reusing Smart Lock users
 
 ### Databases
