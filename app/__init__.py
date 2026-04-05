@@ -30,6 +30,7 @@ def get_git_output(project_root, *args):
 
 def create_app():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    from projects.cloud_chat import init_cloud_chat
     from projects.cloud_storage import init_cloud_storage
     from projects.minecraft import init_minecraft
     from projects.smartlock import init_smartlock, render_cookies_required
@@ -60,6 +61,7 @@ def create_app():
     init_minecraft(flask_app, csrf)
     init_smartlock(flask_app, csrf)
     init_cloud_storage(flask_app)
+    init_cloud_chat(flask_app)
 
     @flask_app.errorhandler(CSRFError)
     def handle_csrf_error(error):
@@ -120,8 +122,10 @@ def create_app():
 
 
 def init_project_dbs():
+    from projects.cloud_chat import init_cloud_chat_db
     from projects.cloud_storage import init_cloud_storage_db
     from projects.smartlock import init_db
 
     init_db()
     init_cloud_storage_db()
+    init_cloud_chat_db()

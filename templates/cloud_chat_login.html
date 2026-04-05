@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{{ page_name or 'Cloud Chat — Login' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
+</head>
+<body>
+<div class="page-shell">
+  <div class="top-bar-unified">
+    <div class="top-bar-main">
+      <div class="app-brand">
+        <div class="brand-icon">💬</div>
+        <div>
+          <div class="brand-name">Cloud Chat</div>
+          <div class="brand-sub">Friedutch Plus</div>
+        </div>
+      </div>
+      <div class="top-right">
+        {% if show_logout_button %}
+        <form method="POST" action="/smartlock/logout" class="top-icon-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="top-icon-btn" type="submit" data-confirm="Log out of Smart Lock">👋</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <main class="cloudchat-auth-layout">
+    <section class="zone zone-cyan cloudchat-hero-zone">
+      <div class="hero">
+        <div class="app-icon">☁️</div>
+        <p class="projects-label">Cloud Chat</p>
+        <h1>Private project access with its own users.</h1>
+        <p>Sign in with a Cloud Chat username and password, or use the admin path to manage project users through Smart Lock.</p>
+      </div>
+      <div class="cloudchat-chip-row">
+        <span class="chip chip-on">Project-specific accounts</span>
+        <span class="chip chip-on">Smart Lock admin managed</span>
+      </div>
+    </section>
+
+    <section class="zone zone-pink cloudchat-login-zone">
+      <p class="projects-label">User Login</p>
+      <form class="cloudchat-auth-form" method="POST" action="/cloudchat/login">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="cloudchat-field">
+          <span class="cloudchat-field-label">Username</span>
+          <input class="app-input" type="text" name="username" autocomplete="username" placeholder="username" required>
+        </label>
+        <label class="cloudchat-field">
+          <span class="cloudchat-field-label">Password</span>
+          <input class="app-input" type="password" name="password" autocomplete="current-password" placeholder="password" required>
+        </label>
+        <button class="big-btn btn-primary" type="submit">Enter Cloud Chat</button>
+      </form>
+
+      <div class="cloudchat-divider"><span>Admin</span></div>
+      <a class="sm-btn sm-ghost cloudchat-admin-link" href="/cloudchat/admin">
+        {{ 'Manage users' if admin_logged_in else 'Admin login' }}
+      </a>
+      <p class="page-sub">Use Smart Lock admin access to create, disable, delete, and reset Cloud Chat users.</p>
+
+      {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
+    </section>
+  </main>
+
+  {% include "_site_footer.html" %}
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<script src="{{ url_for('static', filename='js/pages/cloud_chat.js', v=asset_version) }}"></script>
+</body>
+</html>

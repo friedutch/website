@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{{ page_name or 'Cloud Chat — Friedutch Plus' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
+</head>
+<body>
+<div class="page-shell">
+  <div class="top-bar-unified">
+    <div class="top-bar-main">
+      <div class="app-brand">
+        <div class="brand-icon">💬</div>
+        <div>
+          <div class="brand-name">Cloud Chat</div>
+          <div class="brand-sub">Friedutch Plus</div>
+        </div>
+      </div>
+      <div class="top-right">
+        {% if can_manage %}
+        <a class="sm-btn sm-ghost" href="/cloudchat/admin">Manage users</a>
+        {% endif %}
+        <form method="POST" action="/cloudchat/logout" class="contents-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="sm-btn sm-cyan" type="submit">Log out</button>
+        </form>
+        {% if show_logout_button %}
+        <form method="POST" action="/smartlock/logout" class="contents-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="sm-btn sm-ghost" type="submit" data-confirm="Log out of Smart Lock">Admin out</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if app_message %}<p class="page-message page-message-ok">{{ app_message }}</p>{% endif %}
+
+  <section class="zone zone-cyan cloudchat-app-hero">
+    <div class="hero">
+      <div class="app-icon">☁️</div>
+      <p class="projects-label">Cloud Chat Zone</p>
+      <h1>{{ current_user['username'] }}</h1>
+      <p>This project zone is now protected by Cloud Chat users managed from the Smart Lock admin path.</p>
+    </div>
+    <div class="cloudchat-chip-row">
+      <span class="chip chip-on">Signed in</span>
+      <span class="chip">{{ current_user['created_at'][:19].replace('T', ' ') }} UTC</span>
+    </div>
+  </section>
+
+  <div class="cloudchat-grid">
+    <section class="zone zone-purple">
+      <div class="zone-title">
+        <div class="zone-title-left"><span>🪪</span> <span>Account</span></div>
+      </div>
+      <ul class="detail-list">
+        <li>
+          <span>Username</span>
+          <strong>{{ current_user['username'] }}</strong>
+        </li>
+        <li>
+          <span>Project</span>
+          <strong>Cloud Chat</strong>
+        </li>
+        <li>
+          <span>Admin Path</span>
+          <strong>{{ 'Available' if can_manage else 'Smart Lock required' }}</strong>
+        </li>
+      </ul>
+    </section>
+
+    <section class="zone zone-green">
+      <div class="zone-title">
+        <div class="zone-title-left"><span>🧭</span> <span>Next Step</span></div>
+      </div>
+      <p class="project-desc">The user and admin access model is in place. This page is the authenticated Cloud Chat landing zone where the actual chat experience can be added next.</p>
+    </section>
+  </div>
+
+  {% include "_site_footer.html" %}
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<script src="{{ url_for('static', filename='js/pages/cloud_chat.js', v=asset_version) }}"></script>
+</body>
+</html>
