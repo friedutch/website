@@ -21,11 +21,6 @@ body {
   font-size: 38px;
 }
 
-.captcha-hero-card,
-.captcha-choice-card {
-  min-height: 100%;
-}
-
 .captcha-tip-row {
   display: grid;
   gap: 12px;

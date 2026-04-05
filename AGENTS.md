@@ -114,6 +114,8 @@
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)
 - Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable.
 - Smart Lock admin tab memory uses that same browser storage layer.
+- Avoid `min-height: 100%` on cards inside auto-sized CSS grid layouts unless the parent track has an explicit fixed height.
+- That pattern can create hover/focus relayout loops where cards keep growing during interaction.
 
 ### Debugging notes
 - Static assets use versioned URLs to reduce stale-cache problems.
