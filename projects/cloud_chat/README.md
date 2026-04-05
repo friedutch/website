@@ -28,6 +28,7 @@
 - Cloud Chat admin access is separate:
   - the `Admin login` path uses the existing Smart Lock admin session
   - the Cloud Chat admin screen is under `/cloudchat/admin`
+- New and reset passwords are revealed only in the immediate admin response and are not shown again later.
 - Cloud Chat user accounts only apply to the Cloud Chat project zone.
 
 ### Registration model
@@ -56,10 +57,14 @@
 ### Database table
 - `cloud_chat_users`
   - username, password hash, active state, and created timestamp
+- `cloud_chat_login_attempts`
+  - failed-login counters and temporary lockout windows keyed by username plus client IP
 
 ### Security notes
 - Passwords are stored as Werkzeug password hashes, not plaintext.
 - Passwords are only revealed once, immediately after create/reset, and are not recoverable later from storage.
+- The one-time password reveal is rendered directly in the admin response and marked `Cache-Control: no-store`.
+- Cloud Chat requires at least 12 characters for newly created or reset passwords.
 - Cloud Chat login attempts are throttled per username and client IP after repeated failures.
 - Cloud Chat admin actions are POST-only and CSRF-protected.
 - Cloud Chat private pages should remain `noindex`.

@@ -135,7 +135,9 @@
 - Cloud Chat is a project-specific private zone:
   - Cloud Chat users sign in with a username and password at `/cloudchat/`
   - the `Admin login` path on that screen leads to Smart Lock admin-managed user administration
-  - created and reset passwords are shown once right after the admin action, then only stored as hashes
+  - created and reset passwords are shown once in the immediate admin response, then only stored as hashes
+  - that one-time reveal response is marked `no-store`
+  - Cloud Chat now requires at least 12 characters for new or reset passwords
   - repeated failed login attempts are throttled per username and client IP
   - Cloud Chat users live in their own database table instead of reusing Smart Lock users
 
@@ -147,6 +149,7 @@
 - Cloud Chat database:
   - [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
 - These are SQLite files committed/used as local runtime state.
+- Cloud Chat now uses a second internal table for login-attempt throttling in the same database.
 - Do not rename or migrate DB tables casually. There are already legacy names in use, especially in Smart Lock.
 
 ### Environment variables
