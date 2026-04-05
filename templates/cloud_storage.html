@@ -1,45 +1,21 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Cloud Storage — Friedutch Plus' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_storage.css', v=asset_version) }}">
-</head>
-<body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">☁️</div>
-      <div>
-        <div class="brand-name">Cloud Storage</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-  <div class="top-bar-meta">
-    <div class="header-progress">
-      <div class="header-progress-bar" aria-hidden="true">
-        <div class="header-progress-fill" style="width: {{ (metrics.total_size_bytes / (10 * 1024 * 1024 * 1024) * 100) if metrics.total_size_bytes else 0 }}%"></div>
-      </div>
-      <div class="header-progress-meta">
-        <span>{{ metrics.total_size_label }} used</span>
-        <span>{{ metrics.remaining_size_label }} remaining</span>
-      </div>
-    </div>
-  </div>
-</div>
+{% extends "_app_frame.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_storage.css', v=asset_version) }}">
+{% endblock %}
+
+{% block header_kicker %}Cloud Storage{% endblock %}
+{% block header_title %}File handoff{% endblock %}
+{% block header_subtitle %}{{ metrics.total_size_label }} used, {{ metrics.remaining_size_label }} remaining.{% endblock %}
+
+{% block header_actions %}
+<div class="chip-row">
+  <span class="chip chip-on">{{ metrics.file_count }} files</span>
+  <span class="chip">{{ metrics.latest_upload }}</span>
+</div>
+{% endblock %}
+
+{% block content %}
 {% if message %}<p class="page-message page-message-ok">{{ message }}</p>{% endif %}
 {% if error %}<p class="page-message page-message-error">{{ error }}</p>{% endif %}
 
@@ -134,10 +110,8 @@
   </div>
   {% endif %}
 </div>
+{% endblock %}
 
-{% include "_site_footer.html" %}
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script src="{{ url_for('static', filename='js/pages/cloud_storage.js', v=asset_version) }}"></script>
-</body>
-</html>
+{% endblock %}

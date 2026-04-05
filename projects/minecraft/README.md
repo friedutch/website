@@ -4,6 +4,7 @@
 - This module owns the public Minecraft landing page for `friedutch.plus`.
 - It reads the Minecraft page environment variables plus local server files and renders the public connection page at `/minecraft/`.
 - It can also expose an admin-only controls block for the separate Minecraft LaunchAgent.
+- The page now renders inside the same shared Discord-like site shell as the rest of the website.
 
 ## AI Copilot
 
@@ -25,6 +26,7 @@
 - The actual Minecraft daemon should run as its own process or service outside this repo.
 - The page reads server status from the LaunchAgent label and selected world/server details from local `server.properties`.
 - Start and stop controls on the page live in the admin-only controls block and require an authenticated Smart Lock admin session.
+- When admin access is missing, the rest of the site uses the canonical `/login` Smart Lock entrypoint.
 - A DNS record such as `mc.friedutch.plus` should point at the host running the Minecraft server.
 - The provided ops files assume a live server root at `/Users/administrator/Servers/minecraft`.
 - Keep that live server root outside the Git repo and never commit a copied server instance, world folder, Paper jar, or plugin jar.

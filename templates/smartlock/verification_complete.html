@@ -1,51 +1,24 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Smart Lock — Access Granted' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+{% extends "_app_frame.html" %}
+
+{% block page_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css', v=asset_version) }}">
-</head>
-<body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">🔐</div>
-      <div>
-        <div class="brand-name">Smart Lock</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-</div>
-<div class="site-header">
-  <div class="site-logo">🏠 <span>Friedutch Plus</span></div>
-  <div class="site-sub">Personal projects & tools</div>
-</div>
+{% endblock %}
+
+{% block header_kicker %}Admin Access{% endblock %}
+{% block header_title %}Verification complete{% endblock %}
+{% block header_subtitle %}Closing this verification step and returning you to the main admin flow.{% endblock %}
+
+{% block content %}
 <div class="project-card">
   <span class="project-icon">✅</span>
   <div class="project-name">{{ heading or 'Access granted' }}</div>
   <div class="project-desc">{{ description or 'Closing this verification page and returning to your login screen.' }}</div>
   <p class="msg-err msg-err-spaced" id="verification-complete-fallback">{{ fallback_copy or 'If this page stays open, continue here.' }} <a href="{{ redirect_url }}">Continue</a>.</p>
 </div>
+{% endblock %}
 
-{% include "_site_footer.html" %}
-
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script id="verification-complete-script" src="{{ url_for('static', filename='js/pages/smartlock/verification_complete.js', v=asset_version) }}"
         data-redirect-url="{{ redirect_url }}"
         data-login-sync-channel="{{ login_sync_channel or '' }}"></script>
-
-</body>
-</html>
+{% endblock %}

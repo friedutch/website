@@ -108,60 +108,19 @@
   flex: 1 1 320px;
 }
 
-.cloudchat-discord-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top, color-mix(in srgb, var(--accent-soft) 18%, transparent), transparent 42%),
-    #1f2128;
-  color: #dbdee1;
+.cloudchat-app-shell {
+  min-height: 0;
 }
 
-.cloudchat-discord-app {
+.cloudchat-workspace {
   display: grid;
-  grid-template-columns: 72px 300px minmax(0, 1fr);
-  min-height: 100vh;
-}
-
-.cloudchat-rail {
-  background: #1a1b20;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 0;
-}
-
-.cloudchat-rail-home,
-.cloudchat-rail-pill {
-  width: 48px;
-  height: 48px;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 0;
+  min-height: calc(100vh - 170px);
   border-radius: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: #f2f3f5;
-  background: #313338;
-  transition:
-    background 0.18s ease,
-    border-radius 0.18s ease,
-    transform 0.18s ease;
-}
-
-.cloudchat-rail-home:hover,
-.cloudchat-rail-home-active,
-.cloudchat-rail-pill:hover {
-  background: #5865f2;
-  border-radius: 14px;
-  transform: translateY(-1px);
-}
-
-.cloudchat-rail-pill-ghost:hover {
-  background: #3ba55d;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 .cloudchat-sidebar {
@@ -391,7 +350,7 @@
   background: #313338;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
-  min-height: 100vh;
+  min-height: 0;
 }
 
 .cloudchat-thread-header {
@@ -603,20 +562,14 @@
 }
 
 @media (max-width: 1100px) {
-  .cloudchat-discord-app {
-    grid-template-columns: 72px 260px minmax(0, 1fr);
+  .cloudchat-workspace {
+    grid-template-columns: 260px minmax(0, 1fr);
   }
 }
 
 @media (max-width: 860px) {
-  .cloudchat-discord-app {
+  .cloudchat-workspace {
     grid-template-columns: 1fr;
-  }
-
-  .cloudchat-rail {
-    flex-direction: row;
-    justify-content: center;
-    padding: 12px;
   }
 
   .cloudchat-sidebar {

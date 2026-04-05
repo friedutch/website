@@ -1,48 +1,29 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Smart Lock — Verify Email' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+{% extends "_app_frame.html" %}
+
+{% block page_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/email_pending.css', v=asset_version) }}">
-</head>
-<body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">🔐</div>
-      <div>
-        <div class="brand-name">Smart Lock</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-</div>
+{% endblock %}
+
+{% block header_kicker %}Admin Access{% endblock %}
+{% block header_title %}Verify email{% endblock %}
+{% block header_subtitle %}Finish the admin email change by following the verification link.{% endblock %}
+
+{% block content %}
 <div class="wrap">
   <div class="hero">
     <div class="app-icon">📬</div>
-    <h1>Check your inbox!</h1>
+    <h1>Check your inbox</h1>
     <p>Verification link sent to:</p>
   </div>
   <div class="email-card">
-    <div class="email-label">📧 Email address</div>
+    <div class="email-label">Email address</div>
     <div class="email-val">{{ pending_email }}</div>
   </div>
   {% if captcha_code %}
   <div class="number-box">
-    <div class="number-label">✨ Your captcha code</div>
+    <div class="number-label">Your captcha code</div>
     <div class="number-display">{{ captcha_code }}</div>
-    <div class="number-hint">Select this captcha in the email flow 👆</div>
+    <div class="number-hint">Select this captcha in the email flow.</div>
   </div>
   {% endif %}
   {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
@@ -50,20 +31,17 @@
   <div class="actions">
     <form class="contents-form" method="POST" action="/smartlock/change-email/resend">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button id="resend-btn" class="sm-btn sm-ghost resend-btn-disabled" type="submit" disabled>🔄 Resend</button>
+      <button id="resend-btn" class="sm-btn sm-ghost resend-btn-disabled" type="submit" disabled>Resend</button>
     </form>
     <form class="contents-form" method="POST" action="/smartlock/change-email/cancel">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="sm-btn sm-ghost" type="submit">❌ Wrong email?</button>
+      <button class="sm-btn sm-ghost" type="submit">Wrong email?</button>
     </form>
   </div>
 </div>
+{% endblock %}
 
-{% include "_site_footer.html" %}
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script src="{{ url_for('static', filename='js/pages/smartlock/email_pending.js', v=asset_version) }}"
         data-sent-at="{{ sent_at }}"></script>
-
-</body>
-</html>
+{% endblock %}

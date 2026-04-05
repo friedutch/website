@@ -47,7 +47,7 @@ def _brute_force_message(remaining):
 
 
 def register_auth_routes(app):
-    @app.route("/smartlock/login", methods=["GET", "POST"])
+    @app.route("/login", methods=["GET", "POST"])
     def smartlock_login():
         cooldown_key = actor_cooldown_key("admin_link_cooldown")
         link_cooldown = cooldown_remaining(cooldown_key)
@@ -107,9 +107,19 @@ def register_auth_routes(app):
             login_sync_channel=login_sync_channel,
         )
 
-    @app.route("/smartlock/poll-status")
+    @app.route("/smartlock/login", methods=["GET", "POST"], endpoint="smartlock_login_legacy")
+    def smartlock_login_legacy():
+        if request.method == "GET":
+            return redirect(url_for("smartlock_login"))
+        return smartlock_login()
+
+    @app.route("/login/poll-status")
     def smartlock_poll_status():
         return jsonify({"status": "logged_in" if is_site_admin() else "waiting"})
+
+    @app.route("/smartlock/poll-status", endpoint="smartlock_poll_status_legacy")
+    def smartlock_poll_status_legacy():
+        return smartlock_poll_status()
 
     @app.route("/smartlock/verify")
     def smartlock_verify():

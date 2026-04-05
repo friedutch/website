@@ -65,7 +65,7 @@ def create_app():
 
     @flask_app.errorhandler(CSRFError)
     def handle_csrf_error(error):
-        if request.path.startswith("/smartlock"):
+        if request.path == "/login" or request.path.startswith("/smartlock"):
             return render_cookies_required(), 400
         return jsonify({"error": "bad request", "reason": error.description}), 400
 

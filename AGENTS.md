@@ -40,11 +40,15 @@
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)
   - app factory, homepage, deploy webhook, project registration
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py)
-  - shared render helper for template rendering and asset-version injection
+  - shared render helper for template rendering, asset-version injection, and project-rail state
 - [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py)
   - site-wide CSRF template helper
 - [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py)
   - site-wide admin-session helpers
+- [`templates/_app_frame.html`](/Users/administrator/Sites/friedutchplus/templates/_app_frame.html)
+  - shared Discord-like site shell used by all rendered pages
+- [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
+  - shared cross-project shell styling
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
   - lightweight Smart Lock bootstrap
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
@@ -109,6 +113,10 @@
 - The live Minecraft server-list name comes from the server `motd`, which is currently `FP SMP`.
 
 ### Frontend behavior notes
+- The whole site now uses one shared Discord-like shell:
+  - left rail for project switching
+  - shared main content frame
+  - separate utility entry for admin login at `/login`
 - Shared theme and confirm behavior lives in:
   - [`static/js/early-theme.js`](/Users/administrator/Sites/friedutchplus/static/js/early-theme.js)
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)

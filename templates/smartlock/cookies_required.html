@@ -1,40 +1,14 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Smart Lock — Cookies Required' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
-</head>
-<body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">🔐</div>
-      <div>
-        <div class="brand-name">Smart Lock</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-</div>
+{% extends "_app_frame.html" %}
+
+{% block header_kicker %}Admin Access{% endblock %}
+{% block header_title %}Cookies required{% endblock %}
+{% block header_subtitle %}Smart Lock needs session cookies for login, captcha verification, and CSRF protection.{% endblock %}
+
+{% block content %}
 <main class="simple-page">
-  <h1>Enable cookies to use Smart Lock.</h1>
-  <p>Smart Lock needs session cookies for login, captcha verification, and CSRF protection.</p>
+  <div class="zone zone-pink">
+    <h1>Enable cookies to use Smart Lock.</h1>
+    <p>Once cookies are enabled, reload the page and continue with the admin flow from <code>/login</code>.</p>
+  </div>
 </main>
-
-{% include "_site_footer.html" %}
-
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
-</body>
-</html>
+{% endblock %}

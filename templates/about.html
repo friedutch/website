@@ -1,57 +1,46 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Friedutch Plus' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/about.css', v=asset_version) }}">
-</head>
-<body>
-<div class="site-header">
-  <div class="site-logo">
-    <img class="site-logo-mark" src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
-    <span>Friedutch Plus</span>
-  </div>
-</div>
-<p class="projects-label">About</p>
-<section class="project-card active about-card">
-  <p class="project-desc">Friedutch Plus is my self-hosted website for the tools and pages that support my own setup. It brings together a small set of focused projects in one place instead of splitting them across separate apps or dashboards.</p>
-  <p class="project-desc">Some parts of the site are public and meant to be viewed directly, like the Minecraft page and general project overview. Other parts are private operational tools that are only available to me after Smart Lock verifies my session.</p>
-  <p class="project-desc">In practice, that means this site works as both a front door and a control surface: public pages explain what is available, while protected pages handle admin actions, file access, and other personal management tasks behind authentication.</p>
+{% extends "_app_frame.html" %}
+
+{% block header_kicker %}Friedutch Plus{% endblock %}
+{% block header_title %}About the workspace{% endblock %}
+{% block header_subtitle %}A self-hosted personal site organized like one unified app instead of a pile of disconnected tools.{% endblock %}
+
+{% block header_actions %}
+<a class="sm-btn sm-ghost" href="/">Home</a>
+{% if not show_logout_button %}
+<a class="sm-btn sm-cyan" href="/login">Admin Login</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="zone zone-purple">
+  <p class="project-desc">Friedutch Plus is the single place where the public pages, internal tools, and private admin flows for your setup live together. The left rail acts like Discord’s server switcher, but each icon opens one project instead of one community.</p>
+  <p class="project-desc">Some projects are public-facing, like the Minecraft page. Others are private operational surfaces backed by Smart Lock admin state or project-specific user accounts.</p>
 </section>
-<p class="projects-label">Projects</p>
-<div class="projects-grid">
+
+<section class="projects-grid">
   <a class="project-card active" href="/smartlock/">
     <span class="project-icon">🔐</span>
     <div class="project-name">Smart Lock</div>
-    <div class="project-desc">Access control panel. Manage users, RFID badges, fingerprints and passcodes.</div>
-    <span class="project-tag tag-live">✅ Live</span>
+    <div class="project-desc">Manage admin sessions, users, badges, fingerprints, and hardware events.</div>
+    <span class="project-tag tag-live">Admin</span>
   </a>
   <a class="project-card active" href="/cloud-storage/">
     <span class="project-icon">☁️</span>
     <div class="project-name">Cloud Storage</div>
-    <div class="project-desc">Private file handoff space for uploading, downloading, and deleting your own work files.</div>
-    <span class="project-tag tag-live">✅ Live</span>
+    <div class="project-desc">Hand files to yourself privately with upload, download, and deletion controls.</div>
+    <span class="project-tag tag-live">Private</span>
   </a>
-  <a class="project-card active" href="/privatechat/">
+  <a class="project-card active" href="/privatechat/login">
     <span class="project-icon">💬</span>
     <div class="project-name">Private Chat</div>
-    <div class="project-desc">Private project zone with its own username and password accounts, managed through Smart Lock admin access and built around one-to-one direct messages.</div>
-    <span class="project-tag tag-live">✅ Live</span>
+    <div class="project-desc">One-to-one direct messages with project-scoped users and live sync.</div>
+    <span class="project-tag tag-live">Live</span>
   </a>
   <a class="project-card active" href="/minecraft/">
     <span class="project-icon">⛏️</span>
     <div class="project-name">Minecraft Server</div>
-    <div class="project-desc">Public landing page for the self-hosted Minecraft world, with the live join address and server status.</div>
-    <span class="project-tag tag-live">✅ Live</span>
+    <div class="project-desc">Public server identity page with real status and admin controls.</div>
+    <span class="project-tag tag-live">Public</span>
   </a>
-</div>
-{% include "_site_footer.html" %}
-
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
-
-</body>
-</html>
+</section>
+{% endblock %}

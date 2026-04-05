@@ -1,28 +1,32 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Private Chat — Friedutch Plus' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
-</head>
-<body class="cloudchat-discord-body">
-<div class="cloudchat-discord-app">
-  <aside class="cloudchat-rail">
-    <a class="cloudchat-rail-home cloudchat-rail-home-active" href="{{ url_for('cloud_chat_index') }}" aria-label="Private Chat home">PC</a>
-    {% if can_manage %}
-    <a class="cloudchat-rail-pill" href="{{ url_for('cloud_chat_admin') }}" aria-label="Manage Private Chat users">AD</a>
-    {% endif %}
-    {% if show_logout_button %}
-    <form method="POST" action="/smartlock/logout" class="contents-form">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="cloudchat-rail-pill cloudchat-rail-pill-ghost" type="submit" data-confirm="Log out of Smart Lock" aria-label="Log out of Smart Lock">SL</button>
-    </form>
-    {% endif %}
-  </aside>
+{% extends "_app_frame.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
+{% endblock %}
+
+{% block header_kicker %}Private Chat{% endblock %}
+{% block header_title %}Direct messages{% endblock %}
+{% block header_subtitle %}Signed in as {{ current_user['username'] }}.{% endblock %}
+
+{% block header_actions %}
+{% if can_manage %}
+<a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_admin') }}">Manage users</a>
+{% endif %}
+<form method="POST" action="{{ url_for('cloud_chat_logout') }}" class="contents-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="sm-btn sm-cyan" type="submit">Log out</button>
+</form>
+{% endblock %}
+
+{% block content_class %}cloudchat-app-shell{% endblock %}
+
+{% block content %}
+{% if selected_partner %}
+  {% if app_message %}<div class="cloudchat-inline-message cloudchat-inline-message-ok">{{ app_message }}</div>{% endif %}
+  {% if app_error %}<div class="cloudchat-inline-message cloudchat-inline-message-err">{{ app_error }}</div>{% endif %}
+{% endif %}
+
+<div class="cloudchat-workspace">
   <aside
     class="cloudchat-sidebar"
     data-cloudchat-partner-list-root
@@ -94,7 +98,7 @@
     </div>
   </aside>
 
-  <main class="cloudchat-main">
+  <section class="cloudchat-main">
     {% if selected_partner %}
     <header class="cloudchat-thread-header">
       <div class="cloudchat-thread-identity">
@@ -113,9 +117,6 @@
         <span class="cloudchat-thread-count" data-cloudchat-thread-count>{{ chat_message_count }} message{{ '' if chat_message_count == 1 else 's' }}</span>
       </div>
     </header>
-
-    {% if app_message %}<div class="cloudchat-inline-message cloudchat-inline-message-ok">{{ app_message }}</div>{% endif %}
-    {% if app_error %}<div class="cloudchat-inline-message cloudchat-inline-message-err">{{ app_error }}</div>{% endif %}
 
     <section class="cloudchat-thread-stage">
       <div
@@ -187,10 +188,10 @@
       <p>Select a direct message to start talking.</p>
     </section>
     {% endif %}
-  </main>
+  </section>
 </div>
+{% endblock %}
 
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script src="{{ url_for('static', filename='js/pages/cloud_chat.js', v=asset_version) }}"></script>
-</body>
-</html>
+{% endblock %}

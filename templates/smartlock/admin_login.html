@@ -1,40 +1,19 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Smart Lock — Access' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css', v=asset_version) }}">
-</head>
-<body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">🔐</div>
-      <div>
-        <div class="brand-name">Smart Lock</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-</div>
-<p class="projects-label">Smart Lock</p>
+{% extends "_app_frame.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css', v=asset_version) }}">
+{% endblock %}
+
+{% block header_kicker %}Admin Access{% endblock %}
+{% block header_title %}Login{% endblock %}
+{% block header_subtitle %}Magic link plus captcha confirmation for site-wide admin access.{% endblock %}
+
+{% block content %}
 <main class="access-layout">
   <section class="project-card access-card">
     <span class="project-icon">🔐</span>
-    <div class="project-name">Smart Lock</div>
-    <div class="project-desc">Admin login by magic link.</div>
+    <div class="project-name">Admin Login</div>
+    <div class="project-desc">Smart Lock protects the site-wide admin session, but the login page now lives outside the project at <code>/login</code>.</div>
 
     {% if captcha_code %}
     <div class="number-box access-code-card">
@@ -50,10 +29,10 @@
       <div class="access-note-copy">Open the latest Smart Lock email and continue from there.</div>
     </div>
     {% else %}
-    <form method="POST" action="/smartlock/login" class="access-form">
+    <form method="POST" action="{{ url_for('smartlock_login') }}" class="access-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button class="big-btn btn-primary access-submit-btn" type="submit" {% if link_cooldown > 0 %}disabled{% endif %}>
-        📧 Send link
+        Send link
       </button>
     </form>
     {% endif %}
@@ -64,15 +43,13 @@
     {% if message %}<p class="msg-err msg-err-spaced">{{ message }}</p>{% endif %}
   </section>
 </main>
+{% endblock %}
 
-{% include "_site_footer.html" %}
-
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script id="admin-login-script" src="{{ url_for('static', filename='js/pages/smartlock/admin_login.js', v=asset_version) }}"
         data-link-cooldown="{{ link_cooldown }}"
         data-poll-login="{{ 'true' if captcha_code else 'false' }}"
-        data-login-sync-channel="{{ login_sync_channel or '' }}"></script>
-
-</body>
-</html>
+        data-login-sync-channel="{{ login_sync_channel or '' }}"
+        data-poll-url="{{ url_for('smartlock_poll_status') }}"
+        data-admin-url="{{ url_for('smartlock_admin') }}"></script>
+{% endblock %}

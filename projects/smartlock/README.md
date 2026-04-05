@@ -5,7 +5,7 @@
 - The admin signs in using a magic link plus a captcha-like confirmation step.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
-- The admin panel uses top tabs for Users and Logs, while the top header carries the persistent session-time island and the global Home, Log out, and Theme controls.
+- The Smart Lock pages now render inside the shared Discord-like site shell, while the admin panel keeps its own Users, Logs, and Arduino tabs.
 - The admin panel now has top tabs for Users, Logs, and Arduino.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - The user detail page now includes an RFID `Scan` button that listens for the next badge read from the Arduino bridge, fills the RFID field automatically, and shows live validation feedback inline.
@@ -15,7 +15,7 @@
 ## AI Copilot
 
 ### Purpose
-- Admin-only access-control web interface under `/smartlock/`.
+- Admin-only access-control project under `/smartlock/`, with the site-wide admin login screen now served from `/login`.
 - Supports physical smart-lock administration concepts:
   - users
   - passcodes
@@ -104,8 +104,8 @@
 - Successful same-browser magic-link verification should signal the original login page to continue into the admin panel instead of leaving the verified email tab on the panel.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
-- Smart Lock now uses the shared site header across its pages, with Home, Log out, and Theme controls pinned on the right.
-- The current session's remaining time lives in a persistent header island directly under the top action row.
+- Smart Lock now uses the shared Discord-like site shell across its pages, with project switching on the left rail and admin login separated at `/login`.
+- The current session's remaining time lives in a persistent header island inside the shared app shell header.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The user detail page's RFID save flow should stay badge-first and low-friction:
@@ -135,10 +135,11 @@
 ### Routes
 - Main:
   - `/smartlock/`
-  - `/smartlock/login`
-  - `/smartlock/poll-status`
+  - `/login`
+  - `/login/poll-status`
   - `/smartlock/verify`
   - `POST /smartlock/verify-captcha`
+  - legacy aliases still exist at `/smartlock/login` and `/smartlock/poll-status`
 - Cross-device session:
   - `POST /smartlock/add-session`
   - `/smartlock/join/<token>`

@@ -1,21 +1,50 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Friedutch Plus' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/landing.css', v=asset_version) }}">
-</head>
-<body>
-<main class="landing-shell">
-  <a class="landing-logo-link" href="/about" aria-label="Open Friedutch Plus about page">
-    <img class="landing-logo" src="{{ url_for('static', filename='img/branding/friedutch-plus-logo.svg', v=asset_version) }}" alt="Friedutch Plus logo">
-  </a>
-</main>
+{% extends "_app_frame.html" %}
 
-<script src="{{ url_for('static', filename='js/pages/landing.js', v=asset_version) }}"></script>
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
-</body>
-</html>
+{% block header_kicker %}Friedutch Plus{% endblock %}
+{% block header_title %}Control hub{% endblock %}
+{% block header_subtitle %}Projects, infrastructure, and private tools in one Discord-like workspace.{% endblock %}
+
+{% block header_actions %}
+<a class="sm-btn sm-ghost" href="/about">About</a>
+{% if not show_logout_button %}
+<a class="sm-btn sm-cyan" href="/login">Admin Login</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="zone zone-cyan">
+  <div class="hero">
+    <div class="app-icon">✦</div>
+    <p class="projects-label">Workspace</p>
+    <h1>Everything lives here.</h1>
+    <p>Use the left rail to switch between projects the same way Discord switches between servers, except each icon opens one of your site modules instead.</p>
+  </div>
+</section>
+
+<section class="projects-grid">
+  <a class="project-card active" href="/smartlock/">
+    <span class="project-icon">🔐</span>
+    <div class="project-name">Smart Lock</div>
+    <div class="project-desc">Admin access control, session management, and live hardware status.</div>
+    <span class="project-tag tag-live">Admin</span>
+  </a>
+  <a class="project-card active" href="/cloud-storage/">
+    <span class="project-icon">☁️</span>
+    <div class="project-name">Cloud Storage</div>
+    <div class="project-desc">Private file transfer space for uploads, downloads, and cleanup.</div>
+    <span class="project-tag tag-live">Private</span>
+  </a>
+  <a class="project-card active" href="/privatechat/login">
+    <span class="project-icon">💬</span>
+    <div class="project-name">Private Chat</div>
+    <div class="project-desc">Project-scoped direct messages with a live Discord-style DM client.</div>
+    <span class="project-tag tag-live">Live</span>
+  </a>
+  <a class="project-card active" href="/minecraft/">
+    <span class="project-icon">⛏️</span>
+    <div class="project-name">Minecraft</div>
+    <div class="project-desc">Public world page with server status and admin-only controls.</div>
+    <span class="project-tag tag-live">Public</span>
+  </a>
+</section>
+{% endblock %}

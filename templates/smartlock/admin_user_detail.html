@@ -1,33 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or (user['name'] ~ ' — Friedutch Plus') }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+{% extends "_app_frame.html" %}
+
+{% block page_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_user_detail.css', v=asset_version) }}">
-</head>
-<body>
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">🔐</div>
-      <div>
-        <div class="brand-name">Smart Lock</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-right">
-      {% if show_logout_button %}
-      <form method="POST" action="/smartlock/logout" class="top-icon-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-</div>
+{% endblock %}
+
+{% block header_kicker %}Smart Lock{% endblock %}
+{% block header_title %}{{ "New user" if is_new_user else user['name'] }}{% endblock %}
+{% block header_subtitle %}{{ "Create access profile" if is_new_user else "Manage access profile" }}{% endblock %}
+
+{% block header_actions %}
+<a class="sm-btn sm-ghost" href="{{ url_for('smartlock_admin') }}">Back to panel</a>
+{% endblock %}
+
+{% block content %}
 <main class="user-detail-layout">
   <section class="zone zone-cyan detail-overview">
     <div class="detail-header">
@@ -148,7 +133,7 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input class="app-input" type="text" name="id_value" placeholder="Badge ID" value="{{ user['rfid_id'] or '' }}" data-rfid-id-input>
       <button class="sm-btn sm-cyan" type="button" data-rfid-scan-button>Scan</button>
-      <button class="sm-btn sm-cyan" type="submit">💾 Save</button>
+      <button class="sm-btn sm-cyan" type="submit">Save</button>
     </form>
     <div class="rfid-scan-status" data-rfid-scan-status>Click Scan, then tap the badge on the reader.</div>
   </div>
@@ -169,29 +154,25 @@
     <form class="field-row" method="POST" action="/smartlock/user/{{ user['id'] }}/set/fingerprint">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input class="app-input" type="text" name="id_value" placeholder="Fingerprint ID" value="{{ user['fingerprint_id'] or '' }}">
-      <button class="sm-btn sm-green" type="submit">💾 Save</button>
+      <button class="sm-btn sm-green" type="submit">Save</button>
     </form>
   </div>
 
   <form method="POST" action="/smartlock/users/delete/{{ user['id'] }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button class="big-btn delete-user-btn" type="submit" data-confirm="Delete {{ user['name'] }}">
-      🗑️ Delete {{ user['name'] }}
+      Delete {{ user['name'] }}
     </button>
   </form>
   {% endif %}
   </section>
 </main>
+{% endblock %}
 
-{% include "_site_footer.html" %}
-
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script
   id="user-detail-script"
   src="{{ url_for('static', filename='js/pages/smartlock/admin_user_detail.js', v=asset_version) }}"
   data-arduino-events-url="{{ url_for('smartlock_hardware_events') }}"
 ></script>
-
-</body>
-</html>
+{% endblock %}

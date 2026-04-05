@@ -3,9 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const linkCooldown = Number(script?.dataset.linkCooldown || "0");
   const shouldPollLogin = script?.dataset.pollLogin === "true";
   const loginSyncChannel = script?.dataset.loginSyncChannel || "";
+  const pollUrl = script?.dataset.pollUrl || "/login/poll-status";
+  const adminUrl = script?.dataset.adminUrl || "/smartlock/admin";
 
   const completeLogin = function (redirectUrl) {
-    window.location.replace(redirectUrl || "/smartlock/admin");
+    window.location.replace(redirectUrl || adminUrl);
   };
 
   if (loginSyncChannel && "BroadcastChannel" in window) {
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
           completeLogin(data.redirectUrl);
         }
       } catch (error) {
-        completeLogin("/smartlock/admin");
+        completeLogin(adminUrl);
       }
     });
   }
@@ -58,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (shouldPollLogin) {
     const poll = function () {
-      fetch("/smartlock/poll-status")
+      fetch(pollUrl)
         .then(function (response) { return response.json(); })
         .then(function (data) {
           if (data.status === "logged_in") {

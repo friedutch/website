@@ -355,7 +355,7 @@ def _require_cloud_chat_user():
     if user:
         return user, None
     session["cloudchat_login_error"] = "Sign in to continue in Private Chat."
-    return None, redirect(url_for("cloud_chat_index"))
+    return None, redirect(url_for("cloud_chat_login"))
 
 
 def _get_active_chat_user(user_id):
@@ -656,14 +656,19 @@ def init_cloud_chat(app):
     @app.route("/privatechat/")
     def cloud_chat_index():
         user = _get_current_user()
-        if user:
-            requested_partner_id = request.args.get("dm", type=int)
-            return _render_cloud_chat_app(user, requested_partner_id=requested_partner_id)
-        return _render_cloud_chat_login()
+        if not user:
+            return redirect(url_for("cloud_chat_login"))
+        requested_partner_id = request.args.get("dm", type=int)
+        return _render_cloud_chat_app(user, requested_partner_id=requested_partner_id)
 
-    @app.route("/cloudchat/login", methods=["POST"])
-    @app.route("/privatechat/login", methods=["POST"])
+    @app.route("/privatechat/login", methods=["GET", "POST"])
     def cloud_chat_login():
+        current_user = _get_current_user()
+        if request.method == "GET":
+            if current_user:
+                return redirect(url_for("cloud_chat_index"))
+            return _render_cloud_chat_login()
+
         username = _normalize_username(request.form.get("username", ""))
         password = request.form.get("password", "")
         if not username or not password:
@@ -695,12 +700,18 @@ def init_cloud_chat(app):
         session["cloudchat_app_message"] = f"Welcome back, {row['username']}."
         return redirect(url_for("cloud_chat_index"))
 
+    @app.route("/cloudchat/login", methods=["GET", "POST"], endpoint="legacy_cloud_chat_login")
+    def legacy_cloud_chat_login():
+        if request.method == "GET":
+            return redirect(url_for("cloud_chat_login"), code=302)
+        return cloud_chat_login()
+
     @app.route("/cloudchat/logout", methods=["POST"])
     @app.route("/privatechat/logout", methods=["POST"])
     def cloud_chat_logout():
         _clear_cloud_chat_session()
         session["cloudchat_login_error"] = "You have been logged out of Private Chat."
-        return redirect(url_for("cloud_chat_index"))
+        return redirect(url_for("cloud_chat_login"))
 
     @app.route("/cloudchat/messages/send/<int:partner_id>", methods=["POST"])
     @app.route("/privatechat/messages/send/<int:partner_id>", methods=["POST"])

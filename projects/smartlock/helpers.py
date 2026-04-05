@@ -30,18 +30,33 @@ def cookies_enabled_for_smartlock():
     return session.get("smartlock_cookies_probe") == "ok"
 
 
+def is_smartlock_cookie_path(path):
+    return path == "/login" or path.startswith("/smartlock")
+
+
 def render_cookies_required():
     return render_page(
         "smartlock/cookies_required.html",
         page_name="Smart Lock — Cookies Required",
+        current_project="login" if request.path == "/login" else "smartlock",
     )
 
 
 def ensure_smartlock_cookies():
-    if not request.path.startswith("/smartlock"):
+    if not is_smartlock_cookie_path(request.path):
         return None
     if request.endpoint == "static":
         return None
+    if request.method == "GET":
+        legacy_targets = {
+            "/smartlock/login": "/login",
+            "/smartlock/poll-status": "/login/poll-status",
+        }
+        canonical_path = legacy_targets.get(request.path)
+        if canonical_path:
+            query = urlencode(request.args.to_dict(flat=True))
+            target = f"{canonical_path}?{query}" if query else canonical_path
+            return redirect(target)
     if request.path.startswith("/smartlock/api/"):
         return None
     if cookies_enabled_for_smartlock():

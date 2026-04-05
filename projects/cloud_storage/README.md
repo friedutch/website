@@ -4,6 +4,7 @@
 - Cloud Storage is a private admin-only drop zone for moving files from the Mac to another device.
 - It reuses Smart Lock admin login instead of introducing a new auth system.
 - Uploaded files stay available until you delete them.
+- The page now lives inside the same shared Discord-like site shell as the rest of Friedutch Plus.
 
 ## AI Copilot
 
@@ -22,7 +23,7 @@
 ### Access model
 - Cloud Storage relies on Smart Lock admin state.
 - Treat it as an admin-only internal tool.
-- The `/cloud-storage/` page should redirect to Smart Lock login when there is no active admin session.
+- The `/cloud-storage/` page should redirect to the site-wide admin login at `/login` when there is no active admin session.
 
 ### Storage model
 - File metadata is stored in `cloud_storage.db`.
@@ -35,7 +36,7 @@
 - Upload sessions are staged in a temporary upload-session directory under the storage root before finalizing into the main file list.
 - Uploads are checked against the 10 GB total storage limit before and during finalization.
 - File records include a SHA-256 checksum plus download history metadata.
-- The page uses the shared site header plus a persistent storage-usage bar that shows used and remaining space.
+- The page uses the shared project rail and site shell plus a persistent storage-usage bar that shows used and remaining space.
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.

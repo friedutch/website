@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
           logoutForm.submit();
           return;
         }
-        window.location.href = "/smartlock/login";
+        window.location.href = "/login";
       }, 5000);
       return;
     }

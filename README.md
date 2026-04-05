@@ -20,12 +20,9 @@
   - a hardware API route inside the Smart Lock module
   - a macOS USB serial bridge script
   - a merged Uno sketch for keypad, RFID, and fingerprint checks
-- The root page `/` is a minimal logo landing screen that links into `/about`.
-- The about page at `/about` links to:
-  - Smart Lock
-  - Cloud Storage
-  - Private Chat
-  - Minecraft Server
+- The whole site now renders inside one shared Discord-like app shell.
+- The left rail works like Discord's server switcher, except each icon opens one site project.
+- The site-wide admin login is now `/login`, while project-scoped logins live inside their own zones such as `/privatechat/login`.
 
 ### Entrypoints
 - [`run.py`](/Users/administrator/Sites/friedutchplus/run.py): primary runtime entrypoint. Use this when starting the app intentionally.
@@ -81,9 +78,11 @@
 
 ### Repo structure
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py): app factory, `/`, `/about`, `/deploy`
-- [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects the page title and asset version
+- [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py): shared render helper that injects asset versions plus the shared project rail state
 - [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py): site-wide CSRF template helper
 - [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py): shared admin role helpers
+- [`templates/_app_frame.html`](/Users/administrator/Sites/friedutchplus/templates/_app_frame.html): shared Discord-like site shell used by every rendered page
+- [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css): shared shell and cross-project visual system
 - [`templates/minecraft.html`](/Users/administrator/Sites/friedutchplus/templates/minecraft.html): public landing page for the self-hosted Minecraft server
 - [`static/css/pages/minecraft.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/minecraft.css): Minecraft page styling
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py): lightweight Smart Lock bootstrap/registration entrypoint
@@ -133,11 +132,11 @@
   - large uploads use chunked background requests instead of one giant blocking form post
   - file contents live outside the repo in `CLOUD_STORAGE_ROOT`
 - Private Chat is a project-specific private zone:
-  - Private Chat users sign in with a username and password at `/privatechat/`
+  - Private Chat users sign in with a username and password at `/privatechat/login`
   - signed-in Private Chat users can open private one-to-one DM threads with other registered Private Chat users
   - the open DM thread now refreshes live for signed-in participants
   - the DM client now tracks lightweight presence and unread state to behave more like a Discord-style direct-message app
-  - the `Admin login` path on that screen leads to Smart Lock admin-managed user administration
+  - the `Admin login` path on that screen leads to the site-wide Smart Lock admin login at `/login`
   - created and reset passwords are shown once in the immediate admin response, then only stored as hashes
   - that one-time reveal response is marked `no-store`
   - Private Chat now requires at least 12 characters for new or reset passwords

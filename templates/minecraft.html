@@ -1,150 +1,134 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+{% extends "_app_frame.html" %}
+
+{% block page_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/minecraft.css', v=asset_version) }}">
-</head>
-<body>
-<div class="minecraft-shell">
-  <div class="top-bar-unified">
-    <div class="top-bar-main">
-      <div class="app-brand">
-        <div class="brand-icon">⛏️</div>
-        <div>
-          <div class="brand-name">Minecraft Server</div>
-          <div class="brand-sub">Friedutch Plus</div>
-        </div>
-      </div>
-      <div class="top-right">
-        {% if show_logout_button %}
-        <form method="POST" action="/smartlock/logout" class="top-icon-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-        </form>
-        {% endif %}
-      </div>
-    </div>
-  </div>
+{% endblock %}
 
-  <section class="details-grid">
-    <article class="detail-card server-id-card server-id-card-{{ minecraft.status|lower }}">
-      <p class="card-label">Server ID</p>
-      <div class="server-id-head">
-        <h1>{{ minecraft.server_name }}</h1>
-        <p class="server-id-sub">{{ minecraft.summary }}</p>
-      </div>
-      <div class="address-line">
-        <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
-        <code id="join-address">{{ minecraft.join_address }}</code>
-        <strong class="card-stat join-status">{{ minecraft.status }}</strong>
-      </div>
-      <ul class="detail-list">
-        <li>
-          <span>Players</span>
-          <strong>{{ minecraft.player_count }}</strong>
-        </li>
-      </ul>
-    </article>
+{% block header_kicker %}Minecraft{% endblock %}
+{% block header_title %}{{ minecraft.server_name }}{% endblock %}
+{% block header_subtitle %}{{ minecraft.summary }}{% endblock %}
 
-    <article class="detail-card">
-      <p class="card-label">Golden Rules</p>
-      <ul class="detail-list">
-        <li>
-          <span>Respect ownership</span>
-          <strong>No griefing or stealing.</strong>
-        </li>
-        <li>
-          <span>Play fair</span>
-          <strong>No cheats, x-ray, or hacked clients.</strong>
-        </li>
-        <li>
-          <span>Discuss calmly</span>
-          <strong>No spam, harassment, or hate.</strong>
-        </li>
-      </ul>
-    </article>
-
-    <article class="detail-card">
-      <p class="card-label">Game Details</p>
-      <ul class="detail-list">
-        <li>
-          <span>Edition</span>
-          <strong>{{ minecraft.edition }}</strong>
-        </li>
-        <li>
-          <span>Mod Loader</span>
-          <strong>{{ minecraft.modloader }}</strong>
-        </li>
-        <li>
-          <span>Version</span>
-          <strong>{{ minecraft.version }}</strong>
-        </li>
-        <li>
-          <span>Access</span>
-          <strong>{{ minecraft.access }}</strong>
-        </li>
-      </ul>
-    </article>
-
-    {% if minecraft.can_manage %}
-    <article class="detail-card">
-      <p class="card-label">Admin Controls</p>
-      <ul class="detail-list">
-        <li>
-          <span>Status</span>
-          <div class="detail-actions">
-            <strong class="card-stat-inline">{{ minecraft.status }}</strong>
-            <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
-            </form>
-            <form method="POST" action="{{ url_for('minecraft.minecraft_server_stop') }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <button class="action-btn action-btn-danger" type="submit" {% if not minecraft.can_stop %}disabled{% endif %}>Stop</button>
-            </form>
-          </div>
-        </li>
-        <li>
-          <span>Access</span>
-          <div class="detail-actions">
-            <strong>{{ minecraft.access }}</strong>
-            <button class="action-btn" type="button" disabled>Change</button>
-          </div>
-        </li>
-        <li>
-          <span>Reset World</span>
-          <div class="detail-actions">
-            <strong>{{ minecraft.world_name }}</strong>
-            <button class="action-btn action-btn-danger" type="button" disabled>Reset</button>
-          </div>
-        </li>
-        <li>
-          <span>Version</span>
-          <div class="detail-actions">
-            <strong>{{ minecraft.version }}</strong>
-            <button class="action-btn" type="button" disabled>Change</button>
-          </div>
-        </li>
-        <li>
-          <span>Mod Loader</span>
-          <div class="detail-actions">
-            <strong>{{ minecraft.modloader }}</strong>
-            <button class="action-btn" type="button" disabled>Change</button>
-          </div>
-        </li>
-      </ul>
-    </article>
-    {% endif %}
-  </section>
-
-  {% include "_site_footer.html" %}
+{% block header_actions %}
+<div class="chip-row">
+  <span class="chip {% if minecraft.status == 'Online' %}chip-on{% endif %}">{{ minecraft.status }}</span>
+  <span class="chip">{{ minecraft.player_count }}</span>
 </div>
+{% endblock %}
 
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block content %}
+<section class="details-grid">
+  <article class="detail-card server-id-card server-id-card-{{ minecraft.status|lower }}">
+    <p class="card-label">Server ID</p>
+    <div class="server-id-head">
+      <h1>{{ minecraft.server_name }}</h1>
+      <p class="server-id-sub">{{ minecraft.summary }}</p>
+    </div>
+    <div class="address-line">
+      <button class="copy-btn" type="button" data-copy-target="#join-address">Copy</button>
+      <code id="join-address">{{ minecraft.join_address }}</code>
+      <strong class="card-stat join-status">{{ minecraft.status }}</strong>
+    </div>
+    <ul class="detail-list">
+      <li>
+        <span>Players</span>
+        <strong>{{ minecraft.player_count }}</strong>
+      </li>
+    </ul>
+  </article>
+
+  <article class="detail-card">
+    <p class="card-label">Golden Rules</p>
+    <ul class="detail-list">
+      <li>
+        <span>Respect ownership</span>
+        <strong>No griefing or stealing.</strong>
+      </li>
+      <li>
+        <span>Play fair</span>
+        <strong>No cheats, x-ray, or hacked clients.</strong>
+      </li>
+      <li>
+        <span>Discuss calmly</span>
+        <strong>No spam, harassment, or hate.</strong>
+      </li>
+    </ul>
+  </article>
+
+  <article class="detail-card">
+    <p class="card-label">Game Details</p>
+    <ul class="detail-list">
+      <li>
+        <span>Edition</span>
+        <strong>{{ minecraft.edition }}</strong>
+      </li>
+      <li>
+        <span>Mod Loader</span>
+        <strong>{{ minecraft.modloader }}</strong>
+      </li>
+      <li>
+        <span>Version</span>
+        <strong>{{ minecraft.version }}</strong>
+      </li>
+      <li>
+        <span>Access</span>
+        <strong>{{ minecraft.access }}</strong>
+      </li>
+    </ul>
+  </article>
+
+  {% if minecraft.can_manage %}
+  <article class="detail-card">
+    <p class="card-label">Admin Controls</p>
+    <ul class="detail-list">
+      <li>
+        <span>Status</span>
+        <div class="detail-actions">
+          <strong class="card-stat-inline">{{ minecraft.status }}</strong>
+          <form method="POST" action="{{ url_for('minecraft.minecraft_server_start') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="action-btn" type="submit" {% if not minecraft.can_start %}disabled{% endif %}>Start</button>
+          </form>
+          <form method="POST" action="{{ url_for('minecraft.minecraft_server_stop') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="action-btn action-btn-danger" type="submit" {% if not minecraft.can_stop %}disabled{% endif %}>Stop</button>
+          </form>
+        </div>
+      </li>
+      <li>
+        <span>Access</span>
+        <div class="detail-actions">
+          <strong>{{ minecraft.access }}</strong>
+          <button class="action-btn" type="button" disabled>Change</button>
+        </div>
+      </li>
+      <li>
+        <span>Reset World</span>
+        <div class="detail-actions">
+          <strong>{{ minecraft.world_name }}</strong>
+          <button class="action-btn action-btn-danger" type="button" disabled>Reset</button>
+        </div>
+      </li>
+      <li>
+        <span>Version</span>
+        <div class="detail-actions">
+          <strong>{{ minecraft.version }}</strong>
+          <button class="action-btn" type="button" disabled>Change</button>
+        </div>
+      </li>
+      <li>
+        <span>Mod Loader</span>
+        <div class="detail-actions">
+          <strong>{{ minecraft.modloader }}</strong>
+          <button class="action-btn" type="button" disabled>Change</button>
+        </div>
+      </li>
+    </ul>
+  </article>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block page_scripts %}
 <script>
 document.querySelectorAll('[data-copy-target]').forEach((button) => {
   button.addEventListener('click', async () => {
@@ -165,5 +149,4 @@ document.querySelectorAll('[data-copy-target]').forEach((button) => {
   });
 });
 </script>
-</body>
-</html>
+{% endblock %}

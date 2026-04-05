@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
+<title>{% block title %}{{ page_name or 'Friedutch Plus' }}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/site_shell.css', v=asset_version) }}">
+{% block page_styles %}{% endblock %}
+</head>
+<body class="site-app-body{% block body_class %}{% endblock %}">
+<div class="site-app-shell">
+  <aside class="site-project-rail" aria-label="Projects">
+    {% for project in site_projects %}
+    <a
+      class="site-project-link{% if current_project == project.key %} site-project-link-active{% endif %}"
+      href="{{ project.href }}"
+      aria-label="{{ project.label }}"
+      title="{{ project.label }}"
+    >
+      <span>{{ project.short }}</span>
+    </a>
+    {% endfor %}
+
+    <div class="site-project-rail-spacer"></div>
+
+    {% if show_logout_button %}
+    <form method="POST" action="{{ url_for('smartlock_logout') }}" class="contents-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="site-project-link site-project-link-utility" type="submit" data-confirm="Log out of admin access" aria-label="Admin logout" title="Admin logout">
+        <span>AO</span>
+      </button>
+    </form>
+    {% else %}
+    <a
+      class="site-project-link site-project-link-utility{% if current_project == 'login' %} site-project-link-active{% endif %}"
+      href="{{ site_admin_login_url }}"
+      aria-label="Admin login"
+      title="Admin login"
+    >
+      <span>LG</span>
+    </a>
+    {% endif %}
+
+    <button class="site-project-link site-project-link-utility" data-theme-toggle data-theme-label="Theme" type="button" aria-label="Toggle theme" title="Toggle theme">TH</button>
+    {% if config.GITHUB_REPO_URL %}
+    <a class="site-project-link site-project-link-utility" href="{{ config.GITHUB_REPO_URL }}" target="_blank" rel="noreferrer" aria-label="GitHub repository" title="GitHub repository">
+      <span>GH</span>
+    </a>
+    {% endif %}
+  </aside>
+
+  <main class="site-app-main">
+    <header class="site-app-header">
+      <div class="site-app-heading">
+        {% if self.header_kicker()|trim %}
+        <p class="site-app-kicker">{% block header_kicker %}{% endblock %}</p>
+        {% endif %}
+        <h1 class="site-app-title">{% block header_title %}{{ page_name or 'Friedutch Plus' }}{% endblock %}</h1>
+        {% if self.header_subtitle()|trim %}
+        <p class="site-app-subtitle">{% block header_subtitle %}{% endblock %}</p>
+        {% endif %}
+      </div>
+      <div class="site-app-actions">
+        {% block header_actions %}{% endblock %}
+      </div>
+    </header>
+
+    <section class="site-app-content{% if self.content_class()|trim %} {% block content_class %}{% endblock %}{% endif %}">
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}{% endblock %}
+</body>
+</html>

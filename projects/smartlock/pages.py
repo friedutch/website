@@ -25,6 +25,7 @@ def render_login_page(
     return render_page(
         "smartlock/admin_login.html",
         page_name="Smart Lock — Access",
+        current_project="login",
         admin_sent=admin_sent,
         link_cooldown=link_cooldown,
         captcha_code=captcha_code,
@@ -38,6 +39,7 @@ def render_email_pending_page(*, error=None, captcha_code=None, noindex=False):
     return render_page(
         "smartlock/email_pending.html",
         page_name="Smart Lock — Verify Email",
+        current_project="login",
         pending_email=get_pending_email(),
         sent_at=get_pending_sent_at(),
         error=error,
@@ -59,6 +61,7 @@ def render_verification_complete_page(
     return render_page(
         "smartlock/verification_complete.html",
         page_name=page_name,
+        current_project="login",
         redirect_url=redirect_url,
         heading=heading,
         description=description,
@@ -74,6 +77,7 @@ def render_user_detail_page(user, *, is_new_user, error=None, page_name=None, no
         page_name=page_name or (
             "New User — Friedutch Plus" if is_new_user else f"{user['name']} — Friedutch Plus"
         ),
+        current_project="smartlock",
         user=user,
         is_new_user=is_new_user,
         error=error,
@@ -94,6 +98,7 @@ def render_admin_panel(*, email_error=None):
     return render_page(
         "smartlock/admin_panel.html",
         page_name="Smart Lock",
+        current_project="smartlock",
         users=users,
         admin_email=get_admin_email(),
         pending=get_pending_email(),

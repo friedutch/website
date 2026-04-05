@@ -1,151 +1,133 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Private Chat — Admin' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+{% extends "_app_frame.html" %}
+
+{% block page_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
-</head>
-<body>
-<div class="page-shell">
-  <div class="top-bar-unified">
-    <div class="top-bar-main">
-      <div class="app-brand">
-        <div class="brand-icon">💬</div>
-        <div>
-          <div class="brand-name">Private Chat Admin</div>
-          <div class="brand-sub">Managed by Smart Lock</div>
-        </div>
-      </div>
-      <div class="top-right">
-        <a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_index') }}">Private Chat</a>
-        <form method="POST" action="/smartlock/logout" class="contents-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button class="sm-btn sm-ghost" type="submit" data-confirm="Log out of Smart Lock">Admin out</button>
-        </form>
-      </div>
-    </div>
+{% endblock %}
+
+{% block header_kicker %}Private Chat{% endblock %}
+{% block header_title %}Manage users{% endblock %}
+{% block header_subtitle %}Smart Lock admin session required. These users only exist inside Private Chat.{% endblock %}
+
+{% block header_actions %}
+<a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_index') }}">Open app</a>
+{% endblock %}
+
+{% block content %}
+{% if admin_message %}<p class="page-message page-message-ok">{{ admin_message }}</p>{% endif %}
+{% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
+
+{% if password_preview %}
+<section class="zone zone-green cloudchat-password-preview-zone">
+  <div class="zone-title">
+    <div class="zone-title-left"><span>🔐</span> <span>One-Time Password</span></div>
   </div>
-
-  {% if admin_message %}<p class="page-message page-message-ok">{{ admin_message }}</p>{% endif %}
-  {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
-  {% if password_preview %}
-  <section class="zone zone-green cloudchat-password-preview-zone">
-    <div class="zone-title">
-      <div class="zone-title-left"><span>🔐</span> <span>One-Time Password</span></div>
-    </div>
-    <div class="cloudchat-preview-meta">
-      <span class="chip chip-on">User {{ password_preview['username'] }}</span>
-      <span class="chip">One-time reveal</span>
-    </div>
-    <div class="cloudchat-preview-row">
-      <input class="app-input" type="password" value="{{ password_preview['password'] }}" readonly data-password-preview-input aria-label="One-time password preview">
-      <button class="sm-btn sm-ghost" type="button" data-password-preview-toggle>Reveal</button>
-      <button class="sm-btn sm-cyan" type="button" data-password-preview-copy>Copy</button>
-    </div>
-  </section>
-  {% endif %}
-
-  <div class="cloudchat-grid">
-    <section class="zone zone-cyan">
-      <div class="zone-title">
-        <div class="zone-title-left"><span>➕</span> <span>Create User</span></div>
-      </div>
-      <form class="cloudchat-admin-form" method="POST" action="{{ url_for('cloud_chat_create_user') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label class="cloudchat-field">
-          <span class="cloudchat-field-label">Username</span>
-          <input class="app-input" type="text" name="username" value="{{ username_value }}" placeholder="username" maxlength="32" required>
-        </label>
-        <label class="cloudchat-field">
-          <span class="cloudchat-field-label">Password</span>
-          <input class="app-input" type="password" name="password" placeholder="minimum {{ password_min_length }} characters" minlength="{{ password_min_length }}" required>
-        </label>
-        <button class="big-btn btn-primary" type="submit">Create Private Chat user</button>
-      </form>
-    </section>
-
-    <section class="zone zone-pink">
-      <div class="zone-title">
-        <div class="zone-title-left"><span>🧩</span> <span>Access Model</span></div>
-      </div>
-      <ul class="detail-list">
-        <li>
-          <span>User login</span>
-          <strong>Username + password</strong>
-        </li>
-        <li>
-          <span>Admin login</span>
-          <strong>Smart Lock session</strong>
-        </li>
-        <li>
-          <span>Scope</span>
-          <strong>Private Chat only</strong>
-        </li>
-      </ul>
-    </section>
+  <div class="cloudchat-preview-meta">
+    <span class="chip chip-on">User {{ password_preview['username'] }}</span>
+    <span class="chip">One-time reveal</span>
   </div>
+  <div class="cloudchat-preview-row">
+    <input class="app-input" type="password" value="{{ password_preview['password'] }}" readonly data-password-preview-input aria-label="One-time password preview">
+    <button class="sm-btn sm-ghost" type="button" data-password-preview-toggle>Reveal</button>
+    <button class="sm-btn sm-cyan" type="button" data-password-preview-copy>Copy</button>
+  </div>
+</section>
+{% endif %}
 
-  <section class="zone zone-purple">
+<div class="cloudchat-grid">
+  <section class="zone zone-cyan">
     <div class="zone-title">
-      <div class="zone-title-left"><span>👥</span> <span>Private Chat Users</span></div>
+      <div class="zone-title-left"><span>➕</span> <span>Create User</span></div>
     </div>
-    {% if users %}
-    <div class="cloudchat-search-row">
-      <input class="app-input" type="search" id="cloudchat-user-search" placeholder="Search usernames or status">
-    </div>
-    <div class="cloudchat-user-list">
-      {% for user in users %}
-      <article class="user-card cloudchat-user-card" data-cloudchat-user-card data-cloudchat-user-search="{{ (user.username ~ ' ' ~ ('active' if user.is_active else 'disabled') ~ ' ' ~ ('signed in here' if user.is_current_user else ''))|lower }}">
-        <div class="user-card-top">
-          <div class="user-avatar">💬</div>
-          <div class="user-info">
-            <div class="user-name">{{ user.username }}</div>
-            <div class="user-sub">{{ user.created_at }} UTC</div>
-          </div>
-          <span class="chip {{ 'chip-on' if user.is_active else 'chip-off' }}">{{ 'Active' if user.is_active else 'Disabled' }}</span>
-          {% if user.is_current_user %}
-          <span class="current-badge">SIGNED IN HERE</span>
-          {% endif %}
-        </div>
-
-        <div class="cloudchat-user-actions">
-          <form method="POST" action="{{ url_for('cloud_chat_toggle_user', user_id=user.id) }}" class="contents-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button class="sm-btn {{ 'sm-ghost' if user.is_active else 'sm-cyan' }}" type="submit">
-              {{ 'Disable' if user.is_active else 'Re-enable' }}
-            </button>
-          </form>
-
-          <form method="POST" action="{{ url_for('cloud_chat_reset_user_password', user_id=user.id) }}" class="cloudchat-reset-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input class="app-input" type="password" name="password" placeholder="New password ({{ password_min_length }}+ chars)" minlength="{{ password_min_length }}" required>
-            <button class="sm-btn sm-cyan" type="submit">Reset password</button>
-          </form>
-
-          <form method="POST" action="{{ url_for('cloud_chat_delete_user', user_id=user.id) }}" class="contents-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button class="sm-btn action-btn-danger" type="submit" data-confirm="Delete {{ user.username }} from Private Chat">Delete</button>
-          </form>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
-    <p class="empty empty-hidden" id="cloudchat-user-search-empty">No Private Chat users match this search.</p>
-    {% else %}
-    <div class="empty">
-      <div class="empty-icon">💬</div>
-      <div class="empty-text">No Private Chat users yet.</div>
-    </div>
-    {% endif %}
+    <form class="cloudchat-admin-form" method="POST" action="{{ url_for('cloud_chat_create_user') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="cloudchat-field">
+        <span class="cloudchat-field-label">Username</span>
+        <input class="app-input" type="text" name="username" value="{{ username_value }}" placeholder="username" maxlength="32" required>
+      </label>
+      <label class="cloudchat-field">
+        <span class="cloudchat-field-label">Password</span>
+        <input class="app-input" type="password" name="password" placeholder="minimum {{ password_min_length }} characters" minlength="{{ password_min_length }}" required>
+      </label>
+      <button class="big-btn btn-primary" type="submit">Create Private Chat user</button>
+    </form>
   </section>
 
-  {% include "_site_footer.html" %}
+  <section class="zone zone-pink">
+    <div class="zone-title">
+      <div class="zone-title-left"><span>🧩</span> <span>Access Model</span></div>
+    </div>
+    <ul class="detail-list">
+      <li>
+        <span>User login</span>
+        <strong>/privatechat/login</strong>
+      </li>
+      <li>
+        <span>Admin login</span>
+        <strong>/login</strong>
+      </li>
+      <li>
+        <span>Scope</span>
+        <strong>Private Chat only</strong>
+      </li>
+    </ul>
+  </section>
 </div>
 
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+<section class="zone zone-purple">
+  <div class="zone-title">
+    <div class="zone-title-left"><span>👥</span> <span>Private Chat Users</span></div>
+  </div>
+  {% if users %}
+  <div class="cloudchat-search-row">
+    <input class="app-input" type="search" id="cloudchat-user-search" placeholder="Search usernames or status">
+  </div>
+  <div class="cloudchat-user-list">
+    {% for user in users %}
+    <article class="user-card cloudchat-user-card" data-cloudchat-user-card data-cloudchat-user-search="{{ (user.username ~ ' ' ~ ('active' if user.is_active else 'disabled') ~ ' ' ~ ('signed in here' if user.is_current_user else ''))|lower }}">
+      <div class="user-card-top">
+        <div class="user-avatar">💬</div>
+        <div class="user-info">
+          <div class="user-name">{{ user.username }}</div>
+          <div class="user-sub">{{ user.created_at }} UTC</div>
+        </div>
+        <span class="chip {{ 'chip-on' if user.is_active else 'chip-off' }}">{{ 'Active' if user.is_active else 'Disabled' }}</span>
+        {% if user.is_current_user %}
+        <span class="current-badge">SIGNED IN HERE</span>
+        {% endif %}
+      </div>
+
+      <div class="cloudchat-user-actions">
+        <form method="POST" action="{{ url_for('cloud_chat_toggle_user', user_id=user.id) }}" class="contents-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="sm-btn {{ 'sm-ghost' if user.is_active else 'sm-cyan' }}" type="submit">
+            {{ 'Disable' if user.is_active else 'Re-enable' }}
+          </button>
+        </form>
+
+        <form method="POST" action="{{ url_for('cloud_chat_reset_user_password', user_id=user.id) }}" class="cloudchat-reset-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input class="app-input" type="password" name="password" placeholder="New password ({{ password_min_length }}+ chars)" minlength="{{ password_min_length }}" required>
+          <button class="sm-btn sm-cyan" type="submit">Reset password</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('cloud_chat_delete_user', user_id=user.id) }}" class="contents-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="sm-btn action-btn-danger" type="submit" data-confirm="Delete {{ user.username }} from Private Chat">Delete</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <p class="empty empty-hidden" id="cloudchat-user-search-empty">No Private Chat users match this search.</p>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">💬</div>
+    <div class="empty-text">No Private Chat users yet.</div>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block page_scripts %}
 <script src="{{ url_for('static', filename='js/pages/cloud_chat.js', v=asset_version) }}"></script>
-</body>
-</html>
+{% endblock %}

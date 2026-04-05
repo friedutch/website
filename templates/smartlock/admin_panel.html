@@ -1,48 +1,26 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{{ page_name or 'Smart Lock' }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
+{% extends "_app_frame.html" %}
+
+{% block page_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_panel.css', v=asset_version) }}">
-</head>
-<body>
+{% endblock %}
 
-<div class="top-bar-unified">
-  <div class="top-bar-main">
-    <div class="app-brand">
-      <div class="brand-icon">🔐</div>
-      <div>
-        <div class="brand-name">Smart Lock</div>
-        <div class="brand-sub">Friedutch Plus</div>
-      </div>
-    </div>
-    <div class="top-bar-right">
-      <div class="panel-tabs" role="tablist" aria-label="Admin sections">
-        <button class="panel-tab active" type="button" data-panel-tab="people" aria-selected="true">Users</button>
-        <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
-        <button class="panel-tab" type="button" data-panel-tab="arduino" aria-selected="false">Arduino</button>
-      </div>
-      <div class="top-right">
-        {% if show_logout_button %}
-        <form method="POST" action="/smartlock/logout" class="top-icon-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button class="top-icon-btn" type="submit" data-confirm="Log out">👋</button>
-        </form>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <div class="top-bar-meta">
-    <div class="header-island">
-      <span class="header-island-label">Session</span>
-      <span class="header-island-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</span>
-    </div>
-  </div>
+{% block header_kicker %}Smart Lock{% endblock %}
+{% block header_title %}Admin panel{% endblock %}
+{% block header_subtitle %}Session remaining: {{ current_remaining }} seconds.{% endblock %}
+
+{% block header_actions %}
+<div class="panel-tabs" role="tablist" aria-label="Admin sections">
+  <button class="panel-tab active" type="button" data-panel-tab="people" aria-selected="true">Users</button>
+  <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
+  <button class="panel-tab" type="button" data-panel-tab="arduino" aria-selected="false">Arduino</button>
 </div>
+<div class="header-island">
+  <span class="header-island-label">Session</span>
+  <span class="header-island-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</span>
+</div>
+{% endblock %}
 
+{% block content %}
 {% if panel_message %}<p class="msg-err panel-message">{{ panel_message }}</p>{% endif %}
 
 <div class="zone zone-pink admin-tools-card">
@@ -52,7 +30,7 @@
     <div class="admin-email-block">
       <p class="setting-label">Admin email</p>
       <p class="setting-val">{{ admin_email }}</p>
-      <div class="pending-tag">⏳ Awaiting verification</div>
+      <div class="pending-tag">Awaiting verification</div>
       <p class="pending-copy">Sent to <strong>{{ pending }}</strong></p>
       <div class="pending-actions">
         <a class="sm-btn sm-pink settings-action-btn" href="/smartlock/change-email/pending">View status</a>
@@ -64,7 +42,7 @@
     </div>
     {% else %}
     <div class="email-change-panel" data-email-change-panel>
-      <button class="sm-btn sm-ghost sm-ghost-pink settings-action-btn email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>📧 Change email</button>
+      <button class="sm-btn sm-ghost sm-ghost-pink settings-action-btn email-change-toggle{% if email_error %} email-change-toggle-hidden{% endif %}" type="button" data-email-change-open {% if cooldown_remaining > 0 %}disabled{% endif %}>Change email</button>
       <form class="email-change-form{% if not email_error %} email-change-form-hidden{% endif %}" method="POST" action="/smartlock/change-email" id="chg-form" data-email-change-form>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="sm-btn sm-ghost sm-ghost-pink email-change-cancel" type="button" data-email-change-cancel>Cancel</button>
@@ -194,7 +172,7 @@
   <p class="no-items log-search-empty user-search-empty-hidden" id="log-search-empty">No logs match this search.</p>
 
   {% if not log_entries %}
-  <p class="no-items">No sessions yet 👀</p>
+  <p class="no-items">No sessions yet.</p>
   {% endif %}
 
   <form method="POST" action="/smartlock/session/logout-all">
@@ -220,13 +198,10 @@
   </div>
 </div>
 </div>
+{% endblock %}
 
-{% include "_site_footer.html" %}
-
-
-<script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>
+{% block page_scripts %}
 <script id="admin-panel-script" src="{{ url_for('static', filename='js/pages/smartlock/admin_panel.js', v=asset_version) }}"
         data-cooldown-remaining="{{ cooldown_remaining }}"
         data-arduino-events-url="/smartlock/api/hardware/events"></script>
-</body>
-</html>
+{% endblock %}

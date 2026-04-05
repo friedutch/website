@@ -1,7 +1,7 @@
 # Private Chat
 
 ## Human Summary
-- Private Chat is a private username/password project zone under `/privatechat/`.
+- Private Chat is a private username/password project zone with its own login at `/privatechat/login`.
 - Private Chat users are specific to this project and are managed by a Smart Lock admin.
 - The Private Chat login screen has a normal user login plus an admin path for managing users.
 
@@ -23,13 +23,14 @@
 - Provide private authenticated direct messages for signed-in Private Chat users.
 - Keep the selected DM thread updating live while both participants are signed in.
 - Present the signed-in app as a Discord-style DM client without server/channel features.
+- Render the project inside the same shared Discord-like shell used across the whole site.
 
 ### Access model
 - Regular Private Chat users sign in with:
   - username
   - password
 - Private Chat admin access is separate:
-  - the `Admin login` path uses the existing Smart Lock admin session
+  - the `Admin login` path uses the site-wide Smart Lock login at `/login`
   - the Private Chat admin screen is under `/privatechat/admin`
 - New and reset passwords are revealed only in the immediate admin response and are not shown again later.
 - Private Chat user accounts only apply to the Private Chat project zone.
@@ -40,10 +41,11 @@
 
 ### Routes
 - `/privatechat/`
-  - login screen for Private Chat users
-  - logged-in direct-message view for active Private Chat users
+  - authenticated direct-message view for active Private Chat users
+- `/privatechat/login`
+  - username/password login screen for Private Chat users
 - `POST /privatechat/login`
-  - username/password login
+  - username/password login submission
 - `POST /privatechat/logout`
   - logout the current Private Chat user session
 - `POST /privatechat/messages/send/<int:partner_id>`
@@ -60,6 +62,7 @@
   - disable or re-enable a Private Chat user
 - `POST /privatechat/admin/users/delete/<int:user_id>`
   - delete a Private Chat user
+- legacy `/cloudchat/*` routes still exist as compatibility redirects or aliases to the canonical `/privatechat/*` paths
 
 ### Database table
 - `cloud_chat_users`
