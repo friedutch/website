@@ -14,12 +14,6 @@
   margin-bottom: 18px;
 }
 
-.cloudchat-hero-zone,
-.cloudchat-login-zone,
-.cloudchat-app-hero {
-  min-height: 100%;
-}
-
 .cloudchat-chip-row,
 .cloudchat-user-actions {
   display: flex;
