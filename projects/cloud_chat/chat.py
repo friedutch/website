@@ -26,7 +26,7 @@ def _get_db():
     return db
 
 
-def init_cloud_chat_db():
+def init_chat_db():
     db = sqlite3.connect(CLOUD_CHAT_DB_PATH)
     db.execute(
         """CREATE TABLE IF NOT EXISTS cloud_chat_users (
@@ -350,12 +350,12 @@ def _get_current_user():
     return row
 
 
-def _require_cloud_chat_user():
+def _require_chat_user():
     user = _get_current_user()
     if user:
         return user, None
-    session["cloudchat_login_error"] = "Sign in to continue in Private Chat."
-    return None, redirect(url_for("cloud_chat_login"))
+    session["cloudchat_login_error"] = "Sign in to continue in Chat."
+    return None, redirect(url_for("chat_login"))
 
 
 def _get_active_chat_user(user_id):
@@ -542,17 +542,17 @@ def _json_no_store(payload, status=200):
     return response
 
 
-def _render_cloud_chat_login(error=None):
+def _render_chat_login(error=None):
     return render_page(
-        "cloud_chat_login.html",
-        page_name="Private Chat — Login",
+        "chat_login.html",
+        page_name="Chat — Login",
         error=error or _pop_notice("cloudchat_login_error"),
         admin_logged_in=is_site_admin(),
         noindex=True,
     )
 
 
-def _render_cloud_chat_app(user, error=None, draft_message="", requested_partner_id=None):
+def _render_chat_app(user, error=None, draft_message="", requested_partner_id=None):
     selected_partner, partners = _select_dm_partner(user["id"], requested_partner_id)
     selected_partner_id = selected_partner["id"] if selected_partner else None
 
@@ -563,8 +563,8 @@ def _render_cloud_chat_app(user, error=None, draft_message="", requested_partner
 
     messages = _list_dm_messages(user["id"], selected_partner["id"] if selected_partner else None)
     return render_page(
-        "cloud_chat_app.html",
-        page_name="Private Chat — Friedutch Plus",
+        "chat_app.html",
+        page_name="Chat — Friedutch Plus",
         current_user=user,
         app_message=_pop_notice("cloudchat_app_message"),
         app_error=error,
@@ -580,7 +580,7 @@ def _render_cloud_chat_app(user, error=None, draft_message="", requested_partner
     )
 
 
-def _list_cloud_chat_users():
+def _list_chat_users():
     db = _get_db()
     try:
         rows = db.execute(
@@ -606,12 +606,12 @@ def _list_cloud_chat_users():
     ]
 
 
-def _render_cloud_chat_admin(error=None, username_value="", admin_message=None, password_preview=None):
+def _render_chat_admin(error=None, username_value="", admin_message=None, password_preview=None):
     response = make_response(
         render_page(
-        "cloud_chat_admin.html",
-        page_name="Private Chat — Admin",
-        users=_list_cloud_chat_users(),
+        "chat_admin.html",
+        page_name="Chat — Admin",
+        users=_list_chat_users(),
         admin_message=admin_message if admin_message is not None else _pop_notice("cloudchat_admin_message"),
         password_preview=password_preview,
         error=error,
@@ -626,7 +626,7 @@ def _render_cloud_chat_admin(error=None, username_value="", admin_message=None, 
     return response
 
 
-def _require_cloud_chat_admin_user(user_id):
+def _require_chat_admin_user(user_id):
     db = _get_db()
     try:
         row = db.execute(
@@ -645,37 +645,30 @@ def _require_cloud_chat_admin_user(user_id):
     return row
 
 
-def init_cloud_chat(app):
-    @app.route("/cloudchat/")
-    def legacy_cloud_chat_index():
-        requested_partner_id = request.args.get("dm", type=int)
-        if requested_partner_id:
-            return redirect(url_for("cloud_chat_index", dm=requested_partner_id), code=302)
-        return redirect(url_for("cloud_chat_index"), code=302)
-
-    @app.route("/privatechat/")
-    def cloud_chat_index():
+def init_chat(app):
+    @app.route("/chat/")
+    def chat_index():
         user = _get_current_user()
         if not user:
-            return redirect(url_for("cloud_chat_login"))
+            return redirect(url_for("chat_login"))
         requested_partner_id = request.args.get("dm", type=int)
-        return _render_cloud_chat_app(user, requested_partner_id=requested_partner_id)
+        return _render_chat_app(user, requested_partner_id=requested_partner_id)
 
-    @app.route("/privatechat/login", methods=["GET", "POST"])
-    def cloud_chat_login():
+    @app.route("/chat/login", methods=["GET", "POST"])
+    def chat_login():
         current_user = _get_current_user()
         if request.method == "GET":
             if current_user:
-                return redirect(url_for("cloud_chat_index"))
-            return _render_cloud_chat_login()
+                return redirect(url_for("chat_index"))
+            return _render_chat_login()
 
         username = _normalize_username(request.form.get("username", ""))
         password = request.form.get("password", "")
         if not username or not password:
-            return _render_cloud_chat_login(error="Enter both a username and password.")
+            return _render_chat_login(error="Enter both a username and password.")
         lockout_remaining = _login_lockout_remaining(username)
         if lockout_remaining > 0:
-            return _render_cloud_chat_login(error=_format_lockout_message(lockout_remaining))
+            return _render_chat_login(error=_format_lockout_message(lockout_remaining))
 
         db = _get_db()
         try:
@@ -692,46 +685,38 @@ def init_cloud_chat(app):
 
         if not row or not row["is_active"] or not check_password_hash(row["password_hash"], password):
             _record_failed_login(username)
-            return _render_cloud_chat_login(error="Invalid Private Chat credentials.")
+            return _render_chat_login(error="Invalid Chat credentials.")
 
         _reset_failed_login(username)
         session["cloudchat_user_id"] = row["id"]
         session["cloudchat_username"] = row["username"]
         session["cloudchat_app_message"] = f"Welcome back, {row['username']}."
-        return redirect(url_for("cloud_chat_index"))
+        return redirect(url_for("chat_index"))
 
-    @app.route("/cloudchat/login", methods=["GET", "POST"], endpoint="legacy_cloud_chat_login")
-    def legacy_cloud_chat_login():
-        if request.method == "GET":
-            return redirect(url_for("cloud_chat_login"), code=302)
-        return cloud_chat_login()
-
-    @app.route("/cloudchat/logout", methods=["POST"])
-    @app.route("/privatechat/logout", methods=["POST"])
-    def cloud_chat_logout():
+    @app.route("/chat/logout", methods=["POST"])
+    def chat_logout():
         _clear_cloud_chat_session()
-        session["cloudchat_login_error"] = "You have been logged out of Private Chat."
-        return redirect(url_for("cloud_chat_login"))
+        session["cloudchat_login_error"] = "You have been logged out of Chat."
+        return redirect(url_for("chat_login"))
 
-    @app.route("/cloudchat/messages/send/<int:partner_id>", methods=["POST"])
-    @app.route("/privatechat/messages/send/<int:partner_id>", methods=["POST"])
-    def cloud_chat_send_message(partner_id):
-        user, redirect_response = _require_cloud_chat_user()
+    @app.route("/chat/messages/send/<int:partner_id>", methods=["POST"])
+    def chat_send_message(partner_id):
+        user, redirect_response = _require_chat_user()
         if redirect_response:
             return redirect_response
 
         if partner_id == user["id"]:
-            return _render_cloud_chat_app(user, error="You cannot open a direct message with yourself.")
+            return _render_chat_app(user, error="You cannot open a direct message with yourself.")
 
         partner = _get_active_chat_user(partner_id)
         if not partner:
-            return _render_cloud_chat_app(user, error="That Private Chat user is unavailable for direct messages.")
+            return _render_chat_app(user, error="That Chat user is unavailable for direct messages.")
 
         _touch_presence(user["id"], partner_id)
 
         message_text = _normalize_message_text(request.form.get("message", ""))
         if not message_text:
-            return _render_cloud_chat_app(
+            return _render_chat_app(
                 user,
                 error="Write a message before sending it.",
                 draft_message=request.form.get("message", ""),
@@ -750,11 +735,10 @@ def init_cloud_chat(app):
         db.close()
         _mark_thread_read(user["id"], partner_id)
         session["cloudchat_app_message"] = f"Message sent to {partner['username']}."
-        return redirect(url_for("cloud_chat_index", dm=partner_id))
+        return redirect(url_for("chat_index", dm=partner_id))
 
-    @app.route("/cloudchat/messages/live/<int:partner_id>")
-    @app.route("/privatechat/messages/live/<int:partner_id>")
-    def cloud_chat_live_messages(partner_id):
+    @app.route("/chat/messages/live/<int:partner_id>")
+    def chat_live_messages(partner_id):
         user = _get_current_user()
         if not user:
             return _json_no_store({"error": "auth_required"}, status=401)
@@ -790,20 +774,15 @@ def init_cloud_chat(app):
             }
         )
 
-    @app.route("/cloudchat/admin")
-    def legacy_cloud_chat_admin():
-        return redirect(url_for("cloud_chat_admin"), code=302)
-
-    @app.route("/privatechat/admin")
-    def cloud_chat_admin():
+    @app.route("/chat/admin")
+    def chat_admin():
         admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
-        return _render_cloud_chat_admin()
+        return _render_chat_admin()
 
-    @app.route("/cloudchat/admin/users/create", methods=["POST"])
-    @app.route("/privatechat/admin/users/create", methods=["POST"])
-    def cloud_chat_create_user():
+    @app.route("/chat/admin/users/create", methods=["POST"])
+    def chat_create_user():
         admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
@@ -811,12 +790,12 @@ def init_cloud_chat(app):
         username = _normalize_username(request.form.get("username", ""))
         password = request.form.get("password", "")
         if not username:
-            return _render_cloud_chat_admin(
+            return _render_chat_admin(
                 error="Enter a username using letters, numbers, dots, dashes, or underscores.",
                 username_value=request.form.get("username", ""),
             )
         if len(password) < PASSWORD_MIN_LENGTH:
-            return _render_cloud_chat_admin(
+            return _render_chat_admin(
                 error=f"Passwords must be at least {PASSWORD_MIN_LENGTH} characters long.",
                 username_value=username,
             )
@@ -833,13 +812,13 @@ def init_cloud_chat(app):
             db.commit()
         except sqlite3.IntegrityError:
             db.close()
-            return _render_cloud_chat_admin(
-                error="That Private Chat username already exists.",
+            return _render_chat_admin(
+                error="That Chat username already exists.",
                 username_value=username,
             )
         db.close()
-        return _render_cloud_chat_admin(
-            admin_message=f"Created Private Chat user {username}.",
+        return _render_chat_admin(
+            admin_message=f"Created Chat user {username}.",
             password_preview={
                 "username": username,
                 "password": password,
@@ -847,17 +826,16 @@ def init_cloud_chat(app):
             },
         )
 
-    @app.route("/cloudchat/admin/users/password/<int:user_id>", methods=["POST"])
-    @app.route("/privatechat/admin/users/password/<int:user_id>", methods=["POST"])
-    def cloud_chat_reset_user_password(user_id):
+    @app.route("/chat/admin/users/password/<int:user_id>", methods=["POST"])
+    def chat_reset_user_password(user_id):
         admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
 
-        user = _require_cloud_chat_admin_user(user_id)
+        user = _require_chat_admin_user(user_id)
         password = request.form.get("password", "")
         if len(password) < PASSWORD_MIN_LENGTH:
-            return _render_cloud_chat_admin(
+            return _render_chat_admin(
                 error=f"New passwords must be at least {PASSWORD_MIN_LENGTH} characters long."
             )
 
@@ -872,7 +850,7 @@ def init_cloud_chat(app):
         )
         db.commit()
         db.close()
-        return _render_cloud_chat_admin(
+        return _render_chat_admin(
             admin_message=f"Reset the password for {user['username']}.",
             password_preview={
                 "username": user["username"],
@@ -881,14 +859,13 @@ def init_cloud_chat(app):
             },
         )
 
-    @app.route("/cloudchat/admin/users/toggle/<int:user_id>", methods=["POST"])
-    @app.route("/privatechat/admin/users/toggle/<int:user_id>", methods=["POST"])
-    def cloud_chat_toggle_user(user_id):
+    @app.route("/chat/admin/users/toggle/<int:user_id>", methods=["POST"])
+    def chat_toggle_user(user_id):
         admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
 
-        user = _require_cloud_chat_admin_user(user_id)
+        user = _require_chat_admin_user(user_id)
         next_state = 0 if user["is_active"] else 1
         db = _get_db()
         db.execute(
@@ -908,16 +885,15 @@ def init_cloud_chat(app):
         session["cloudchat_admin_message"] = (
             f"{'Disabled' if not next_state else 'Re-enabled'} {user['username']}."
         )
-        return redirect(url_for("cloud_chat_admin"))
+        return redirect(url_for("chat_admin"))
 
-    @app.route("/cloudchat/admin/users/delete/<int:user_id>", methods=["POST"])
-    @app.route("/privatechat/admin/users/delete/<int:user_id>", methods=["POST"])
-    def cloud_chat_delete_user(user_id):
+    @app.route("/chat/admin/users/delete/<int:user_id>", methods=["POST"])
+    def chat_delete_user(user_id):
         admin_redirect = require_site_admin()
         if admin_redirect:
             return admin_redirect
 
-        user = _require_cloud_chat_admin_user(user_id)
+        user = _require_chat_admin_user(user_id)
         db = _get_db()
         db.execute("DELETE FROM cloud_chat_users WHERE id = ?", (user_id,))
         db.commit()
@@ -926,5 +902,5 @@ def init_cloud_chat(app):
         if session.get("cloudchat_user_id") == user_id:
             _clear_cloud_chat_session()
 
-        session["cloudchat_admin_message"] = f"Deleted {user['username']} from Private Chat."
-        return redirect(url_for("cloud_chat_admin"))
+        session["cloudchat_admin_message"] = f"Deleted {user['username']} from Chat."
+        return redirect(url_for("chat_admin"))

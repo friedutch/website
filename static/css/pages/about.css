@@ -1,34 +1,13 @@
-body {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 52px 24px 88px;
-}
-
-.site-header {
-  margin-top: 0;
-  margin-bottom: 18px;
-}
-
-.site-logo {
-  align-items: center;
-  gap: 12px;
-  font-size: clamp(28px, 4.2vw, 46px);
-}
-
-.site-logo-mark {
-  width: clamp(52px, 6vw, 72px);
-  height: clamp(52px, 6vw, 72px);
-}
-
-.projects-label {
-  margin-top: 0;
-  margin-bottom: 14px;
-}
-
 .projects-grid {
-  margin-bottom: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  align-items: stretch;
 }
 
-.about-card {
-  margin-bottom: 20px;
+.projects-grid .project-card {
+  min-height: 220px;
+  padding: 24px;
+}
+
+.projects-grid .project-tag {
+  margin-top: auto;
 }

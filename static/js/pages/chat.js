@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentUserId = Number(threadRoot.dataset.cloudchatCurrentUserId || "0");
     const selectedPartnerId = Number(threadRoot.dataset.cloudchatPartnerId || "0");
     const partnerName = threadRoot.dataset.cloudchatPartnerName || "this user";
-    const threadBase = partnerListRoot ? partnerListRoot.dataset.cloudchatThreadBase || "/privatechat/" : "/privatechat/";
+    const threadBase = partnerListRoot ? partnerListRoot.dataset.cloudchatThreadBase || "/chat/" : "/chat/";
     let lastMessageId = Number(threadRoot.dataset.cloudchatLastMessageId || "0");
     let liveRequestInFlight = false;
 

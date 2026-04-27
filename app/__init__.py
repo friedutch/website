@@ -1,5 +1,4 @@
 import os
-import hmac
 import subprocess
 from datetime import datetime, UTC
 from dotenv import load_dotenv
@@ -30,9 +29,8 @@ def get_git_output(project_root, *args):
 
 def create_app():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    from projects.cloud_chat import init_cloud_chat
+    from projects.cloud_chat import init_chat
     from projects.cloud_storage import init_cloud_storage
-    from projects.minecraft import init_minecraft
     from projects.smartlock import init_smartlock, render_cookies_required
 
     flask_app = Flask(
@@ -58,10 +56,9 @@ def create_app():
 
     flask_app.context_processor(inject_csrf_token)
 
-    init_minecraft(flask_app, csrf)
     init_smartlock(flask_app, csrf)
     init_cloud_storage(flask_app)
-    init_cloud_chat(flask_app)
+    init_chat(flask_app)
 
     @flask_app.errorhandler(CSRFError)
     def handle_csrf_error(error):
@@ -94,25 +91,6 @@ def create_app():
         )
         return response
 
-    @flask_app.route("/deploy", methods=["POST"])
-    @csrf.exempt
-    def deploy():
-        sig = request.headers.get("X-Hub-Signature-256", "")
-        secret = os.getenv("GITHUB_WEBHOOK_SECRET", "").encode()
-        if not secret:
-            flask_app.logger.error("Deploy webhook rejected because GITHUB_WEBHOOK_SECRET is missing.")
-            return jsonify({"error": "deploy unavailable"}), 503
-        body = request.get_data()
-        expected = "sha256=" + hmac.new(secret, body, "sha256").hexdigest()
-        if not hmac.compare_digest(sig, expected):
-            return jsonify({"error": "unauthorized"}), 401
-        subprocess.Popen(
-            ["/bin/bash", os.path.join(project_root, "deploy.sh")],
-            stdout=open("/tmp/deploy.log", "w"),
-            stderr=subprocess.STDOUT,
-        )
-        return jsonify({"status": "deploying"}), 200
-
     @flask_app.route("/")
     def landing():
         return render_page("landing.html", page_name="Friedutch Plus")
@@ -125,10 +103,10 @@ def create_app():
 
 
 def init_project_dbs():
-    from projects.cloud_chat import init_cloud_chat_db
+    from projects.cloud_chat import init_chat_db
     from projects.cloud_storage import init_cloud_storage_db
     from projects.smartlock import init_db
 
     init_db()
     init_cloud_storage_db()
-    init_cloud_chat_db()
+    init_chat_db()

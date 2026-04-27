@@ -1,5 +1,9 @@
 {% extends "_app_frame.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/about.css', v=asset_version) }}">
+{% endblock %}
+
 {% block header_kicker %}Friedutch Plus{% endblock %}
 {% block header_title %}Projects{% endblock %}
 
@@ -22,15 +26,10 @@
     <div class="project-name">Cloud Storage</div>
     <span class="project-tag tag-live">Private</span>
   </a>
-  <a class="project-card active" href="/privatechat/login">
+  <a class="project-card active" href="/chat/login">
     <span class="project-icon">💬</span>
-    <div class="project-name">Private Chat</div>
+    <div class="project-name">Chat</div>
     <span class="project-tag tag-live">Live</span>
-  </a>
-  <a class="project-card active" href="/minecraft/">
-    <span class="project-icon">⛏️</span>
-    <div class="project-name">Minecraft Server</div>
-    <span class="project-tag tag-live">Public</span>
   </a>
 </section>
 {% endblock %}

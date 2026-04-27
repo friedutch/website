@@ -4,15 +4,28 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/smartlock/admin_login.css', v=asset_version) }}">
 {% endblock %}
 
+{% block body_class %} site-app-body-headerless{% endblock %}
+{% block content_class %}access-content{% endblock %}
+
 {% block header_kicker %}Admin Access{% endblock %}
 {% block header_title %}Verification complete{% endblock %}
 
 {% block content %}
-<div class="project-card">
-  <span class="project-icon">✅</span>
-  <div class="project-name">{{ heading or 'Access granted' }}</div>
-  <p class="msg-err msg-err-spaced" id="verification-complete-fallback">{{ fallback_copy or 'If this page stays open, continue here.' }} <a href="{{ redirect_url }}">Continue</a>.</p>
-</div>
+<section class="access-shell">
+  <div class="project-card access-card access-card-elevated">
+    <div class="access-head">
+      <div class="access-icon">✅</div>
+      <div>
+        <span class="access-kicker">Admin Access</span>
+        <h1 class="access-title">{{ heading or 'Access granted' }}</h1>
+      </div>
+    </div>
+    <div class="access-note-card">
+      <div class="access-note-title">Signed in</div>
+      <p class="access-note-copy" id="verification-complete-fallback">{{ fallback_copy or 'If this page stays open, continue here.' }} <a href="{{ redirect_url }}">Continue</a>.</p>
+    </div>
+  </div>
+</section>
 {% endblock %}
 
 {% block page_scripts %}

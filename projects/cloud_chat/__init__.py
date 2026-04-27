@@ -1,1 +1,1 @@
-from .cloud_chat import init_cloud_chat, init_cloud_chat_db
+from .chat import init_chat, init_chat_db

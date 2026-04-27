@@ -1,17 +1,17 @@
 {% extends "_app_frame.html" %}
 
 {% block page_styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/chat.css', v=asset_version) }}">
 {% endblock %}
 
-{% block header_kicker %}Private Chat{% endblock %}
+{% block header_kicker %}Chat{% endblock %}
 {% block header_title %}Direct messages{% endblock %}
 
 {% block header_actions %}
 {% if can_manage %}
-<a class="sm-btn sm-ghost" href="{{ url_for('cloud_chat_admin') }}">Manage users</a>
+<a class="sm-btn sm-ghost" href="{{ url_for('chat_admin') }}">Manage users</a>
 {% endif %}
-<form method="POST" action="{{ url_for('cloud_chat_logout') }}" class="contents-form">
+<form method="POST" action="{{ url_for('chat_logout') }}" class="contents-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <button class="sm-btn sm-cyan" type="submit">Log out</button>
 </form>
@@ -29,7 +29,7 @@
   <aside
     class="cloudchat-sidebar"
     data-cloudchat-partner-list-root
-    data-cloudchat-thread-base="{{ url_for('cloud_chat_index') }}"
+    data-cloudchat-thread-base="{{ url_for('chat_index') }}"
   >
     <div class="cloudchat-sidebar-top">
       <div class="cloudchat-sidebar-search">Find or start a conversation</div>
@@ -42,7 +42,7 @@
         {% for partner in dm_partners %}
         <a
           class="cloudchat-dm-link{% if partner['selected'] %} cloudchat-dm-link-selected{% endif %}"
-          href="{{ url_for('cloud_chat_index', dm=partner['id']) }}"
+          href="{{ url_for('chat_index', dm=partner['id']) }}"
           data-partner-id="{{ partner['id'] }}"
         >
           <div class="cloudchat-dm-avatar-wrap">
@@ -73,7 +73,7 @@
         {% endfor %}
       </nav>
       {% else %}
-      <div class="cloudchat-sidebar-empty">No other Private Chat users are available.</div>
+      <div class="cloudchat-sidebar-empty">No other Chat users are available.</div>
       {% endif %}
     </div>
 
@@ -86,12 +86,12 @@
         </div>
       </div>
       <div class="cloudchat-user-actions-bar">
-        <form method="POST" action="{{ url_for('cloud_chat_logout') }}" class="contents-form">
+        <form method="POST" action="{{ url_for('chat_logout') }}" class="contents-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="cloudchat-panel-btn" type="submit" aria-label="Log out">Out</button>
         </form>
         {% if can_manage %}
-        <a class="cloudchat-panel-btn" href="{{ url_for('cloud_chat_admin') }}" aria-label="Manage users">Adm</a>
+        <a class="cloudchat-panel-btn" href="{{ url_for('chat_admin') }}" aria-label="Manage users">Adm</a>
         {% endif %}
       </div>
     </div>
@@ -121,7 +121,7 @@
       <div
         class="cloudchat-thread-shell"
         data-cloudchat-thread
-        data-cloudchat-live-url="{{ url_for('cloud_chat_live_messages', partner_id=selected_partner['id']) }}"
+        data-cloudchat-live-url="{{ url_for('chat_live_messages', partner_id=selected_partner['id']) }}"
         data-cloudchat-current-user-id="{{ current_user['id'] }}"
         data-cloudchat-partner-id="{{ selected_partner['id'] }}"
         data-cloudchat-partner-name="{{ selected_partner['username'] }}"
@@ -162,7 +162,7 @@
     </section>
 
     <footer class="cloudchat-composer-shell">
-      <form class="cloudchat-message-form" method="POST" action="{{ url_for('cloud_chat_send_message', partner_id=selected_partner['id']) }}" data-cloudchat-compose-form>
+      <form class="cloudchat-message-form" method="POST" action="{{ url_for('chat_send_message', partner_id=selected_partner['id']) }}" data-cloudchat-compose-form>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="sr-only" for="cloudchat-message-input">Message {{ selected_partner['username'] }}</label>
         <textarea
@@ -183,7 +183,7 @@
     {% else %}
     <section class="cloudchat-empty-state">
       <div class="cloudchat-empty-icon">💬</div>
-      <h1>Welcome to Private Chat</h1>
+      <h1>Welcome to Chat</h1>
       <p>Select a direct message to start talking.</p>
     </section>
     {% endif %}
@@ -192,5 +192,5 @@
 {% endblock %}
 
 {% block page_scripts %}
-<script src="{{ url_for('static', filename='js/pages/cloud_chat.js', v=asset_version) }}"></script>
+<script src="{{ url_for('static', filename='js/pages/chat.js', v=asset_version) }}"></script>
 {% endblock %}

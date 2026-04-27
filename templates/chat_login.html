@@ -1,7 +1,7 @@
 {% extends "_app_frame.html" %}
 
 {% block page_styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/cloud_chat.css', v=asset_version) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/chat.css', v=asset_version) }}">
 {% endblock %}
 
 {% block body_class %} site-app-body-headerless{% endblock %}
@@ -13,11 +13,11 @@
     <div class="cloudchat-auth-head">
       <div class="cloudchat-auth-icon">💬</div>
       <div class="cloudchat-auth-copy">
-        <span class="cloudchat-auth-kicker">Private Chat</span>
+        <span class="cloudchat-auth-kicker">Chat</span>
         <h1>Login</h1>
       </div>
     </div>
-    <form class="cloudchat-auth-form" method="POST" action="{{ url_for('cloud_chat_login') }}">
+    <form class="cloudchat-auth-form" method="POST" action="{{ url_for('chat_login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label class="cloudchat-field">
         <span class="cloudchat-field-label">Username</span>
@@ -30,7 +30,7 @@
       <button class="big-btn btn-primary" type="submit">Enter</button>
     </form>
     {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
-    <a class="sm-btn sm-ghost cloudchat-auth-admin-link" href="{{ url_for('cloud_chat_admin') }}">
+    <a class="sm-btn sm-ghost cloudchat-auth-admin-link" href="{{ url_for('chat_admin') }}">
       {{ 'Manage users' if admin_logged_in else 'Admin login' }}
     </a>
   </div>
@@ -38,5 +38,5 @@
 {% endblock %}
 
 {% block page_scripts %}
-<script src="{{ url_for('static', filename='js/pages/cloud_chat.js', v=asset_version) }}"></script>
+<script src="{{ url_for('static', filename='js/pages/chat.js', v=asset_version) }}"></script>
 {% endblock %}

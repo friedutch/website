@@ -7,20 +7,25 @@
 }
 
 :root {
-  --accent: #17c0b5;
-  --accent-strong: #0da79d;
-  --accent-soft: rgba(23, 192, 181, 0.12);
-  --accent-deep: #114f55;
-  --signal: #f29a4a;
-  --danger: #f06449;
-  --success: #49b27d;
+  --accent: #5865f2;
+  --accent-strong: #4752c4;
+  --accent-soft: rgba(88, 101, 242, 0.16);
+  --accent-deep: #313ea9;
+  --signal: #faa81a;
+  --danger: #da373c;
+  --success: #23a55a;
   --radius-xl: 28px;
   --radius-lg: 22px;
   --radius-md: 16px;
   --radius-sm: 12px;
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.18);
-  --shadow-md: 0 16px 36px rgba(0, 0, 0, 0.12);
-  --shadow-sm: 0 10px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 16px 36px rgba(0, 0, 0, 0.18);
+  --shadow-sm: 0 10px 24px rgba(0, 0, 0, 0.12);
+  --motion-fast: 0.16s;
+  --motion-base: 0.22s;
+  --motion-slow: 0.4s;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
   --content-width: 1120px;
 }
 
@@ -37,8 +42,8 @@
   --border: rgba(145, 183, 178, 0.18);
   --border-strong: rgba(145, 183, 178, 0.28);
   --page-overlay:
-    radial-gradient(circle at top left, rgba(23, 192, 181, 0.18), transparent 30%),
-    radial-gradient(circle at top right, rgba(242, 154, 74, 0.12), transparent 26%),
+    radial-gradient(circle at top left, rgba(88, 101, 242, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(250, 168, 26, 0.12), transparent 26%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 24%);
 }
 
@@ -55,8 +60,8 @@
   --border: rgba(16, 32, 39, 0.1);
   --border-strong: rgba(16, 32, 39, 0.16);
   --page-overlay:
-    radial-gradient(circle at top left, rgba(23, 192, 181, 0.12), transparent 32%),
-    radial-gradient(circle at top right, rgba(242, 154, 74, 0.1), transparent 28%),
+    radial-gradient(circle at top left, rgba(88, 101, 242, 0.12), transparent 32%),
+    radial-gradient(circle at top right, rgba(250, 168, 26, 0.1), transparent 28%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 24%);
 }
 
@@ -65,7 +70,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: "Manrope", sans-serif;
-  transition: background 0.25s ease, color 0.25s ease;
+  transition: background var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
 }
 
 body {
@@ -103,12 +108,12 @@ code {
 .num-btn,
 .copy-btn {
   transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    background 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease,
-    opacity 0.18s ease;
+    transform var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    background var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
 }
 
 .theme-toggle,
@@ -134,7 +139,7 @@ code {
 .copy-btn:hover {
   transform: translateY(-1px);
   border-color: var(--accent);
-  box-shadow: 0 14px 30px rgba(23, 192, 181, 0.14);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 24%, transparent);
 }
 
 .theme-toggle {
@@ -148,13 +153,11 @@ code {
 }
 
 .page-shell,
-.minecraft-shell,
 body {
   width: 100%;
 }
 
 .page-shell,
-.minecraft-shell,
 .simple-page {
   max-width: var(--content-width);
   margin: 0 auto;
@@ -221,7 +224,7 @@ body {
   border-radius: 20px;
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   color: white;
-  box-shadow: 0 14px 30px rgba(23, 192, 181, 0.22);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
 .brand-icon {
@@ -446,7 +449,6 @@ h1,
 .probe-card:hover,
 .breach-card:hover,
 .file-card:hover {
-  transform: translateY(-2px);
   border-color: var(--border-strong);
   box-shadow: var(--shadow-lg);
 }
@@ -724,7 +726,7 @@ h1,
 .filter-search:focus,
 .log-invite-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(23, 192, 181, 0.12);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .big-btn,
@@ -772,7 +774,7 @@ h1,
 .tab-btn.active {
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   color: white;
-  box-shadow: 0 14px 30px rgba(23, 192, 181, 0.2);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 .btn-primary:hover,
@@ -975,10 +977,10 @@ h1,
   letter-spacing: 0.08em;
   text-transform: uppercase;
   transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease;
+    transform var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard);
 }
 
 .universal-footer-link:hover {
@@ -986,6 +988,29 @@ h1,
   border-color: var(--accent);
   color: var(--text);
   box-shadow: var(--shadow-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    transition-duration: 0.01ms;
+  }
+
+  .theme-toggle,
+  .top-icon-btn,
+  .icon-btn,
+  .action-btn,
+  .panel-tab,
+  .filter-chip,
+  .tab-btn,
+  .method-toggle,
+  .num-btn,
+  .copy-btn,
+  .big-btn,
+  .sm-btn,
+  .universal-footer-link {
+    transition-duration: 0.01ms;
+  }
 }
 
 .debug-footer {
@@ -1011,7 +1036,6 @@ h1,
   }
 
   .page-shell,
-  .minecraft-shell,
   .simple-page,
   body {
     padding-left: 18px;
@@ -1026,7 +1050,6 @@ h1,
 
 @media (max-width: 640px) {
   .page-shell,
-  .minecraft-shell,
   .simple-page {
     padding-top: 18px;
     padding-bottom: 72px;

@@ -1,69 +1,68 @@
-# Private Chat
+# Chat
 
 ## Human Summary
-- Private Chat is a private username/password project zone with its own login at `/privatechat/login`.
-- Private Chat users are specific to this project and are managed by a Smart Lock admin.
-- The Private Chat login screen is now a stripped centered auth card with a separate admin path for managing users.
+- Chat is a private username/password project zone with its own login at `/chat/login`.
+- Chat users are specific to this project and are managed by a Smart Lock admin.
+- The Chat login screen is a stripped centered auth card with a separate admin path for managing users.
 
 ## AI Copilot
 
 ### Ownership
-- [`projects/cloud_chat/cloud_chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.py)
-- [`templates/cloud_chat_login.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_login.html)
-- [`templates/cloud_chat_app.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_app.html)
-- [`templates/cloud_chat_admin.html`](/Users/administrator/Sites/friedutchplus/templates/cloud_chat_admin.html)
-- [`static/css/pages/cloud_chat.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/cloud_chat.css)
-- [`static/js/pages/cloud_chat.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/cloud_chat.js)
+- [`projects/cloud_chat/chat.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/chat.py)
+- [`templates/chat_login.html`](/Users/administrator/Sites/friedutchplus/templates/chat_login.html)
+- [`templates/chat_app.html`](/Users/administrator/Sites/friedutchplus/templates/chat_app.html)
+- [`templates/chat_admin.html`](/Users/administrator/Sites/friedutchplus/templates/chat_admin.html)
+- [`static/css/pages/chat.css`](/Users/administrator/Sites/friedutchplus/static/css/pages/chat.css)
+- [`static/js/pages/chat.js`](/Users/administrator/Sites/friedutchplus/static/js/pages/chat.js)
 - local runtime database path [`projects/cloud_chat/cloud_chat.db`](/Users/administrator/Sites/friedutchplus/projects/cloud_chat/cloud_chat.db)
 
 ### Purpose
-- Provide a dedicated `/privatechat/` zone with project-specific username/password accounts.
-- Keep Private Chat account management inside the Private Chat project instead of reusing Smart Lock users directly.
-- Require a Smart Lock admin session for Private Chat user administration.
-- Provide private authenticated direct messages for signed-in Private Chat users.
+- Provide a dedicated `/chat/` zone with project-specific username/password accounts.
+- Keep Chat account management inside the Chat project instead of reusing Smart Lock users directly.
+- Require a Smart Lock admin session for Chat user administration.
+- Provide private authenticated direct messages for signed-in Chat users.
 - Keep the selected DM thread updating live while both participants are signed in.
 - Present the signed-in app as a Discord-style DM client without server/channel features.
 - Render the project inside the same shared Discord-like shell used across the whole site.
 - Keep the login view visually minimal while leaving the shared rail available.
 
 ### Access model
-- Regular Private Chat users sign in with:
+- Regular Chat users sign in with:
   - username
   - password
-- Private Chat admin access is separate:
+- Chat admin access is separate:
   - the `Admin login` path uses the site-wide Smart Lock login at `/login`
-  - the Private Chat admin screen is under `/privatechat/admin`
+  - the Chat admin screen is under `/chat/admin`
 - New and reset passwords are revealed only in the immediate admin response and are not shown again later.
-- Private Chat user accounts only apply to the Private Chat project zone.
+- Chat user accounts only apply to the Chat project zone.
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.
-- It is registered by calling `init_cloud_chat(app)` from [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py).
+- It is registered by calling `init_chat(app)` from [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py).
 
 ### Routes
-- `/privatechat/`
-  - authenticated direct-message view for active Private Chat users
-- `/privatechat/login`
-  - username/password login screen for Private Chat users
-- `POST /privatechat/login`
+- `/chat/`
+  - authenticated direct-message view for active Chat users
+- `/chat/login`
+  - username/password login screen for Chat users
+- `POST /chat/login`
   - username/password login submission
-- `POST /privatechat/logout`
-  - logout the current Private Chat user session
-- `POST /privatechat/messages/send/<int:partner_id>`
-  - post a new direct message to the selected Private Chat user
-- `/privatechat/messages/live/<int:partner_id>`
+- `POST /chat/logout`
+  - logout the current Chat user session
+- `POST /chat/messages/send/<int:partner_id>`
+  - post a new direct message to the selected Chat user
+- `/chat/messages/live/<int:partner_id>`
   - return the currently selected DM thread as authenticated no-store JSON for live refresh
-- `/privatechat/admin`
+- `/chat/admin`
   - Smart Lock admin-only user management screen
-- `POST /privatechat/admin/users/create`
-  - create a Private Chat user
-- `POST /privatechat/admin/users/password/<int:user_id>`
-  - reset a Private Chat user's password
-- `POST /privatechat/admin/users/toggle/<int:user_id>`
-  - disable or re-enable a Private Chat user
-- `POST /privatechat/admin/users/delete/<int:user_id>`
-  - delete a Private Chat user
-- legacy `/cloudchat/*` routes still exist as compatibility redirects or aliases to the canonical `/privatechat/*` paths
+- `POST /chat/admin/users/create`
+  - create a Chat user
+- `POST /chat/admin/users/password/<int:user_id>`
+  - reset a Chat user's password
+- `POST /chat/admin/users/toggle/<int:user_id>`
+  - disable or re-enable a Chat user
+- `POST /chat/admin/users/delete/<int:user_id>`
+  - delete a Chat user
 
 ### Database table
 - Local runtime database file:
@@ -84,14 +83,14 @@
 - Passwords are stored as Werkzeug password hashes, not plaintext.
 - Passwords are only revealed once, immediately after create/reset, and are not recoverable later from storage.
 - The one-time password reveal is rendered directly in the admin response and marked `Cache-Control: no-store`.
-- Private Chat requires at least 12 characters for newly created or reset passwords.
-- Private Chat login attempts are throttled per username and client IP after repeated failures.
-- Direct messages are posted through normal CSRF-protected form submissions inside the authenticated `/privatechat/` zone.
+- Chat requires at least 12 characters for newly created or reset passwords.
+- Chat login attempts are throttled per username and client IP after repeated failures.
+- Direct messages are posted through normal CSRF-protected form submissions inside the authenticated `/chat/` zone.
 - Live DM polling stays same-origin, authenticated, and marked `no-store`.
 - Unread counts are derived from server-side thread read markers instead of client-only state.
-- Private Chat admin actions are POST-only and CSRF-protected.
-- Private Chat private pages should remain `noindex`.
+- Chat admin actions are POST-only and CSRF-protected.
+- Chat private pages should remain `noindex`.
 
 ### Boundary rule
 - Smart Lock remains the site-wide admin authority.
-- Private Chat owns its own project users and should not store them inside Smart Lock tables.
+- Chat owns its own project users and should not store them inside Smart Lock tables.

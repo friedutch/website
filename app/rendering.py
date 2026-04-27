@@ -5,8 +5,7 @@ SITE_PROJECTS = [
     {"key": "home", "label": "Home", "short": "🏠", "href": "/"},
     {"key": "smartlock", "label": "Smart Lock", "short": "🔐", "href": "/smartlock/"},
     {"key": "cloud_storage", "label": "Cloud Storage", "short": "☁️", "href": "/cloud-storage/"},
-    {"key": "privatechat", "label": "Private Chat", "short": "💬", "href": "/privatechat/"},
-    {"key": "minecraft", "label": "Minecraft", "short": "⛏️", "href": "/minecraft/"},
+    {"key": "chat", "label": "Chat", "short": "💬", "href": "/chat/"},
 ]
 
 
@@ -17,10 +16,8 @@ def _project_key_for_path(path):
         return "smartlock"
     if path.startswith("/cloud-storage/"):
         return "cloud_storage"
-    if path.startswith("/privatechat/") or path.startswith("/cloudchat/"):
-        return "privatechat"
-    if path.startswith("/minecraft/"):
-        return "minecraft"
+    if path.startswith("/chat/"):
+        return "chat"
     if path == "/login":
         return "login"
     return ""

@@ -1,7 +1,3 @@
-body {
-  padding: 24px 24px 72px;
-}
-
 .captcha-layout {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
