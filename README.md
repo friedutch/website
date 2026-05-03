@@ -10,7 +10,7 @@
 ### Purpose
 - Personal self-hosted Flask app on `friedutch.plus`.
 - The whole site renders inside one shared minimal shell.
-- The top menu is ordered Home, Projects, Login, with Projects expanding into a dropdown list.
+- The top menu shows the site brand on the left, Home and Projects centered, and Login on the far right, with Projects expanding into a plain dropdown list.
 - A universal footer carries the GitHub Repository and Discord Server links.
 - Set `SITE_BRAND_NAME` to rename the visible site brand everywhere at once.
 - The canonical site-wide admin login is `/login`.

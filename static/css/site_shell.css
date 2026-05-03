@@ -33,7 +33,7 @@ body.site-app-body {
 }
 
 .site-brand,
-.site-project-list,
+.site-project-nav-main,
 .site-project-utilities {
   display: flex;
   align-items: center;
@@ -60,6 +60,10 @@ body.site-app-body {
 
 .site-brand-name {
   white-space: nowrap;
+}
+
+.site-project-nav-main {
+  justify-content: center;
 }
 
 .site-home-link {
@@ -93,28 +97,33 @@ body.site-app-body {
   box-shadow: none;
 }
 
-.site-project-dropdown-link {
+.site-project-dropdown-item {
   width: 100%;
+  display: flex;
+  align-items: center;
   justify-content: flex-start;
+  min-height: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.site-nav-spacer {
-  min-width: 0;
-}
-
-.site-project-list {
-  justify-content: center;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.site-project-list::-webkit-scrollbar {
-  display: none;
+.site-project-dropdown-item:hover,
+.site-project-dropdown-item-active {
+  background: var(--surface-3);
+  color: var(--text);
 }
 
 .site-project-utilities {
   justify-content: flex-end;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .site-project-link {
@@ -238,22 +247,11 @@ body.site-app-body {
 
 @media (max-width: 980px) {
   .site-project-nav {
-    grid-template-columns: repeat(2, minmax(0, auto));
     gap: 12px;
   }
 
-  .site-home-link,
-  .site-project-dropdown {
-    justify-self: start;
-  }
-
-  .site-project-utilities {
-    grid-column: 1 / -1;
+  .site-project-nav-main {
     justify-content: flex-start;
-  }
-
-  .site-nav-spacer {
-    display: none;
   }
 
   .site-app-header {

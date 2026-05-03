@@ -48,7 +48,7 @@
 - [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css)
   - site-wide visual system for tokens, typography, cards, buttons, inputs, chips, and shared components
 - [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
-  - shared shell, ordered top menu, project dropdown, and footer layout
+  - shared shell, brand header, centered Home/Projects nav, dropdown list, and footer layout
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
   - lightweight Smart Lock bootstrap
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
@@ -88,7 +88,7 @@
   - shared main content frame
   - separate admin login entry at `/login`
 - `SITE_BRAND_NAME` controls the user-facing brand across templates and page titles.
-- The top menu is ordered Home, Projects, Login, and the universal footer exposes the GitHub Repository and Discord Server links.
+- The top menu shows the site brand on the left, Home and Projects centered, Login on the far right, and the universal footer exposes the GitHub Repository and Discord Server links.
 - `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the LaunchAgent-backed site in place.
 - Static assets are versioned and cacheable long-term.
 - The UI uses local system fonts only; do not add remote font dependencies casually.
@@ -97,7 +97,7 @@
 - Shared theme and confirm behavior lives in:
   - [`static/js/early-theme.js`](/Users/administrator/Sites/friedutchplus/static/js/early-theme.js)
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)
-- The shared top menu uses one uniform pill style for nav buttons, Projects expands to a dropdown, and auth pages suppress the admin shortcut to stay visually quiet.
+- The shared top menu uses one uniform pill style for nav buttons, Projects expands to a plain dropdown list, and auth pages suppress the admin shortcut to stay visually quiet.
 - Shared visual components belong in [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css).
 - Project CSS should primarily define feature-specific layout, not new visual systems.
 - Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable, and it stores generic string state for theme and tab memory.
