@@ -88,6 +88,7 @@
   - shared main content frame
   - separate admin login entry at `/login`
 - `SITE_BRAND_NAME` controls the user-facing brand across templates and page titles.
+- `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the LaunchAgent-backed site.
 - Static assets are versioned and cacheable long-term.
 - The UI uses local system fonts only; do not add remote font dependencies casually.
 

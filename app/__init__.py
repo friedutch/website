@@ -1,4 +1,5 @@
 import os
+import hmac
 import subprocess
 from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
@@ -97,6 +98,25 @@ def create_app():
             "frame-ancestors 'none'",
         )
         return response
+
+    @flask_app.route("/deploy", methods=["POST"])
+    @csrf.exempt
+    def deploy():
+        sig = request.headers.get("X-Hub-Signature-256", "")
+        secret = os.getenv("GITHUB_WEBHOOK_SECRET", "").encode()
+        body = request.get_data()
+        expected = "sha256=" + hmac.new(secret, body, "sha256").hexdigest()
+        if not hmac.compare_digest(sig, expected):
+            return jsonify({"error": "unauthorized"}), 401
+
+        deploy_script = os.path.join(project_root, "deploy.sh")
+        with open("/tmp/deploy.log", "w") as deploy_log:
+            subprocess.Popen(
+                ["/bin/bash", deploy_script],
+                stdout=deploy_log,
+                stderr=subprocess.STDOUT,
+            )
+        return jsonify({"status": "deploying"}), 200
 
     @flask_app.route("/")
     def landing():

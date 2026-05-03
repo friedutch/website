@@ -52,6 +52,7 @@
 - The app listens on `127.0.0.1:5001`.
 - Static assets use an asset-version query string from `ASSET_VERSION`, git metadata, or the deployment timestamp fallback.
 - Static assets are configured for long-lived cache headers.
+- `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the LaunchAgent-backed site.
 
 ### Security and state
 - Never commit runtime databases or other live state:
