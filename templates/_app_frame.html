@@ -12,10 +12,11 @@
 <body class="site-app-body{% block body_class %}{% endblock %}">
 <div class="site-app-shell">
   <nav class="site-project-nav" aria-label="Primary">
-    <a class="site-brand" href="/" aria-label="{{ site_brand_name }} home">
-      <span class="site-brand-mark">{{ site_brand_mark }}</span>
-      <span class="site-brand-name">{{ site_brand_name }}</span>
-    </a>
+    <div class="site-project-left">
+      <a class="site-brand" href="/" aria-label="{{ site_brand_name }} home">
+        <span class="site-brand-name">{{ site_brand_name }}</span>
+      </a>
+    </div>
     <div class="site-project-nav-main">
       <a class="site-project-link site-home-link{% if current_project == 'home' %} site-project-link-active{% endif %}" href="/" aria-label="Home">
         <span>Home</span>
@@ -50,7 +51,7 @@
         class="site-project-link site-project-link-utility{% if current_project == 'login' %} site-project-link-active{% endif %}"
         href="{{ site_admin_login_url }}"
       >
-        <span>Login</span>
+        <span>Log in</span>
       </a>
       {% endif %}
     </div>
