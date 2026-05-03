@@ -90,6 +90,7 @@
 - `SITE_BRAND_NAME` controls the user-facing brand across templates and page titles.
 - The top menu shows the site brand on the left, Home and Projects centered, Login on the far right, and the universal footer exposes the GitHub Repository and Discord Server links.
 - `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the LaunchAgent-backed site in place.
+- `/deploy` auth supports either signed GitHub webhook requests (`GITHUB_WEBHOOK_SECRET`) or tokenized webhook URLs/headers (`DEPLOY_WEBHOOK_TOKEN`).
 - Static assets are versioned and cacheable long-term.
 - The UI uses local system fonts only; do not add remote font dependencies casually.
 

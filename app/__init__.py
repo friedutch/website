@@ -102,12 +102,26 @@ def create_app():
     @flask_app.route("/deploy", methods=["POST"])
     @csrf.exempt
     def deploy():
-        sig = request.headers.get("X-Hub-Signature-256", "")
-        secret = os.getenv("GITHUB_WEBHOOK_SECRET", "").encode()
         body = request.get_data()
-        expected = "sha256=" + hmac.new(secret, body, "sha256").hexdigest()
-        if not hmac.compare_digest(sig, expected):
+        sig = request.headers.get("X-Hub-Signature-256", "")
+        secret = os.getenv("GITHUB_WEBHOOK_SECRET", "")
+        token = os.getenv("DEPLOY_WEBHOOK_TOKEN", "")
+        supplied_token = request.args.get("token", "") or request.headers.get("X-Deploy-Token", "")
+
+        authorized = False
+        if secret:
+            expected = "sha256=" + hmac.new(secret.encode(), body, "sha256").hexdigest()
+            authorized = hmac.compare_digest(sig, expected)
+        elif token:
+            authorized = hmac.compare_digest(supplied_token, token)
+
+        if not authorized:
             return jsonify({"error": "unauthorized"}), 401
+
+        payload = request.get_json(silent=True) or {}
+        ref = payload.get("ref", "")
+        if ref and ref != "refs/heads/main":
+            return jsonify({"status": "ignored", "reason": "non-main ref"}), 202
 
         deploy_script = os.path.join(project_root, "deploy.sh")
         with open("/tmp/deploy.log", "w") as deploy_log:

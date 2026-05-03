@@ -54,6 +54,10 @@
 - Static assets use an asset-version query string from `ASSET_VERSION`, git metadata, or the deployment timestamp fallback.
 - Static assets are configured for long-lived cache headers.
   - `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the LaunchAgent-backed site in place.
+  - `/deploy` accepts either:
+    - GitHub signature via `X-Hub-Signature-256` with `GITHUB_WEBHOOK_SECRET`
+    - token auth via `?token=...` or `X-Deploy-Token` with `DEPLOY_WEBHOOK_TOKEN`
+  - GitHub webhooks should be configured for push events on `main`.
 
 ### Security and state
 - Never commit runtime databases or other live state:
@@ -80,6 +84,7 @@
 - `SITE_BRAND_NAME`
 - `FRIEDUTCH_SKIP_GIT_METADATA`
 - `GITHUB_WEBHOOK_SECRET`
+- `DEPLOY_WEBHOOK_TOKEN`
 
 ### Feature notes
 - Performance
