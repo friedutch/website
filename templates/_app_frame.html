@@ -11,22 +11,27 @@
 </head>
 <body class="site-app-body{% block body_class %}{% endblock %}">
 <div class="site-app-shell">
-  <nav class="site-project-nav" aria-label="Projects">
-    <a class="site-brand" href="/" aria-label="{{ site_brand_name }} home">
-      <span class="site-brand-mark">{{ site_brand_mark }}</span>
-      <span class="site-brand-name">{{ site_brand_name }}</span>
+  <nav class="site-project-nav" aria-label="Primary">
+    <a class="site-project-link site-home-link{% if current_project == 'home' %} site-project-link-active{% endif %}" href="/" aria-label="Home">
+      <span>Home</span>
     </a>
-    <div class="site-project-list">
-      {% for project in site_projects %}
-      <a
-        class="site-project-link{% if current_project == project.key %} site-project-link-active{% endif %}"
-        href="{{ project.href }}"
-        aria-label="{{ project.label }}"
-      >
-        <span>{{ project.short }}</span>
-      </a>
-      {% endfor %}
-    </div>
+    <details class="site-project-dropdown">
+      <summary class="site-project-link site-project-link-dropdown{% if current_project in ['smartlock', 'cloud_storage', 'chat'] %} site-project-link-active{% endif %}">
+        <span>Projects</span>
+      </summary>
+      <div class="site-project-dropdown-panel" role="list" aria-label="Project list">
+        {% for project in site_projects %}
+        <a
+          class="site-project-link site-project-dropdown-link{% if current_project == project.key %} site-project-link-active{% endif %}"
+          href="{{ project.href }}"
+          aria-label="{{ project.label }}"
+        >
+          <span>{{ project.short }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </details>
+    <span class="site-nav-spacer" aria-hidden="true"></span>
     <div class="site-project-utilities">
       {% if show_logout_button %}
       <form method="POST" action="{{ url_for('smartlock_logout') }}" class="contents-form">
@@ -40,13 +45,7 @@
         class="site-project-link site-project-link-utility{% if current_project == 'login' %} site-project-link-active{% endif %}"
         href="{{ site_admin_login_url }}"
       >
-        <span>Admin</span>
-      </a>
-      {% endif %}
-      <button class="site-project-link site-project-link-utility" data-theme-toggle data-theme-label="Theme" data-theme-text-only="true" type="button">Theme</button>
-      {% if config.GITHUB_REPO_URL %}
-      <a class="site-project-link site-project-link-utility" href="{{ config.GITHUB_REPO_URL }}" target="_blank" rel="noreferrer">
-        <span>GitHub</span>
+        <span>Login</span>
       </a>
       {% endif %}
     </div>
@@ -72,6 +71,8 @@
       {% block content %}{% endblock %}
     </section>
   </main>
+
+  {% include "_site_footer.html" %}
 </div>
 
 <script src="{{ url_for('static', filename='js/theme.js', v=asset_version) }}"></script>

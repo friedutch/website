@@ -125,8 +125,7 @@ code {
 }
 
 .top-bar-unified,
-.site-header,
-.universal-footer {
+.site-header {
   display: none !important;
 }
 
@@ -789,6 +788,39 @@ h1,
   color: var(--text-soft);
   font-size: 12px;
   font-weight: 700;
+}
+
+.universal-footer {
+  width: min(100%, var(--shell-width));
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3vw, 40px) 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.universal-footer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.universal-footer-link:hover {
+  color: var(--text);
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .debug-footer {

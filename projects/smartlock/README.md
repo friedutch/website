@@ -109,7 +109,7 @@
 - Successful same-browser magic-link verification should signal the original login page to continue into the admin panel instead of leaving the verified email tab on the panel.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
 - The admin panel is tabbed client-side with vertical desktop tabs; keep tab buttons and panel section ids/data attributes aligned.
-- Smart Lock now uses the shared minimal site shell across its pages, with project switching in the horizontal project list and admin login separated at `/login`.
+- Smart Lock now uses the shared minimal site shell across its pages, with project switching in the Projects dropdown, admin login separated at `/login`, and the universal footer shared site-wide.
 - The current session's remaining time lives in a persistent header island inside the shared app shell header.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable. The same storage layer also carries the shared theme preference.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.

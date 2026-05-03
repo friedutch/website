@@ -37,7 +37,7 @@
 - Upload sessions are staged in a temporary upload-session directory under the storage root before finalizing into the main file list.
 - Uploads are checked against the 10 GB total storage limit before and during finalization.
 - File records include a SHA-256 checksum plus download history metadata.
-- The page uses the shared horizontal project list and site shell plus a persistent storage-usage bar that shows used and remaining space.
+- The page uses the shared ordered top menu, project dropdown, universal footer, and site shell plus a persistent storage-usage bar that shows used and remaining space.
 
 ### Registration model
 - This feature is not a Flask `Blueprint`.

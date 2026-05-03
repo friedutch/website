@@ -10,7 +10,8 @@
 ### Purpose
 - Personal self-hosted Flask app on `friedutch.plus`.
 - The whole site renders inside one shared minimal shell.
-- The project list is horizontal and text-based.
+- The top menu is ordered Home, Projects, Login, with Projects expanding into a dropdown list.
+- A universal footer carries the GitHub Repository and Discord Server links.
 - Set `SITE_BRAND_NAME` to rename the visible site brand everywhere at once.
 - The canonical site-wide admin login is `/login`.
 - Chat uses its own project login at `/chat/login`.
@@ -78,6 +79,7 @@
 - `GITHUB_BRANCH`
 - `SITE_BRAND_NAME`
 - `FRIEDUTCH_SKIP_GIT_METADATA`
+- `GITHUB_WEBHOOK_SECRET`
 
 ### Feature notes
 - Performance

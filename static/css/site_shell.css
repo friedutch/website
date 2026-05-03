@@ -62,6 +62,46 @@ body.site-app-body {
   white-space: nowrap;
 }
 
+.site-home-link {
+  justify-content: center;
+}
+
+.site-project-dropdown {
+  position: relative;
+}
+
+.site-project-dropdown > summary {
+  list-style: none;
+}
+
+.site-project-dropdown > summary::-webkit-details-marker {
+  display: none;
+}
+
+.site-project-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 40;
+  display: grid;
+  gap: 6px;
+  min-width: 220px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.site-project-dropdown-link {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.site-nav-spacer {
+  min-width: 0;
+}
+
 .site-project-list {
   justify-content: center;
   overflow-x: auto;
@@ -101,6 +141,12 @@ body.site-app-body {
 
 .site-project-link:hover,
 .site-project-link-active {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.site-project-dropdown[open] > summary {
   border-color: var(--text);
   background: var(--text);
   color: var(--bg);
@@ -192,16 +238,22 @@ body.site-app-body {
 
 @media (max-width: 980px) {
   .site-project-nav {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, auto));
     gap: 12px;
   }
 
-  .site-project-list {
-    justify-content: flex-start;
+  .site-home-link,
+  .site-project-dropdown {
+    justify-self: start;
   }
 
   .site-project-utilities {
+    grid-column: 1 / -1;
     justify-content: flex-start;
+  }
+
+  .site-nav-spacer {
+    display: none;
   }
 
   .site-app-header {
@@ -221,6 +273,10 @@ body.site-app-body {
   .site-project-link {
     min-height: 36px;
     padding: 0 12px;
+  }
+
+  .site-project-dropdown-panel {
+    min-width: min(260px, calc(100vw - 36px));
   }
 
   .site-app-actions .sm-btn,
