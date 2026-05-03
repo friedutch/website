@@ -4,7 +4,7 @@
 - Cloud Storage is a private admin-only drop zone for moving files from the Mac to another device.
 - It reuses Smart Lock admin login instead of introducing a new auth system.
 - Uploaded files stay available until you delete them.
-- The page now lives inside the same shared minimal site shell as the rest of Friedutch Plus.
+- The page now lives inside the same shared minimal site shell as the rest of the site.
 - Cloud Storage visual components inherit the site-wide design system from `static/css/base.css`; Cloud Storage page CSS should only handle upload/file-list layout.
 
 ## AI Copilot

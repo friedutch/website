@@ -1,6 +1,6 @@
 from flask import session
 
-from app.rendering import render_page
+from app.rendering import format_site_title, render_page
 
 from .db import get_admin_email, get_db, get_pending_email, get_pending_sent_at
 from .hardware import read_hardware_events
@@ -74,9 +74,7 @@ def render_verification_complete_page(
 def render_user_detail_page(user, *, is_new_user, error=None, page_name=None, noindex=False):
     return render_page(
         "smartlock/admin_user_detail.html",
-        page_name=page_name or (
-            "New User — Friedutch Plus" if is_new_user else f"{user['name']} — Friedutch Plus"
-        ),
+        page_name=page_name or format_site_title("New User" if is_new_user else user["name"]),
         current_project="smartlock",
         user=user,
         is_new_user=is_new_user,

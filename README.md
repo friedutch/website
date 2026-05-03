@@ -1,4 +1,4 @@
-# Friedutch Plus
+# Project Guide
 
 ## Human Summary
 - This repo powers a personal website with a simple home page plus three internal tools: Smart Lock, Cloud Storage, and Chat.
@@ -8,9 +8,10 @@
 ## AI Copilot
 
 ### Purpose
-- Personal self-hosted Flask app for `friedutch.plus`.
+- Personal self-hosted Flask app on `friedutch.plus`.
 - The whole site renders inside one shared minimal shell.
 - The project list is horizontal and text-based.
+- Set `SITE_BRAND_NAME` to rename the visible site brand everywhere at once.
 - The canonical site-wide admin login is `/login`.
 - Chat uses its own project login at `/chat/login`.
 - The home route `/` shows a minimal personal tools title inside the shared shell.
@@ -74,6 +75,7 @@
 - `ASSET_VERSION`
 - `GITHUB_REPO_URL`
 - `GITHUB_BRANCH`
+- `SITE_BRAND_NAME`
 - `FRIEDUTCH_SKIP_GIT_METADATA`
 
 ### Feature notes

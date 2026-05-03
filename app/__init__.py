@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, g
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
 from app.forms import inject_csrf_token
-from app.rendering import render_page
+from app.rendering import format_site_title, get_site_brand_name, render_page
 from app.site_admin import is_site_admin
 
 
@@ -49,6 +49,7 @@ def create_app():
     flask_app.config["GITHUB_REPO_URL"] = os.getenv("GITHUB_REPO_URL", git_remote)
     flask_app.config["GITHUB_BRANCH"] = os.getenv("GITHUB_BRANCH", git_branch or "main")
     flask_app.config["ASSET_VERSION"] = os.getenv("ASSET_VERSION", git_revision or flask_app.config["LAST_DEPLOYMENT"])
+    flask_app.config["SITE_BRAND_NAME"] = os.getenv("SITE_BRAND_NAME", "jehpok")
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,
@@ -99,11 +100,11 @@ def create_app():
 
     @flask_app.route("/")
     def landing():
-        return render_page("landing.html", page_name="Friedutch Plus")
+        return render_page("landing.html", page_name=get_site_brand_name())
 
     @flask_app.route("/about")
     def about():
-        return render_page("about.html", page_name="Friedutch Plus")
+        return render_page("about.html", page_name=format_site_title("About"))
 
     return flask_app
 

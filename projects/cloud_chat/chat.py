@@ -5,7 +5,7 @@ import sqlite3
 from flask import abort, jsonify, make_response, redirect, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.rendering import render_page
+from app.rendering import format_site_title, render_page
 from app.site_admin import is_site_admin, require_site_admin
 
 
@@ -564,7 +564,7 @@ def _render_chat_app(user, error=None, draft_message="", requested_partner_id=No
     messages = _list_dm_messages(user["id"], selected_partner["id"] if selected_partner else None)
     return render_page(
         "chat_app.html",
-        page_name="Chat — Friedutch Plus",
+        page_name=format_site_title("Chat"),
         current_user=user,
         app_message=_pop_notice("cloudchat_app_message"),
         app_error=error,

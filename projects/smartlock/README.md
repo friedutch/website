@@ -111,7 +111,7 @@
 - The admin panel is tabbed client-side with vertical desktop tabs; keep tab buttons and panel section ids/data attributes aligned.
 - Smart Lock now uses the shared minimal site shell across its pages, with project switching in the horizontal project list and admin login separated at `/login`.
 - The current session's remaining time lives in a persistent header island inside the shared app shell header.
-- The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
+- The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable. The same storage layer also carries the shared theme preference.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
 - The user detail page's RFID save flow should stay badge-first and low-friction:
   - `Scan` listens for the next `CHECK|rfid|...` event

@@ -17,15 +17,15 @@
   function getStoredValue(key){
     try {
       var stored = window.localStorage.getItem(key);
-      if(stored === "dark" || stored === "light"){ return stored; }
+      if(stored !== null){ return stored; }
     } catch (error) {
       // Fall back to cookies when localStorage is unavailable.
     }
     var cookieValue = readCookie("friedutch_" + key);
-    return cookieValue === "dark" || cookieValue === "light" ? cookieValue : null;
+    return cookieValue !== null ? cookieValue : null;
   }
   function setStoredValue(key, value){
-    if(value !== "dark" && value !== "light"){
+    if(value === null || typeof value === "undefined"){
       try {
         window.localStorage.removeItem(key);
       } catch (error) {
@@ -45,7 +45,7 @@
     get: getStoredValue,
     set: setStoredValue
   };
-  var t = window.friedutchStorage.get("theme") || "light";
+  var t = window.friedutchStorage.get("theme") || "system";
   var eff = t === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : t;
   document.documentElement.setAttribute("data-theme", eff);
 })();

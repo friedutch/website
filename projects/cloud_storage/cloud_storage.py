@@ -9,7 +9,7 @@ from pathlib import Path
 from flask import abort, current_app, jsonify, redirect, request, send_file, url_for
 from werkzeug.utils import secure_filename
 
-from app.rendering import render_page
+from app.rendering import format_site_title, render_page
 from app.site_admin import require_site_admin
 
 
@@ -205,7 +205,7 @@ def _render_cloud_storage(message=None, error=None):
     metrics = _storage_metrics(files)
     return render_page(
         "cloud_storage.html",
-        page_name="Cloud Storage — Friedutch Plus",
+        page_name=format_site_title("Cloud Storage"),
         files=files,
         metrics=metrics,
         storage_root=str(get_storage_root()),

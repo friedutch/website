@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{{ url_for('static', filename='js/early-theme.js', v=asset_version) }}"></script>
-<title>{% block title %}{{ page_name or 'Friedutch Plus' }}{% endblock %}</title>
+<title>{% block title %}{{ page_name or site_brand_name }}{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css', v=asset_version) }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/site_shell.css', v=asset_version) }}">
 {% block page_styles %}{% endblock %}
@@ -12,9 +12,9 @@
 <body class="site-app-body{% block body_class %}{% endblock %}">
 <div class="site-app-shell">
   <nav class="site-project-nav" aria-label="Projects">
-    <a class="site-brand" href="/" aria-label="Friedutch Plus home">
-      <span class="site-brand-mark">FP</span>
-      <span class="site-brand-name">Friedutch Plus</span>
+    <a class="site-brand" href="/" aria-label="{{ site_brand_name }} home">
+      <span class="site-brand-mark">{{ site_brand_mark }}</span>
+      <span class="site-brand-name">{{ site_brand_name }}</span>
     </a>
     <div class="site-project-list">
       {% for project in site_projects %}
@@ -58,7 +58,7 @@
         {% if self.header_kicker()|trim %}
         <p class="site-app-kicker">{% block header_kicker %}{% endblock %}</p>
         {% endif %}
-        <h1 class="site-app-title">{% block header_title %}{{ page_name or 'Friedutch Plus' }}{% endblock %}</h1>
+        <h1 class="site-app-title">{% block header_title %}{{ page_name or site_brand_name }}{% endblock %}</h1>
         {% if self.header_subtitle()|trim %}
         <p class="site-app-subtitle">{% block header_subtitle %}{% endblock %}</p>
         {% endif %}

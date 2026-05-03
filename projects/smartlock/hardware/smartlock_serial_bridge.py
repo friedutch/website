@@ -130,7 +130,7 @@ def detect_serial_port():
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Bridge an Arduino Uno smart lock over USB to the Friedutch Plus Smart Lock API."
+        description="Bridge an Arduino Uno smart lock over USB to the Smart Lock API."
     )
     parser.add_argument(
         "--port",

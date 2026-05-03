@@ -19,15 +19,15 @@ function getStorage(){
     get: function(key){
       try {
         const stored = window.localStorage.getItem(key);
-        if(stored === 'dark' || stored === 'light'){ return stored; }
+        if(stored !== null){ return stored; }
       } catch (error) {
         // Fall back to cookies when localStorage is unavailable.
       }
       const cookieValue = readCookie("friedutch_" + key);
-      return cookieValue === 'dark' || cookieValue === 'light' ? cookieValue : null;
+      return cookieValue !== null ? cookieValue : null;
     },
     set: function(key, value){
-      if(value !== 'dark' && value !== 'light'){
+      if(value === null || typeof value === 'undefined'){
         try {
           window.localStorage.removeItem(key);
         } catch (error) {
@@ -59,8 +59,8 @@ function themeButtonText(btn, theme){
 }
 function toggleTheme(btn){
   const storage=getStorage();
-  const themes=['light','dark','system'];
-  const cur=storage.get('theme')||'light';
+  const themes=['system','light','dark'];
+  const cur=storage.get('theme')||'system';
   const next=themes[(themes.indexOf(cur)+1)%3];
   storage.set('theme',next);
   applyTheme(next);
@@ -68,7 +68,7 @@ function toggleTheme(btn){
 }
 (function(){
   const storage=getStorage();
-  const t=storage.get('theme')||'light';
+  const t=storage.get('theme')||'system';
   applyTheme(t);
   document.addEventListener('DOMContentLoaded',function(){
     const btn=document.getElementById('theme-btn')||document.querySelector('[data-theme-toggle]');

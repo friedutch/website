@@ -1,4 +1,4 @@
-# Friedutch Plus Agent Guide
+# Agent Guide
 
 ## Human Summary
 - Read this first, then read the feature README for the area you are changing.
@@ -87,6 +87,7 @@
   - horizontal text project navigation for project switching
   - shared main content frame
   - separate admin login entry at `/login`
+- `SITE_BRAND_NAME` controls the user-facing brand across templates and page titles.
 - Static assets are versioned and cacheable long-term.
 - The UI uses local system fonts only; do not add remote font dependencies casually.
 
@@ -96,7 +97,7 @@
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)
 - Shared visual components belong in [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css).
 - Project CSS should primarily define feature-specific layout, not new visual systems.
-- Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable.
+- Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable, and it stores generic string state for theme and tab memory.
 - Smart Lock admin tab memory uses that same browser storage layer.
 - Avoid `min-height: 100%` on cards inside auto-sized CSS grid layouts unless the parent track has an explicit fixed height.
 
