@@ -2,7 +2,6 @@ from flask import current_app, g, render_template, request
 
 
 SITE_PROJECTS = [
-    {"key": "home", "label": "Home", "short": "Home", "href": "/"},
     {"key": "smartlock", "label": "Smart Lock", "short": "Smart Lock", "href": "/smartlock/"},
     {"key": "cloud_storage", "label": "Cloud Storage", "short": "Storage", "href": "/cloud-storage/"},
     {"key": "chat", "label": "Chat", "short": "Chat", "href": "/chat/"},

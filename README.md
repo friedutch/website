@@ -10,12 +10,13 @@
 ### Purpose
 - Personal self-hosted Flask app on `friedutch.plus`.
 - The whole site renders inside one shared minimal shell.
-- The top menu shows the site brand on the left, Home and Projects centered, and Login on the far right, with Projects expanding into a plain dropdown list.
+- The top menu shows a brand-labeled Home button on the left, Projects centered, and Login on the far right, with Projects expanding into a plain dropdown list.
 - A universal footer carries the GitHub Repository and Discord Server links.
+- The home route exposes the site theme switcher as a large three-position slider.
 - Set `SITE_BRAND_NAME` to rename the visible site brand everywhere at once.
 - The canonical site-wide admin login is `/login`.
 - Chat uses its own project login at `/chat/login`.
-- The home route `/` shows a minimal personal tools title inside the shared shell.
+- The home route `/` shows a minimal personal tools title and the large theme slider inside the shared shell.
 
 ### Current features
 - Smart Lock

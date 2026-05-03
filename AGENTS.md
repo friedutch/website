@@ -48,7 +48,7 @@
 - [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css)
   - site-wide visual system for tokens, typography, cards, buttons, inputs, chips, and shared components
 - [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
-  - shared shell, brand header, centered Home/Projects nav, dropdown list, and footer layout
+  - shared shell, left Home/brand button, centered Projects nav, dropdown list, and footer layout
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
   - lightweight Smart Lock bootstrap
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
@@ -88,7 +88,7 @@
   - shared main content frame
   - separate admin login entry at `/login`
 - `SITE_BRAND_NAME` controls the user-facing brand across templates and page titles.
-- The top menu shows the site brand on the left, Home and Projects centered, Login on the far right, and the universal footer exposes the GitHub Repository and Discord Server links.
+- The top menu shows a brand-labeled Home button on the left, Projects centered, Login on the far right, and the universal footer exposes the GitHub Repository and Discord Server links.
 - `POST /deploy` runs [`deploy.sh`](/Users/administrator/Sites/friedutchplus/deploy.sh), which pulls `main` and restarts the LaunchAgent-backed site in place.
 - `/deploy` auth supports either signed GitHub webhook requests (`GITHUB_WEBHOOK_SECRET`) or tokenized webhook URLs/headers (`DEPLOY_WEBHOOK_TOKEN`).
 - Static assets are versioned and cacheable long-term.

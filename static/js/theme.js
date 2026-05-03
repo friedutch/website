@@ -73,9 +73,10 @@ function setSliderThumb(slider, index){
   const track=slider.querySelector('[data-theme-track]');
   const thumb=slider.querySelector('[data-theme-thumb]');
   if(!track||!thumb){return;}
-  const maxLeft=track.clientWidth-thumb.clientWidth-12;
+  const pad=parseFloat(window.getComputedStyle(track).getPropertyValue('--landing-slider-pad'))||6;
+  const maxLeft=track.clientWidth-thumb.clientWidth-(pad*2);
   const ratio=index/2;
-  thumb.style.left=(6 + (maxLeft*ratio))+'px';
+  thumb.style.left=(pad + (maxLeft*ratio))+'px';
   track.setAttribute('aria-valuenow', String(index));
 }
 
@@ -85,6 +86,12 @@ function updateThemeUI(theme){
   });
   document.querySelectorAll('[data-theme-slider]').forEach(function(slider){
     setSliderThumb(slider, themeToIndex(theme));
+    slider.dataset.themePosition=themeLabelText(theme);
+    slider.querySelectorAll('[data-theme-current-label], [data-theme-thumb-label]').forEach(function(label){
+      label.textContent=themeLabelText(theme);
+    });
+    const track=slider.querySelector('[data-theme-track]');
+    if(track){ track.setAttribute('aria-valuetext', themeLabelText(theme)); }
   });
 }
 
@@ -109,7 +116,6 @@ function toggleTheme(){
     document.querySelectorAll('[data-theme-slider]').forEach(function(slider){
       const track=slider.querySelector('[data-theme-track]');
       const thumb=slider.querySelector('[data-theme-thumb]');
-      const systemLink=slider.querySelector('[data-theme-system-link]');
       if(!track||!thumb){return;}
       let dragging=false;
       let dragOffset=0;
@@ -122,9 +128,10 @@ function toggleTheme(){
       }
       function moveThumb(clientX){
         const rect=track.getBoundingClientRect();
-        const maxLeft=rect.width-thumb.offsetWidth-12;
+        const pad=parseFloat(window.getComputedStyle(track).getPropertyValue('--landing-slider-pad'))||6;
+        const maxLeft=rect.width-thumb.offsetWidth-(pad*2);
         const rawLeft=clientX-rect.left-dragOffset;
-        const left=clamp(rawLeft,6,6+maxLeft);
+        const left=clamp(rawLeft,pad,pad+maxLeft);
         thumb.style.left=left+'px';
       }
       track.addEventListener('click',function(event){
@@ -159,9 +166,6 @@ function toggleTheme(){
         if(event.key==='ArrowLeft'){event.preventDefault(); setTheme(indexToTheme(clamp(idx-1,0,2)));}
         if(event.key==='ArrowRight'){event.preventDefault(); setTheme(indexToTheme(clamp(idx+1,0,2)));}
       });
-      if(systemLink){
-        systemLink.addEventListener('click',function(){setTheme('system');});
-      }
     });
     document.querySelectorAll('[data-confirm]').forEach(function(link){
       link.addEventListener('click',function(event){

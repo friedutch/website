@@ -13,14 +13,11 @@
 <div class="site-app-shell">
   <nav class="site-project-nav" aria-label="Primary">
     <div class="site-project-left">
-      <a class="site-brand" href="/" aria-label="{{ site_brand_name }} home">
-        <span class="site-brand-name">{{ site_brand_name }}</span>
+      <a class="site-project-link site-home-link{% if current_project == 'home' %} site-project-link-active{% endif %}" href="/" aria-label="{{ site_brand_name }} home">
+        <span>{{ site_brand_name }}</span>
       </a>
     </div>
     <div class="site-project-nav-main">
-      <a class="site-project-link site-home-link{% if current_project == 'home' %} site-project-link-active{% endif %}" href="/" aria-label="Home">
-        <span>Home</span>
-      </a>
       <details class="site-project-dropdown">
         <summary class="site-project-link site-project-link-dropdown{% if current_project in ['smartlock', 'cloud_storage', 'chat'] %} site-project-link-active{% endif %}">
           <span>Projects</span>
