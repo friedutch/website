@@ -35,7 +35,7 @@
           <span>Log out</span>
         </button>
       </form>
-      {% else %}
+      {% elif show_admin_utility %}
       <a
         class="site-project-link site-project-link-utility{% if current_project == 'login' %} site-project-link-active{% endif %}"
         href="{{ site_admin_login_url }}"

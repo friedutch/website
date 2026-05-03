@@ -494,7 +494,6 @@ h1,
   cursor: pointer;
   box-shadow: none;
   transition:
-    transform var(--motion-fast) var(--ease-standard),
     border-color var(--motion-fast) var(--ease-standard),
     background var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard),
@@ -561,7 +560,6 @@ h1,
 .icon-btn:hover,
 .copy-btn:hover,
 .universal-footer-link:hover {
-  transform: translateY(-1px);
   border-color: var(--border-strong);
   box-shadow: none;
 }

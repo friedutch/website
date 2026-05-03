@@ -3,7 +3,7 @@
 ## Human Summary
 - Smart Lock is the admin panel for managing people and access methods for a real smart lock setup.
 - The admin signs in using a magic link plus a captcha-like confirmation step.
-- The site-wide admin login at `/login` now uses a centered single-card auth screen inside the shared shell.
+- The site-wide admin login at `/login` now uses a centered single-card auth screen inside the shared shell and keeps the shell utility area minimal.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
 - The Smart Lock pages now render inside the shared minimal site shell, while the admin panel keeps its own Users, Logs, and Arduino tabs.

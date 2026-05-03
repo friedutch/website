@@ -29,9 +29,6 @@
       <button class="big-btn btn-primary" type="submit">Enter</button>
     </form>
     {% if error %}<p class="msg-err">{{ error }}</p>{% endif %}
-    <a class="sm-btn sm-ghost cloudchat-auth-admin-link" href="{{ url_for('chat_admin') }}">
-      {{ 'Manage users' if admin_logged_in else 'Admin login' }}
-    </a>
   </div>
 </section>
 {% endblock %}

@@ -85,6 +85,7 @@
   - Versioned static assets can be cached long-term.
   - The content security policy allows only local scripts/styles/fonts/images plus data URLs for images/fonts.
   - Set `ASSET_VERSION`, `GITHUB_REPO_URL`, and `GITHUB_BRANCH`, or set `FRIEDUTCH_SKIP_GIT_METADATA=1`, to avoid Git subprocess metadata lookups at startup.
+  - The shared top menu keeps project and utility buttons on one visual style, and auth pages hide the admin shortcut.
 - Smart Lock
   - canonical login is `/login`
   - `/smartlock/login` remains a compatibility alias

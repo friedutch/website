@@ -3,7 +3,7 @@
 ## Human Summary
 - Chat is a private username/password project zone with its own login at `/chat/login`.
 - Chat users are specific to this project and are managed by a Smart Lock admin.
-- The Chat login screen is a stripped centered auth card with a separate admin path for managing users.
+- The Chat login screen is a stripped centered auth card with no extra admin shortcut in the card itself.
 
 ## AI Copilot
 

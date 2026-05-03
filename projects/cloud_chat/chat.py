@@ -547,7 +547,7 @@ def _render_chat_login(error=None):
         "chat_login.html",
         page_name="Chat — Login",
         error=error or _pop_notice("cloudchat_login_error"),
-        admin_logged_in=is_site_admin(),
+        show_admin_utility=False,
         noindex=True,
     )
 

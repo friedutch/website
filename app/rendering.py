@@ -43,6 +43,7 @@ def format_site_title(section=None):
 def render_page(template_name, **context):
     page_name = context.pop("page_name", None)
     current_project = context.pop("current_project", _project_key_for_path(request.path))
+    show_admin_utility = context.pop("show_admin_utility", True)
     if context.pop("noindex", False):
         g.x_robots_tag = "noindex, nofollow"
     brand_name = get_site_brand_name()
@@ -55,5 +56,6 @@ def render_page(template_name, **context):
         site_admin_login_url="/login",
         site_brand_name=brand_name,
         site_brand_mark=get_site_brand_mark(),
+        show_admin_utility=show_admin_utility,
         **context,
     )

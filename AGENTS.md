@@ -96,6 +96,7 @@
 - Shared theme and confirm behavior lives in:
   - [`static/js/early-theme.js`](/Users/administrator/Sites/friedutchplus/static/js/early-theme.js)
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)
+- The shared top menu uses one uniform pill style for project and utility buttons, and auth pages suppress the admin shortcut to stay visually quiet.
 - Shared visual components belong in [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css).
 - Project CSS should primarily define feature-specific layout, not new visual systems.
 - Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable, and it stores generic string state for theme and tab memory.

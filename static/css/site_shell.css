@@ -106,15 +106,6 @@ body.site-app-body {
   color: var(--bg);
 }
 
-.site-project-link-utility {
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.site-project-link-utility.site-project-link-active {
-  color: var(--bg);
-}
-
 .site-app-main {
   min-width: 0;
   width: min(100%, var(--shell-width));
