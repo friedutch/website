@@ -1,18 +1,19 @@
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+.cloudchat-auth-layout,
+.cloudchat-grid,
+.cloudchat-login-zone,
+.cloudchat-admin-form,
+.cloudchat-auth-form,
+.cloudchat-message-form,
+.cloudchat-reset-form,
+.cloudchat-field,
+.cloudchat-user-list,
+.cloudchat-password-preview-zone {
+  display: grid;
+  gap: 12px;
 }
 
 .cloudchat-auth-layout,
 .cloudchat-grid {
-  display: grid;
   gap: 18px;
 }
 
@@ -29,25 +30,12 @@
 .cloudchat-auth-card {
   width: min(440px, 100%);
   padding: 28px;
-  display: grid;
-  gap: 18px;
 }
 
 .cloudchat-auth-head {
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.cloudchat-auth-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 72%, white));
-  color: #ffffff;
-  font-size: 30px;
 }
 
 .cloudchat-auth-copy {
@@ -57,59 +45,22 @@
 
 .cloudchat-auth-copy h1 {
   margin: 0;
-  color: var(--text);
   font-size: clamp(28px, 5vw, 34px);
   line-height: 1;
 }
 
-.cloudchat-auth-kicker {
-  color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.cloudchat-auth-admin-link {
+.cloudchat-auth-admin-link,
+.cloudchat-admin-link {
   justify-content: center;
 }
 
-.cloudchat-auth-layout {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  margin-bottom: 20px;
-}
-
+.cloudchat-auth-layout,
 .cloudchat-grid {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   margin-bottom: 20px;
 }
 
-.cloudchat-chip-row,
-.cloudchat-user-actions,
-.cloudchat-preview-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.cloudchat-login-zone,
-.cloudchat-admin-form,
-.cloudchat-auth-form,
-.cloudchat-message-form,
-.cloudchat-reset-form,
-.cloudchat-field,
-.cloudchat-user-list,
-.cloudchat-password-preview-zone {
-  display: grid;
-  gap: 12px;
-}
-
 .cloudchat-field-label {
-  color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   margin-bottom: 8px;
   display: inline-block;
 }
@@ -120,11 +71,6 @@
   justify-content: center;
   align-items: center;
   margin: 8px 0 4px;
-  color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .cloudchat-divider::before {
@@ -137,11 +83,6 @@
 .cloudchat-divider span {
   position: relative;
   padding: 0 10px;
-  background: color-mix(in srgb, var(--surface-2) 92%, transparent);
-}
-
-.cloudchat-admin-link {
-  justify-content: center;
 }
 
 .cloudchat-search-row {
@@ -171,44 +112,25 @@
 }
 
 .cloudchat-workspace {
-  --chat-sidebar-bg: color-mix(in srgb, var(--surface-raised) 94%, transparent);
-  --chat-sidebar-panel: color-mix(in srgb, var(--surface-3) 96%, transparent);
-  --chat-sidebar-hover: color-mix(in srgb, var(--surface-3) 80%, var(--accent-soft));
-  --chat-sidebar-active: color-mix(in srgb, var(--accent) 18%, var(--surface-3));
-  --chat-main-bg: color-mix(in srgb, var(--surface-2) 96%, transparent);
-  --chat-input-bg: color-mix(in srgb, var(--surface-3) 96%, transparent);
-  --chat-text-main: var(--text);
-  --chat-text-muted: var(--text-muted);
-  --chat-text-soft: var(--text-soft);
-  --chat-divider: var(--border);
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 0;
   min-height: calc(100vh - 170px);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
 }
 
 .cloudchat-sidebar {
-  background: var(--chat-sidebar-bg);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   min-width: 0;
+  border-right: 1px solid var(--border);
 }
 
 .cloudchat-sidebar-top {
   padding: 12px;
-  border-bottom: 1px solid var(--chat-divider);
+  border-bottom: 1px solid var(--border);
 }
 
 .cloudchat-sidebar-search {
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--chat-text-soft);
-  font-size: 14px;
-  font-weight: 600;
   padding: 10px 12px;
 }
 
@@ -218,11 +140,6 @@
 }
 
 .cloudchat-section-label {
-  color: var(--chat-text-soft);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   padding: 8px 8px 10px;
 }
 
@@ -236,24 +153,16 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  border-radius: 8px;
   padding: 7px 8px;
-  color: var(--chat-text-muted);
-  transition:
-    background var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
 }
 
 .cloudchat-dm-link:hover {
-  background: var(--chat-sidebar-hover);
-  color: var(--chat-text-main);
+  background: var(--surface-3);
 }
 
 .cloudchat-dm-link-selected {
-  background: var(--chat-sidebar-active);
-  color: var(--chat-text-main);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, var(--border));
+  background: var(--text);
+  color: var(--bg);
 }
 
 .cloudchat-dm-avatar-wrap,
@@ -268,11 +177,8 @@
 .cloudchat-user-avatar {
   width: 42px;
   height: 42px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 72%, white));
-  color: #ffffff;
   font-size: 14px;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -290,21 +196,35 @@
   bottom: 1px;
   width: 13px;
   height: 13px;
-  border-radius: 50%;
-  border: 3px solid var(--chat-sidebar-bg);
-  background: color-mix(in srgb, var(--text-soft) 80%, transparent);
+  border: 3px solid var(--surface);
+  background: var(--text-soft);
 }
 
 .cloudchat-status-dot-online {
-  background: #23a55a;
+  background: var(--success);
 }
 
 .cloudchat-status-dot-idle {
-  background: #f0b232;
+  background: var(--signal);
 }
 
 .cloudchat-status-dot-offline {
-  background: #80848e;
+  background: var(--text-soft);
+}
+
+.cloudchat-dm-link-selected .cloudchat-dm-avatar,
+.cloudchat-dm-link-selected .cloudchat-unread-badge {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.cloudchat-dm-link-selected .cloudchat-dm-time,
+.cloudchat-dm-link-selected .cloudchat-dm-preview {
+  color: color-mix(in srgb, var(--bg) 72%, transparent);
+}
+
+.cloudchat-dm-link-selected .cloudchat-status-dot {
+  border-color: var(--text);
 }
 
 .cloudchat-dm-copy,
@@ -326,12 +246,11 @@
 .cloudchat-user-copy strong {
   color: inherit;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   margin: 0;
 }
 
 .cloudchat-thread-copy h1 {
-  color: var(--chat-text-main);
   font-size: 18px;
 }
 
@@ -340,7 +259,7 @@
 .cloudchat-user-copy span,
 .cloudchat-compose-count,
 .cloudchat-message-time {
-  color: var(--chat-text-soft);
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 600;
 }
@@ -350,7 +269,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--chat-text-soft);
+  color: var(--text-soft);
   font-size: 13px;
   font-weight: 500;
 }
@@ -359,7 +278,7 @@
   min-width: 18px;
   height: 18px;
   border-radius: 999px;
-  background: #da373c;
+  background: var(--danger);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
@@ -370,15 +289,14 @@
 }
 
 .cloudchat-sidebar-empty {
-  color: var(--chat-text-soft);
+  color: var(--text-soft);
   font-size: 14px;
   line-height: 1.6;
   padding: 10px 8px;
 }
 
 .cloudchat-user-panel {
-  background: var(--chat-sidebar-panel);
-  border-top: 1px solid var(--chat-divider);
+  border-top: 1px solid var(--border);
   padding: 10px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -386,11 +304,13 @@
   align-items: center;
 }
 
-.cloudchat-user-panel-main {
+.cloudchat-user-panel-main,
+.cloudchat-thread-identity,
+.cloudchat-thread-meta,
+.cloudchat-message-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 14px;
 }
 
 .cloudchat-user-actions-bar {
@@ -401,29 +321,15 @@
 .cloudchat-panel-btn {
   min-width: 34px;
   height: 34px;
-  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--surface-3) 94%, transparent);
-  color: var(--chat-text-muted);
   font-size: 12px;
   font-weight: 800;
-  transition:
-    background var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
-}
-
-.cloudchat-panel-btn:hover {
-  background: color-mix(in srgb, var(--accent) 16%, var(--surface-3));
-  color: var(--chat-text-main);
-  transform: translateY(-1px);
 }
 
 .cloudchat-main {
   min-width: 0;
-  background: var(--chat-main-bg);
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   min-height: 0;
@@ -435,39 +341,17 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: color-mix(in srgb, var(--surface-2) 94%, transparent);
-  border-bottom: 1px solid var(--chat-divider);
-}
-
-.cloudchat-thread-identity,
-.cloudchat-thread-meta {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  border-bottom: 1px solid var(--border);
 }
 
 .cloudchat-thread-count {
-  color: var(--chat-text-muted);
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 700;
 }
 
 .cloudchat-inline-message {
   margin: 12px 20px 0;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.cloudchat-inline-message-ok {
-  background: color-mix(in srgb, var(--success) 16%, transparent);
-  color: color-mix(in srgb, var(--success) 72%, white);
-}
-
-.cloudchat-inline-message-err {
-  background: color-mix(in srgb, var(--danger) 16%, transparent);
-  color: color-mix(in srgb, var(--danger) 64%, white);
 }
 
 .cloudchat-thread-stage {
@@ -496,12 +380,10 @@
   gap: 12px;
   align-items: start;
   padding: 2px 12px;
-  border-radius: 4px;
-  transition: background var(--motion-fast) var(--ease-standard);
 }
 
 .cloudchat-message-row:hover {
-  background: color-mix(in srgb, var(--surface-3) 68%, transparent);
+  background: var(--surface-3);
 }
 
 .cloudchat-message-row-compact {
@@ -516,19 +398,12 @@
 .cloudchat-message-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 64%, white));
-  color: #ffffff;
   font-size: 14px;
   font-weight: 900;
   letter-spacing: 0.08em;
   margin-top: 2px;
-}
-
-.cloudchat-message-row-peer .cloudchat-message-avatar {
-  background: linear-gradient(135deg, var(--accent-strong), color-mix(in srgb, var(--accent) 52%, white));
 }
 
 .cloudchat-message-content {
@@ -537,7 +412,6 @@
 }
 
 .cloudchat-message-head {
-  display: flex;
   align-items: baseline;
   gap: 10px;
   flex-wrap: wrap;
@@ -545,16 +419,14 @@
 }
 
 .cloudchat-message-author {
-  color: var(--chat-text-main);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .cloudchat-message-body {
   margin: 0;
-  color: var(--chat-text-main);
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.375;
   white-space: pre-wrap;
   word-break: break-word;
@@ -562,7 +434,7 @@
 
 .cloudchat-thread-empty,
 .cloudchat-empty-state {
-  color: var(--chat-text-muted);
+  color: var(--text-muted);
   display: grid;
   justify-items: center;
   align-content: center;
@@ -582,24 +454,16 @@
 
 .cloudchat-empty-state h1 {
   margin: 0;
-  color: var(--chat-text-main);
   font-size: 28px;
 }
 
 .cloudchat-empty-state p {
   margin: 0;
   font-size: 15px;
-  color: var(--chat-text-muted);
 }
 
 .cloudchat-empty-icon {
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 72%, white));
-  font-size: 32px;
+  display: none;
 }
 
 .cloudchat-composer-shell {
@@ -614,18 +478,7 @@
   min-height: 56px;
   max-height: 42vh;
   resize: none;
-  border: none;
-  border-radius: 8px;
-  background: var(--chat-input-bg);
-  color: var(--chat-text-main);
   line-height: 1.375;
-  padding: 16px 18px;
-  box-shadow: none;
-}
-
-.cloudchat-message-input:focus {
-  outline: 2px solid color-mix(in srgb, var(--accent) 34%, transparent);
-  outline-offset: 0;
 }
 
 .cloudchat-compose-footer {
@@ -648,7 +501,8 @@
   }
 
   .cloudchat-sidebar {
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
     min-height: 280px;
   }
 

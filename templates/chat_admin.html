@@ -18,7 +18,7 @@
 {% if password_preview %}
 <section class="zone zone-green cloudchat-password-preview-zone">
   <div class="zone-title">
-    <div class="zone-title-left"><span>🔐</span> <span>One-Time Password</span></div>
+    <div class="zone-title-left"><span>One-Time Password</span></div>
   </div>
   <div class="cloudchat-preview-meta">
     <span class="chip chip-on">User {{ password_preview['username'] }}</span>
@@ -35,7 +35,7 @@
 <div class="cloudchat-grid">
   <section class="zone zone-cyan">
     <div class="zone-title">
-      <div class="zone-title-left"><span>➕</span> <span>Create User</span></div>
+      <div class="zone-title-left"><span>Create User</span></div>
     </div>
     <form class="cloudchat-admin-form" method="POST" action="{{ url_for('chat_create_user') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -53,7 +53,7 @@
 
   <section class="zone zone-pink">
     <div class="zone-title">
-      <div class="zone-title-left"><span>🧩</span> <span>Access Model</span></div>
+      <div class="zone-title-left"><span>Access Model</span></div>
     </div>
     <ul class="detail-list">
       <li>
@@ -74,7 +74,7 @@
 
 <section class="zone zone-purple">
   <div class="zone-title">
-    <div class="zone-title-left"><span>👥</span> <span>Chat Users</span></div>
+    <div class="zone-title-left"><span>Chat Users</span></div>
   </div>
   {% if users %}
   <div class="cloudchat-search-row">
@@ -84,7 +84,7 @@
     {% for user in users %}
     <article class="user-card cloudchat-user-card" data-cloudchat-user-card data-cloudchat-user-search="{{ (user.username ~ ' ' ~ ('active' if user.is_active else 'disabled') ~ ' ' ~ ('signed in here' if user.is_current_user else ''))|lower }}">
       <div class="user-card-top">
-        <div class="user-avatar">💬</div>
+        <div class="user-avatar">{{ user.username[:1]|upper }}</div>
         <div class="user-info">
           <div class="user-name">{{ user.username }}</div>
           <div class="user-sub">{{ user.created_at }} UTC</div>
@@ -120,7 +120,6 @@
   <p class="empty empty-hidden" id="cloudchat-user-search-empty">No Chat users match this search.</p>
   {% else %}
   <div class="empty">
-    <div class="empty-icon">💬</div>
     <div class="empty-text">No Chat users yet.</div>
   </div>
   {% endif %}

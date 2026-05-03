@@ -43,7 +43,7 @@
 
 <div class="zone zone-cyan">
   <div class="zone-title">
-    <div class="zone-title-left"><span>📤</span> Upload</div>
+    <div class="zone-title-left">Upload</div>
     <span class="zone-title-note">Stored outside the repo</span>
   </div>
   <form class="upload-form" method="POST" action="/cloud-storage/upload" enctype="multipart/form-data" id="cloud-upload-form">
@@ -61,7 +61,7 @@
 
 <div class="zone zone-purple">
   <div class="zone-title">
-    <div class="zone-title-left"><span>🗂️</span> Stored files</div>
+    <div class="zone-title-left">Stored files</div>
     <span class="zone-title-note">Available until deleted</span>
   </div>
   {% if files %}
@@ -75,7 +75,7 @@
     {% for file in files %}
     <div class="file-card {% if file.missing %}file-card-missing{% endif %}" data-file-card data-file-search="{{ (file.original_name ~ ' ' ~ file.mime_type ~ ' ' ~ file.size_label ~ ' ' ~ file.checksum_sha256 ~ ' ' ~ ('missing' if file.missing else 'ready'))|lower }}">
       <div class="file-card-top">
-        <div class="file-icon">📄</div>
+        <div class="file-icon">{{ file.original_name[:1]|upper }}</div>
         <div class="file-info">
           <div class="file-name">{{ file.original_name }}</div>
           <div class="file-meta">{{ file.size_label }} · {{ file.mime_type }} · {{ file.created_at }} UTC</div>
@@ -104,7 +104,6 @@
   <p class="empty empty-hidden" id="cloud-file-search-empty">No files match this search.</p>
   {% else %}
   <div class="empty">
-    <div class="empty-icon">📭</div>
     <div class="empty-text">No files uploaded yet.</div>
   </div>
   {% endif %}

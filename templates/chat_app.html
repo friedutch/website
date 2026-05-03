@@ -88,7 +88,7 @@
       <div class="cloudchat-user-actions-bar">
         <form method="POST" action="{{ url_for('chat_logout') }}" class="contents-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button class="cloudchat-panel-btn" type="submit" aria-label="Log out">Out</button>
+      <button class="cloudchat-panel-btn" type="submit" aria-label="Log out">Exit</button>
         </form>
         {% if can_manage %}
         <a class="cloudchat-panel-btn" href="{{ url_for('chat_admin') }}" aria-label="Manage users">Adm</a>
@@ -182,7 +182,6 @@
     </footer>
     {% else %}
     <section class="cloudchat-empty-state">
-      <div class="cloudchat-empty-icon">💬</div>
       <h1>Welcome to Chat</h1>
       <p>Select a direct message to start talking.</p>
     </section>

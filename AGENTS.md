@@ -38,15 +38,17 @@
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)
   - app factory and top-level routes
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py)
-  - shared render helper for template rendering, asset-version injection, and project-rail state
+  - shared render helper for template rendering, asset-version injection, and project navigation state
 - [`app/forms.py`](/Users/administrator/Sites/friedutchplus/app/forms.py)
   - site-wide CSRF template helper
 - [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py)
   - site-wide admin-session helpers
 - [`templates/_app_frame.html`](/Users/administrator/Sites/friedutchplus/templates/_app_frame.html)
-  - shared Discord-like site shell used by all rendered pages
+  - shared minimal site shell used by all rendered pages
+- [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css)
+  - site-wide visual system for tokens, typography, cards, buttons, inputs, chips, and shared components
 - [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
-  - shared cross-project shell styling
+  - shared shell and horizontal project navigation layout
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
   - lightweight Smart Lock bootstrap
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
@@ -81,18 +83,26 @@
 
 ### Runtime model
 - App listens on `127.0.0.1:5001`.
-- The whole site uses one shared Discord-like shell:
-  - left rail for project switching
+- The whole site uses one shared minimal shell:
+  - horizontal text project navigation for project switching
   - shared main content frame
   - separate admin login entry at `/login`
+- Static assets are versioned and cacheable long-term.
+- The UI uses local system fonts only; do not add remote font dependencies casually.
 
 ### Frontend behavior notes
 - Shared theme and confirm behavior lives in:
   - [`static/js/early-theme.js`](/Users/administrator/Sites/friedutchplus/static/js/early-theme.js)
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)
+- Shared visual components belong in [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css).
+- Project CSS should primarily define feature-specific layout, not new visual systems.
 - Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable.
 - Smart Lock admin tab memory uses that same browser storage layer.
 - Avoid `min-height: 100%` on cards inside auto-sized CSS grid layouts unless the parent track has an explicit fixed height.
+
+### Compatibility cleanup shorthand
+- If the user says `remcomleft`, they are authorizing a cleanup pass that removes compatibility leftovers across the whole website, including old aliases, obsolete UI affordances, stale docs, and unused assets.
+- Still preserve live runtime data, avoid DB table renames without an explicit migration, and verify routes/tests after cleanup.
 
 ### Commands another AI will likely need
 - Validate Python syntax:

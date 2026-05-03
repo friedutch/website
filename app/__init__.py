@@ -1,6 +1,6 @@
 import os
 import subprocess
-from datetime import datetime, UTC
+from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, g
 from flask_wtf.csrf import CSRFProtect, CSRFError
@@ -14,6 +14,8 @@ load_dotenv()
 
 
 def get_git_output(project_root, *args):
+    if os.getenv("FRIEDUTCH_SKIP_GIT_METADATA") == "1":
+        return ""
     try:
         completed = subprocess.run(
             ["git", *args],
@@ -41,13 +43,17 @@ def create_app():
     flask_app.secret_key = os.getenv("SECRET_KEY")
     csrf = CSRFProtect(flask_app)
     flask_app.config["LAST_DEPLOYMENT"] = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
-    flask_app.config["GITHUB_REPO_URL"] = get_git_output(project_root, "remote", "get-url", "origin")
-    flask_app.config["GITHUB_BRANCH"] = get_git_output(project_root, "rev-parse", "--abbrev-ref", "HEAD") or "main"
-    flask_app.config["ASSET_VERSION"] = get_git_output(project_root, "rev-parse", "--short", "HEAD") or flask_app.config["LAST_DEPLOYMENT"]
+    git_remote = get_git_output(project_root, "remote", "get-url", "origin")
+    git_branch = get_git_output(project_root, "rev-parse", "--abbrev-ref", "HEAD")
+    git_revision = get_git_output(project_root, "rev-parse", "--short", "HEAD")
+    flask_app.config["GITHUB_REPO_URL"] = os.getenv("GITHUB_REPO_URL", git_remote)
+    flask_app.config["GITHUB_BRANCH"] = os.getenv("GITHUB_BRANCH", git_branch or "main")
+    flask_app.config["ASSET_VERSION"] = os.getenv("ASSET_VERSION", git_revision or flask_app.config["LAST_DEPLOYMENT"])
     flask_app.config.update(
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
+        SEND_FILE_MAX_AGE_DEFAULT=timedelta(days=365),
     )
 
     @flask_app.context_processor
@@ -81,8 +87,8 @@ def create_app():
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline'; "
             "style-src 'self' 'unsafe-inline'; "
-            "img-src 'self' data: https:; "
-            "font-src 'self' data: https:; "
+            "img-src 'self' data:; "
+            "font-src 'self' data:; "
             "connect-src 'self'; "
             "object-src 'none'; "
             "base-uri 'self'; "

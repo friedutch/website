@@ -9,11 +9,11 @@
 
 ### Purpose
 - Personal self-hosted Flask app for `friedutch.plus`.
-- The whole site renders inside one shared Discord-like shell.
-- The left rail uses emoji project buttons.
+- The whole site renders inside one shared minimal shell.
+- The project list is horizontal and text-based.
 - The canonical site-wide admin login is `/login`.
 - Chat uses its own project login at `/chat/login`.
-- The home route `/` now shows a simple Discord username card inside the shared shell.
+- The home route `/` shows a minimal personal tools title inside the shared shell.
 
 ### Current features
 - Smart Lock
@@ -29,15 +29,17 @@
 - [`app/__init__.py`](/Users/administrator/Sites/friedutchplus/app/__init__.py)
   - app factory and top-level routes
 - [`app/rendering.py`](/Users/administrator/Sites/friedutchplus/app/rendering.py)
-  - shared render helper and project-rail state
+  - shared render helper and project navigation state
 - [`app/site_admin.py`](/Users/administrator/Sites/friedutchplus/app/site_admin.py)
   - shared admin-session helpers
 
 ### Repo structure
 - [`templates/_app_frame.html`](/Users/administrator/Sites/friedutchplus/templates/_app_frame.html)
   - shared app shell
+- [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css)
+  - global visual system for tokens, typography, cards, buttons, inputs, chips, and shared components
 - [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
-  - shared shell styling
+  - shared shell and horizontal project navigation layout
 - [`projects/smartlock/`](/Users/administrator/Sites/friedutchplus/projects/smartlock)
   - Smart Lock owner
 - [`projects/cloud_storage/cloud_storage.py`](/Users/administrator/Sites/friedutchplus/projects/cloud_storage/cloud_storage.py)
@@ -47,7 +49,8 @@
 
 ### Runtime model
 - The app listens on `127.0.0.1:5001`.
-- Static assets use an asset-version query string derived from git metadata.
+- Static assets use an asset-version query string from `ASSET_VERSION`, git metadata, or the deployment timestamp fallback.
+- Static assets are configured for long-lived cache headers.
 
 ### Security and state
 - Never commit runtime databases or other live state:
@@ -68,8 +71,17 @@
 - `MAIL_TO`
 - `SMARTLOCK_HARDWARE_API_KEY`
 - `CLOUD_STORAGE_ROOT`
+- `ASSET_VERSION`
+- `GITHUB_REPO_URL`
+- `GITHUB_BRANCH`
+- `FRIEDUTCH_SKIP_GIT_METADATA`
 
 ### Feature notes
+- Performance
+  - The client UI uses local system fonts and no remote font requests.
+  - Versioned static assets can be cached long-term.
+  - The content security policy allows only local scripts/styles/fonts/images plus data URLs for images/fonts.
+  - Set `ASSET_VERSION`, `GITHUB_REPO_URL`, and `GITHUB_BRANCH`, or set `FRIEDUTCH_SKIP_GIT_METADATA=1`, to avoid Git subprocess metadata lookups at startup.
 - Smart Lock
   - canonical login is `/login`
   - `/smartlock/login` remains a compatibility alias

@@ -8,11 +8,6 @@
 {% block header_title %}Admin panel{% endblock %}
 
 {% block header_actions %}
-<div class="panel-tabs" role="tablist" aria-label="Admin sections">
-  <button class="panel-tab active" type="button" data-panel-tab="people" aria-selected="true">Users</button>
-  <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
-  <button class="panel-tab" type="button" data-panel-tab="arduino" aria-selected="false">Arduino</button>
-</div>
 <div class="header-island">
   <span class="header-island-label">Session</span>
   <span class="header-island-value" id="settings-session-remaining" data-current-remaining="{{ current_remaining }}">--:--</span>
@@ -23,7 +18,7 @@
 {% if panel_message %}<p class="msg-err panel-message">{{ panel_message }}</p>{% endif %}
 
 <div class="zone zone-pink admin-tools-card">
-  <div class="zone-title"><div class="zone-title-left"><span>⚙️</span> <span>Admin</span></div></div>
+  <div class="zone-title"><div class="zone-title-left"><span>Admin</span></div></div>
   <div class="settings-actions">
     {% if pending %}
     <div class="admin-email-block">
@@ -57,9 +52,15 @@
   </div>
 </div>
 
+<div class="smartlock-workspace">
+<div class="panel-tabs smartlock-panel-tabs" role="tablist" aria-label="Admin sections">
+  <button class="panel-tab active" type="button" data-panel-tab="people" aria-selected="true">Users</button>
+  <button class="panel-tab" type="button" data-panel-tab="access" aria-selected="false">Logs</button>
+  <button class="panel-tab" type="button" data-panel-tab="arduino" aria-selected="false">Arduino</button>
+</div>
 <div class="panel-stack">
 <div class="zone zone-cyan panel-section active" id="panel-people" data-panel-section="people">
-  <div class="zone-title"><div class="zone-title-left"><span>👥</span> <span>Users</span></div></div>
+  <div class="zone-title"><div class="zone-title-left"><span>Users</span></div></div>
   <div class="user-search-row">
     <input class="app-input user-search-input" type="search" id="user-search" placeholder="Search names, passcodes, RFID or fingerprint IDs">
   </div>
@@ -71,12 +72,12 @@
   {% for user in users %}
   <div class="user-card" data-user-card data-size-source="user" data-user-search="{{ (user['name'] ~ ' ' ~ user['passcode'] ~ ' ' ~ (user['rfid_id'] or '') ~ ' ' ~ (user['fingerprint_id'] or ''))|lower }}">
     <div class="user-card-top">
-      <div class="user-avatar">👤</div>
+      <div class="user-avatar">{{ user['name'][:1]|upper }}</div>
       <div class="user-info">
         <div class="user-name">{{ user['name'] }}</div>
         <div class="user-sub">Access profile summary</div>
       </div>
-      <a class="icon-btn edit" href="/smartlock/user/{{ user['id'] }}">✏️</a>
+      <a class="icon-btn edit" href="/smartlock/user/{{ user['id'] }}">Edit</a>
     </div>
     <div class="user-method-grid">
       <div class="user-method-card">
@@ -115,7 +116,7 @@
 
 <div class="zone zone-green panel-section" id="panel-access" data-panel-section="access">
   <div class="zone-title">
-    <div class="zone-title-left"><span>📡</span> <span>Logs</span></div>
+    <div class="zone-title-left"><span>Logs</span></div>
   </div>
   <div class="log-search-row">
     <input class="app-input log-search-input" type="search" id="log-search" placeholder="Search devices, IPs, timestamps or states">
@@ -158,7 +159,7 @@
       {% else %}
       <form method="POST" action="/smartlock/session/logout/{{ entry['session_token'] }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="icon-btn session-action" type="submit" data-confirm="Log out">🚪</button>
+        <button class="icon-btn session-action" type="submit" data-confirm="Log out">Log out</button>
       </form>
       <span class="session-state session-state-active {% if entry['remaining'] <= 600 %}session-state-active-warn{% endif %}" data-session-state data-session-remaining="{{ entry['remaining'] }}">Active</span>
       {% endif %}
@@ -177,7 +178,6 @@
   <form method="POST" action="/smartlock/session/logout-all">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button class="log-purge-card" type="submit" data-confirm="Purge all other active sessions">
-      <span class="log-purge-icon">🚪</span>
       <span class="log-purge-copy">Purge all other active sessions</span>
     </button>
   </form>
@@ -185,7 +185,7 @@
 
 <div class="zone zone-pink panel-section" id="panel-arduino" data-panel-section="arduino">
   <div class="zone-title">
-    <div class="zone-title-left"><span>🧰</span> <span>Arduino</span></div>
+    <div class="zone-title-left"><span>Arduino</span></div>
   </div>
   <div class="arduino-console-card">
     <div class="arduino-console-head">
@@ -195,6 +195,7 @@
     <pre class="arduino-console" id="arduino-console" data-arduino-console>{% if hardware_events %}{% for entry in hardware_events %}[{{ entry['timestamp'] }}] {{ entry['kind'] }} {{ entry['line'] }}
 {% endfor %}{% else %}Waiting for Arduino events...{% endif %}</pre>
   </div>
+</div>
 </div>
 </div>
 {% endblock %}

@@ -15,7 +15,7 @@
 <main class="user-detail-layout">
   <section class="zone zone-cyan detail-overview">
     <div class="detail-header">
-      <div class="detail-avatar">{{ "✨" if is_new_user else "👤" }}</div>
+      <div class="detail-avatar">{{ "N" if is_new_user else user['name'][:1]|upper }}</div>
       <div>
         <p class="projects-label">Smart Lock User</p>
         <div class="detail-name">{{ "New user" if is_new_user else user['name'] }}</div>
@@ -24,21 +24,18 @@
     </div>
     <div class="detail-summary-grid">
       <div class="detail-summary-card">
-        <span>🔢</span>
         <div>
           <div class="detail-summary-label">Passcode</div>
           <div class="detail-summary-copy">{{ "Generated on save" if is_new_user else user['passcode'] }}</div>
         </div>
       </div>
       <div class="detail-summary-card">
-        <span>💳</span>
         <div>
           <div class="detail-summary-label">RFID</div>
           <div class="detail-summary-copy">{{ "Ready to configure" if is_new_user else ("Enabled" if user['rfid_enabled'] else "Disabled") }}</div>
         </div>
       </div>
       <div class="detail-summary-card">
-        <span>🖐️</span>
         <div>
           <div class="detail-summary-label">Fingerprint</div>
           <div class="detail-summary-copy">{{ "Ready to configure" if is_new_user else ("Enabled" if user['fingerprint_enabled'] else "Disabled") }}</div>
@@ -54,7 +51,6 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="method-zone">
       <div class="method-head">
-        <span class="method-emoji">👤</span>
         <span class="method-label">Identity</span>
         <span class="method-toggle locked">Required</span>
       </div>
@@ -64,7 +60,6 @@
 
     <div class="method-zone">
       <div class="method-head">
-        <span class="method-emoji">🔢</span>
         <span class="method-label">Passcode</span>
         <span class="method-toggle locked">Generated</span>
       </div>
@@ -74,7 +69,6 @@
 
     <div class="method-zone">
       <div class="method-head">
-        <span class="method-emoji">💳</span>
         <span class="method-label">RFID Badge</span>
         <label class="method-switch">
           <input type="checkbox" name="rfid_enabled" {% if user['rfid_enabled'] %}checked{% endif %}>
@@ -91,7 +85,6 @@
 
     <div class="method-zone">
       <div class="method-head">
-        <span class="method-emoji">🖐️</span>
         <span class="method-label">Fingerprint</span>
         <label class="method-switch">
           <input type="checkbox" name="fingerprint_enabled" {% if user['fingerprint_enabled'] %}checked{% endif %}>
@@ -107,7 +100,6 @@
   {% else %}
   <div class="method-zone">
     <div class="method-head">
-      <span class="method-emoji">🔢</span>
       <span class="method-label">Passcode</span>
       <span class="method-toggle locked">Default ✓</span>
     </div>
@@ -117,7 +109,6 @@
 
   <div class="method-zone">
     <div class="method-head">
-      <span class="method-emoji">💳</span>
       <span class="method-label">RFID Badge</span>
       <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/rfid">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -139,7 +130,6 @@
 
   <div class="method-zone">
     <div class="method-head">
-      <span class="method-emoji">🖐️</span>
       <span class="method-label">Fingerprint</span>
       <form method="POST" action="/smartlock/user/{{ user['id'] }}/toggle/fingerprint">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

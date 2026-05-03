@@ -22,9 +22,10 @@
 - Require a Smart Lock admin session for Chat user administration.
 - Provide private authenticated direct messages for signed-in Chat users.
 - Keep the selected DM thread updating live while both participants are signed in.
-- Present the signed-in app as a Discord-style DM client without server/channel features.
-- Render the project inside the same shared Discord-like shell used across the whole site.
-- Keep the login view visually minimal while leaving the shared rail available.
+- Present the signed-in app as a minimal direct-message client without server/channel features.
+- Render the project inside the same shared minimal shell used across the whole site.
+- Chat visual components inherit the site-wide design system from `static/css/base.css`; Chat page CSS should only handle auth, admin, and DM layout.
+- Keep the login view visually minimal while leaving the shared horizontal project navigation available.
 
 ### Access model
 - Regular Chat users sign in with:

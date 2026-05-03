@@ -11,11 +11,8 @@
 .access-card {
   width: min(460px, 100%);
   padding: 30px;
+  display: grid;
   gap: 18px;
-}
-
-.access-card-elevated {
-  box-shadow: var(--shadow-md);
 }
 
 .access-head {
@@ -24,30 +21,13 @@
   gap: 16px;
 }
 
-.access-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-  color: #ffffff;
-  font-size: 31px;
-}
-
 .access-kicker {
   display: block;
-  color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   margin-bottom: 4px;
 }
 
 .access-title {
   margin: 0;
-  color: var(--text);
   font-size: clamp(28px, 5vw, 34px);
   line-height: 1;
 }
@@ -65,9 +45,6 @@
 .access-code-card,
 .access-note-card {
   padding: 18px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface-3);
 }
 
 .access-code-card {
@@ -85,17 +62,7 @@
 }
 
 .access-note-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text);
   text-align: center;
-}
-
-.access-note-copy {
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.55;
 }
 
 .cd-note {
@@ -113,7 +80,6 @@
 #lk-timer {
   display: inline-block;
   min-width: 3.4ch;
-  font-family: "Space Grotesk", sans-serif;
   font-variant-numeric: tabular-nums;
 }
 

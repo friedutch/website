@@ -28,13 +28,6 @@
   grid-template-columns: auto 1fr;
   gap: 12px;
   align-items: center;
-  padding: 16px 18px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface-3);
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 700;
 }
 
 .captcha-tip-card span {
@@ -44,8 +37,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-  color: white;
+  border: 1px solid var(--border);
   font-size: 13px;
   font-weight: 800;
 }
@@ -55,7 +47,6 @@
 }
 
 .captcha-choice-head h2 {
-  font-family: "Space Grotesk", sans-serif;
   font-size: clamp(28px, 4vw, 40px);
   line-height: 1;
 }

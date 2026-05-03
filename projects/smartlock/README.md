@@ -6,8 +6,9 @@
 - The site-wide admin login at `/login` now uses a centered single-card auth screen inside the shared shell.
 - It also supports adding sessions on another device and changing the admin email with the same verification pattern.
 - Add-session links are minted from the admin panel and can be regenerated there without changing any data directly.
-- The Smart Lock pages now render inside the shared Discord-like site shell, while the admin panel keeps its own Users, Logs, and Arduino tabs.
-- The admin panel now has top tabs for Users, Logs, and Arduino.
+- The Smart Lock pages now render inside the shared minimal site shell, while the admin panel keeps its own Users, Logs, and Arduino tabs.
+- The admin panel uses vertical project tabs for Users, Logs, and Arduino on desktop.
+- Smart Lock visual components inherit the site-wide design system from `static/css/base.css`; Smart Lock page CSS should only handle feature layout.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - The user detail page now includes an RFID `Scan` button that listens for the next badge read from the Arduino bridge, fills the RFID field automatically, and shows live validation feedback inline.
 - The feature now uses a lightweight bootstrap plus focused Smart Lock modules for auth, admin, hardware, DB/state, and page composition.
@@ -107,8 +108,8 @@
 - The browser-session actor id lives in the Flask session cookie as `cooldown_actor_id`.
 - Successful same-browser magic-link verification should signal the original login page to continue into the admin panel instead of leaving the verified email tab on the panel.
 - The page UI language now says `captcha`, but one DB table still uses the legacy name `match_numbers`.
-- The admin panel is tabbed client-side from the top action bar; keep tab buttons and panel section ids/data attributes aligned.
-- Smart Lock now uses the shared Discord-like site shell across its pages, with project switching on the left rail and admin login separated at `/login`.
+- The admin panel is tabbed client-side with vertical desktop tabs; keep tab buttons and panel section ids/data attributes aligned.
+- Smart Lock now uses the shared minimal site shell across its pages, with project switching in the horizontal project list and admin login separated at `/login`.
 - The current session's remaining time lives in a persistent header island inside the shared app shell header.
 - The selected admin panel tab persists across reloads using browser storage, with a cookie fallback when local storage is unavailable.
 - The admin panel's Users section is card-based and should keep the edit link pointing to the existing user detail page.
