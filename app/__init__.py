@@ -109,10 +109,10 @@ def create_app():
         supplied_token = request.args.get("token", "") or request.headers.get("X-Deploy-Token", "")
 
         authorized = False
-        if secret:
+        if secret and sig:
             expected = "sha256=" + hmac.new(secret.encode(), body, "sha256").hexdigest()
             authorized = hmac.compare_digest(sig, expected)
-        elif token:
+        if not authorized and token and supplied_token:
             authorized = hmac.compare_digest(supplied_token, token)
 
         if not authorized:
