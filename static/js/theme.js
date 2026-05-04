@@ -65,8 +65,10 @@ function indexToTheme(index){return index<=0?'light':index>=2?'dark':'system';}
 function setTheme(theme){
   const storage=getStorage();
   storage.set('theme',theme);
+  document.documentElement.classList.add('theme-fading');
   applyTheme(theme);
   updateThemeUI(theme);
+  window.setTimeout(function(){document.documentElement.classList.remove('theme-fading');}, 220);
 }
 
 function setSliderThumb(slider, index){
@@ -76,7 +78,11 @@ function setSliderThumb(slider, index){
   const pad=parseFloat(window.getComputedStyle(track).getPropertyValue('--landing-slider-pad'))||6;
   const maxLeft=track.clientWidth-thumb.clientWidth-(pad*2);
   const ratio=index/2;
-  thumb.style.left=(pad + (maxLeft*ratio))+'px';
+  const left=pad + (maxLeft*ratio);
+  thumb.style.left=left+'px';
+  const center=left + (thumb.clientWidth/2);
+  const split=Math.max(0, Math.min(center/track.clientWidth, 1));
+  track.style.setProperty('--landing-slider-split', (split*100).toFixed(3)+'%');
   track.setAttribute('aria-valuenow', String(index));
 }
 
@@ -85,11 +91,12 @@ function updateThemeUI(theme){
     toggle.textContent=themeButtonText(toggle, theme);
   });
   document.querySelectorAll('[data-theme-slider]').forEach(function(slider){
-    setSliderThumb(slider, themeToIndex(theme));
+    const selectedIndex=themeToIndex(theme);
+    setSliderThumb(slider, selectedIndex);
     const activeTheme=themeLabelText(theme);
     slider.querySelectorAll('[data-theme-label-theme]').forEach(function(label){
-      const isActive=label.dataset.themeLabelTheme===activeTheme;
-      label.classList.toggle('landing-theme-label-hidden', isActive);
+      const labelIndex=themeToIndex(label.dataset.themeLabelTheme||'system');
+      label.classList.toggle('landing-theme-label-hidden', labelIndex<=selectedIndex);
     });
     const track=slider.querySelector('[data-theme-track]');
     if(track){ track.setAttribute('aria-valuetext', activeTheme); }
@@ -176,6 +183,12 @@ function toggleTheme(){
     mediaQuery.addEventListener('change',function(){
       const cur=storage.get('theme')||'system';
       if(cur==='system'){applyTheme('system');}
+    });
+    window.addEventListener('resize', function(){
+      updateThemeUI(storage.get('theme')||'system');
+    });
+    window.addEventListener('orientationchange', function(){
+      updateThemeUI(storage.get('theme')||'system');
     });
   });
 })();
