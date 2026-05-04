@@ -76,6 +76,7 @@
   border-radius: inherit;
   transition: width 1s var(--ease-standard), background-color 1s var(--ease-standard);
   pointer-events: none;
+  z-index: 0;
 }
 
 .landing-theme-label {
@@ -87,6 +88,7 @@
   font-weight: 800;
   line-height: 1;
   pointer-events: none;
+  z-index: 2;
 }
 
 .landing-theme-label-light {
@@ -116,6 +118,7 @@
   border: 0;
   background: var(--bg);
   transition: left 1s var(--ease-standard);
+  z-index: 3;
 }
 
 .landing-theme-track.is-dragging .landing-theme-thumb {
@@ -126,11 +129,12 @@
   width: min(560px, 100%);
   min-height: 108px;
   margin-top: var(--space-4);
+  margin-inline: auto;
   border-radius: 999px;
   border: 0;
   background: var(--text);
   color: var(--bg);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
