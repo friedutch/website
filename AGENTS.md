@@ -46,7 +46,7 @@
 - [`templates/_app_frame.html`](/Users/administrator/Sites/friedutchplus/templates/_app_frame.html)
   - shared minimal site shell used by all rendered pages
 - [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css)
-  - site-wide visual system for tokens, typography, cards, buttons, inputs, chips, and shared components
+  - site-wide visual system for color, radius, motion, and spacing tokens plus shared components
 - [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
   - shared shell, left Home/brand button, centered Projects nav, dropdown list, and footer layout
 - [`projects/smartlock/smartlock.py`](/Users/administrator/Sites/friedutchplus/projects/smartlock/smartlock.py)
@@ -100,6 +100,7 @@
   - [`static/js/theme.js`](/Users/administrator/Sites/friedutchplus/static/js/theme.js)
 - The shared top menu uses one uniform pill style for nav buttons, Projects expands to a plain dropdown list, and auth pages suppress the admin shortcut to stay visually quiet.
 - Shared visual components belong in [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css).
+- Shared spacing values should come from the base spacing token scale in [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css), and project CSS should consume those tokens rather than inventing new one-off spacing values unless a feature has a clear exception.
 - Project CSS should primarily define feature-specific layout, not new visual systems.
 - Browser storage uses a resilient wrapper with cookie fallback when local storage is unavailable, and it stores generic string state for theme and tab memory.
 - Smart Lock admin tab memory uses that same browser storage layer.

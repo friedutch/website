@@ -25,6 +25,7 @@
 - Present the signed-in app as a minimal direct-message client without server/channel features.
 - Render the project inside the same shared minimal shell used across the whole site.
 - Chat visual components inherit the site-wide design system from `static/css/base.css`; Chat page CSS should only handle auth, admin, and DM layout.
+- Chat layout spacing should use the shared spacing token scale from `static/css/base.css` so the project matches global spacing rhythm.
 - Keep the login view visually minimal while leaving the shared ordered top menu and universal footer available.
 
 ### Access model

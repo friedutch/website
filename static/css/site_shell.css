@@ -25,8 +25,8 @@ body.site-app-body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 18px clamp(18px, 3vw, 40px);
+  gap: var(--space-6);
+  padding: 18px var(--space-page-x);
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface) 92%, transparent);
   backdrop-filter: blur(18px);
@@ -181,10 +181,10 @@ body.site-app-body {
   min-height: 0;
   width: min(100%, var(--shell-width));
   margin: 0 auto;
-  padding: clamp(22px, 4vw, 56px) clamp(18px, 3vw, 40px) 64px;
+  padding: var(--space-page-y) var(--space-page-x) 64px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: 24px;
+  gap: var(--space-6);
   overflow: hidden;
 }
 
@@ -199,7 +199,7 @@ body.site-app-body {
 .site-app-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
+  gap: var(--space-6);
   align-items: start;
   width: 100%;
 }
@@ -241,7 +241,7 @@ body.site-app-body {
 .site-app-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   flex-wrap: wrap;
   justify-content: flex-end;
 }
@@ -251,7 +251,7 @@ body.site-app-body {
   min-height: 0;
   display: grid;
   width: 100%;
-  gap: 20px;
+  gap: var(--space-5);
   align-content: start;
   overflow: auto;
 }

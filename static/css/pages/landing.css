@@ -12,13 +12,13 @@
   width: 100%;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: var(--space-6);
 }
 
 .landing-card {
   width: min(100%, 720px);
   display: grid;
-  gap: 18px;
+  gap: var(--space-4);
   padding: clamp(28px, 6vw, 72px) 0;
   background: transparent;
   text-align: center;
@@ -50,7 +50,7 @@
 .landing-theme-toggle {
   display: grid;
   justify-items: center;
-  margin-top: 22px;
+  margin-top: var(--space-6);
 }
 
 .landing-theme-track {
@@ -125,7 +125,7 @@
 .landing-projects-btn {
   width: min(560px, 100%);
   min-height: 108px;
-  margin-top: 18px;
+  margin-top: var(--space-4);
   border-radius: 999px;
   border: 0;
   background: var(--text);

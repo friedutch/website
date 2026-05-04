@@ -9,6 +9,7 @@
 - The Smart Lock pages now render inside the shared minimal site shell, while the admin panel keeps its own Users, Logs, and Arduino tabs.
 - The admin panel uses vertical project tabs for Users, Logs, and Arduino on desktop.
 - Smart Lock visual components inherit the site-wide design system from `static/css/base.css`; Smart Lock page CSS should only handle feature layout.
+- Smart Lock layout spacing should use the shared spacing token scale from `static/css/base.css` so spacing stays consistent with the rest of the site shell.
 - The Users tab shows a large create card that opens a draft user setup page, plus access cards with passcode, RFID, and fingerprint details at a glance, and a Logs tab for sessions and attempts.
 - The user detail page now includes an RFID `Scan` button that listens for the next badge read from the Arduino bridge, fills the RFID field automatically, and shows live validation feedback inline.
 - The feature now uses a lightweight bootstrap plus focused Smart Lock modules for auth, admin, hardware, DB/state, and page composition.

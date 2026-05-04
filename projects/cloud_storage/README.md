@@ -6,6 +6,7 @@
 - Uploaded files stay available until you delete them.
 - The page now lives inside the same shared minimal site shell as the rest of the site.
 - Cloud Storage visual components inherit the site-wide design system from `static/css/base.css`; Cloud Storage page CSS should only handle upload/file-list layout.
+- Cloud Storage layout spacing should use the shared spacing token scale from `static/css/base.css` to stay aligned with shared-shell rhythm.
 
 ## AI Copilot
 

@@ -40,7 +40,7 @@
 - [`templates/_app_frame.html`](/Users/administrator/Sites/friedutchplus/templates/_app_frame.html)
   - shared app shell
 - [`static/css/base.css`](/Users/administrator/Sites/friedutchplus/static/css/base.css)
-  - global visual system for tokens, typography, cards, buttons, inputs, chips, and shared components
+  - global visual system for color, radius, motion, and spacing tokens plus shared components
 - [`static/css/site_shell.css`](/Users/administrator/Sites/friedutchplus/static/css/site_shell.css)
   - shared shell and horizontal project navigation layout
 - [`projects/smartlock/`](/Users/administrator/Sites/friedutchplus/projects/smartlock)
@@ -94,6 +94,7 @@
   - The content security policy allows only local scripts/styles/fonts/images plus data URLs for images/fonts.
   - Set `ASSET_VERSION`, `GITHUB_REPO_URL`, and `GITHUB_BRANCH`, or set `FRIEDUTCH_SKIP_GIT_METADATA=1`, to avoid Git subprocess metadata lookups at startup.
   - The shared top menu keeps project and utility buttons on one visual style, and auth pages hide the admin shortcut.
+  - Shared layout spacing now uses a universal token scale from `static/css/base.css` so shell/page rhythm stays consistent across features.
 - Smart Lock
   - canonical login is `/login`
   - `/smartlock/login` remains a compatibility alias
