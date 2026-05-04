@@ -82,7 +82,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--bg);
+  color: var(--text);
   font-size: 15px;
   font-weight: 800;
   line-height: 1;
@@ -115,7 +115,7 @@
   border-radius: 50%;
   border: 0;
   background: var(--bg);
-  transition: left var(--motion-fast) var(--ease-standard);
+  transition: left 1s var(--ease-standard);
 }
 
 .landing-theme-track.is-dragging .landing-theme-thumb {

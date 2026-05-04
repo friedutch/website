@@ -81,7 +81,8 @@ function setSliderThumb(slider, index, theme){
   const left=pad + (maxLeft*ratio);
   thumb.style.left=left+'px';
   const center=left + (thumb.clientWidth/2);
-  let split=Math.max(0, Math.min(center/track.clientWidth, 1));
+  const embrace = thumb.clientWidth * 0.18;
+  let split=Math.max(0, Math.min((center + embrace)/track.clientWidth, 1));
   if(theme==='light' || theme==='dark'){
     split=1;
   }

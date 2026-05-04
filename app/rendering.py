@@ -9,8 +9,10 @@ SITE_PROJECTS = [
 
 
 def _project_key_for_path(path):
-    if path in {"/", "/about"}:
+    if path == "/":
         return "home"
+    if path == "/about":
+        return "about"
     if path.startswith("/smartlock/"):
         return "smartlock"
     if path.startswith("/cloud-storage/"):
