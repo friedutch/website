@@ -68,10 +68,10 @@ function setTheme(theme){
   document.documentElement.classList.add('theme-fading');
   applyTheme(theme);
   updateThemeUI(theme);
-  window.setTimeout(function(){document.documentElement.classList.remove('theme-fading');}, 220);
+  window.setTimeout(function(){document.documentElement.classList.remove('theme-fading');}, 1000);
 }
 
-function setSliderThumb(slider, index){
+function setSliderThumb(slider, index, theme){
   const track=slider.querySelector('[data-theme-track]');
   const thumb=slider.querySelector('[data-theme-thumb]');
   if(!track||!thumb){return;}
@@ -81,7 +81,10 @@ function setSliderThumb(slider, index){
   const left=pad + (maxLeft*ratio);
   thumb.style.left=left+'px';
   const center=left + (thumb.clientWidth/2);
-  const split=Math.max(0, Math.min(center/track.clientWidth, 1));
+  let split=Math.max(0, Math.min(center/track.clientWidth, 1));
+  if(theme==='light'){
+    split=1;
+  }
   track.style.setProperty('--landing-slider-split', (split*100).toFixed(3)+'%');
   track.setAttribute('aria-valuenow', String(index));
 }
@@ -92,7 +95,7 @@ function updateThemeUI(theme){
   });
   document.querySelectorAll('[data-theme-slider]').forEach(function(slider){
     const selectedIndex=themeToIndex(theme);
-    setSliderThumb(slider, selectedIndex);
+    setSliderThumb(slider, selectedIndex, theme);
     const activeTheme=themeLabelText(theme);
     slider.querySelectorAll('[data-theme-label-theme]').forEach(function(label){
       const labelIndex=themeToIndex(label.dataset.themeLabelTheme||'system');

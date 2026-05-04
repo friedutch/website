@@ -71,7 +71,7 @@
     );
   color: var(--bg);
   cursor: pointer;
-  transition: background var(--motion-base) var(--ease-standard);
+  transition: background 1s var(--ease-standard);
 }
 
 .landing-theme-label {
