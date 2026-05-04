@@ -86,12 +86,13 @@ function updateThemeUI(theme){
   });
   document.querySelectorAll('[data-theme-slider]').forEach(function(slider){
     setSliderThumb(slider, themeToIndex(theme));
-    slider.dataset.themePosition=themeLabelText(theme);
-    slider.querySelectorAll('[data-theme-current-label], [data-theme-thumb-label]').forEach(function(label){
-      label.textContent=themeLabelText(theme);
+    const activeTheme=themeLabelText(theme);
+    slider.querySelectorAll('[data-theme-label-theme]').forEach(function(label){
+      const isActive=label.dataset.themeLabelTheme===activeTheme;
+      label.classList.toggle('landing-theme-label-hidden', isActive);
     });
     const track=slider.querySelector('[data-theme-track]');
-    if(track){ track.setAttribute('aria-valuetext', themeLabelText(theme)); }
+    if(track){ track.setAttribute('aria-valuetext', activeTheme); }
   });
 }
 

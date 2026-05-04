@@ -11,10 +11,11 @@ body.site-app-body {
 }
 
 .site-app-shell {
-  min-height: 100vh;
+  height: 100dvh;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   width: 100%;
+  overflow: hidden;
 }
 
 .site-project-nav {
@@ -103,7 +104,7 @@ body.site-app-body {
   z-index: 40;
   display: grid;
   gap: 6px;
-  min-width: 220px;
+  width: max-content;
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -112,7 +113,7 @@ body.site-app-body {
 }
 
 .site-project-dropdown-item {
-  width: 100%;
+  width: auto;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -177,12 +178,14 @@ body.site-app-body {
 
 .site-app-main {
   min-width: 0;
+  min-height: 0;
   width: min(100%, var(--shell-width));
   margin: 0 auto;
   padding: clamp(22px, 4vw, 56px) clamp(18px, 3vw, 40px) 64px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 24px;
+  overflow: hidden;
 }
 
 .site-app-body-headerless .site-app-header {
@@ -245,10 +248,12 @@ body.site-app-body {
 
 .site-app-content {
   min-width: 0;
+  min-height: 0;
   display: grid;
   width: 100%;
   gap: 20px;
   align-content: start;
+  overflow: auto;
 }
 
 .site-app-content:empty {

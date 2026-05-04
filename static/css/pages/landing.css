@@ -65,10 +65,9 @@
   cursor: pointer;
 }
 
-.landing-theme-current {
+.landing-theme-label {
   position: absolute;
   top: 50%;
-  left: 30px;
   transform: translateY(-50%);
   color: var(--bg);
   font-size: 15px;
@@ -77,9 +76,21 @@
   pointer-events: none;
 }
 
-.landing-theme-toggle[data-theme-position="light"] .landing-theme-current {
+.landing-theme-label-light {
+  left: 30px;
+}
+
+.landing-theme-label-system {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.landing-theme-label-dark {
   right: 30px;
-  left: auto;
+}
+
+.landing-theme-label-hidden {
+  opacity: 0;
 }
 
 .landing-theme-thumb {
@@ -92,19 +103,6 @@
   border: 0;
   background: var(--bg);
   transition: left var(--motion-fast) var(--ease-standard);
-}
-
-.landing-theme-thumb-label {
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 5px);
-  transform: translateX(-50%);
-  color: var(--bg);
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
-  pointer-events: none;
 }
 
 .landing-theme-track.is-dragging .landing-theme-thumb {
@@ -130,12 +128,7 @@
     height: 64px;
   }
 
-  .landing-theme-current {
+  .landing-theme-label {
     font-size: 14px;
-  }
-
-  .landing-theme-thumb-label {
-    top: calc(100% + 4px);
-    font-size: 10px;
   }
 }
