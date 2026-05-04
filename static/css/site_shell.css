@@ -266,19 +266,19 @@ body.site-app-body {
 
 @media (max-width: 980px) {
   .site-project-nav {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 12px;
   }
 
   .site-project-nav-main {
-    justify-content: flex-start;
-    order: 2;
-    width: 100%;
+    justify-content: center;
+    order: 0;
+    width: auto;
   }
 
   .site-project-left,
   .site-project-utilities {
-    flex: 1 1 auto;
+    flex: 1 1 0;
   }
 
   .site-app-header {

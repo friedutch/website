@@ -50,11 +50,11 @@
 .landing-theme-toggle {
   display: grid;
   justify-items: center;
-  margin-top: 6px;
+  margin-top: 22px;
 }
 
 .landing-theme-track {
-  --landing-slider-pad: 8px;
+  --landing-slider-pad: 12px;
   position: relative;
   width: min(560px, 100%);
   height: 108px;
@@ -97,8 +97,8 @@
   position: absolute;
   top: var(--landing-slider-pad);
   left: var(--landing-slider-pad);
-  width: 76px;
-  height: 76px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   border: 0;
   background: var(--bg);
@@ -119,13 +119,13 @@
   }
 
   .landing-theme-track {
-    --landing-slider-pad: 7px;
+    --landing-slider-pad: 12px;
     height: 94px;
   }
 
   .landing-theme-thumb {
-    width: 64px;
-    height: 64px;
+    width: 70px;
+    height: 70px;
   }
 
   .landing-theme-label {
