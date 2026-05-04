@@ -82,7 +82,7 @@ function setSliderThumb(slider, index, theme){
   thumb.style.left=left+'px';
   const center=left + (thumb.clientWidth/2);
   let split=Math.max(0, Math.min(center/track.clientWidth, 1));
-  if(theme==='light'){
+  if(theme==='light' || theme==='dark'){
     split=1;
   }
   track.style.setProperty('--landing-slider-split', (split*100).toFixed(3)+'%');
