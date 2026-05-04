@@ -108,6 +108,25 @@
   opacity: 0;
 }
 
+.landing-theme-center-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--bg);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: lowercase;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.landing-theme-track.is-dark-selected .landing-theme-center-label {
+  opacity: 1;
+}
+
 .landing-theme-thumb {
   position: absolute;
   top: var(--landing-slider-pad);
@@ -131,9 +150,9 @@
   margin-top: var(--space-4);
   margin-inline: auto;
   border-radius: 999px;
-  border: 0;
-  background: var(--text);
-  color: var(--bg);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,11 +160,16 @@
   font-weight: 800;
   line-height: 1;
   text-transform: lowercase;
-  transition: opacity var(--motion-base) var(--ease-standard);
+  transition:
+    border-color var(--motion-fast) var(--ease-standard),
+    background var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
 }
 
 .landing-projects-btn:hover {
-  opacity: 0.88;
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
 }
 
 @media (max-width: 720px) {
@@ -169,6 +193,10 @@
 
   .landing-theme-label {
     font-size: 14px;
+  }
+
+  .landing-theme-center-label {
+    font-size: 16px;
   }
 
   .landing-projects-btn {

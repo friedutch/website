@@ -83,6 +83,10 @@ function setSliderThumb(slider, index, theme){
   const center=left + (thumb.clientWidth/2);
   const embrace = thumb.clientWidth * 0.18;
   let split=Math.max(0, Math.min((center + embrace)/track.clientWidth, 1));
+  if(theme==='system'){
+    const leftCenterGap = pad + (thumb.clientWidth/2);
+    split=Math.max(0, Math.min((center + embrace + leftCenterGap)/track.clientWidth, 1));
+  }
   if(theme==='light' || theme==='dark'){
     split=1;
   }
@@ -97,7 +101,14 @@ function updateThemeUI(theme){
   document.querySelectorAll('[data-theme-slider]').forEach(function(slider){
     const selectedIndex=themeToIndex(theme);
     setSliderThumb(slider, selectedIndex, theme);
+    slider.querySelectorAll('[data-theme-track]').forEach(function(track){
+      track.classList.toggle('is-dark-selected', selectedIndex === 2);
+    });
     const activeTheme=themeLabelText(theme);
+    const leftMost = selectedIndex === 0;
+    slider.querySelectorAll('.landing-theme-label').forEach(function(label){
+      label.style.color = leftMost ? 'var(--bg)' : 'var(--text)';
+    });
     slider.querySelectorAll('[data-theme-label-theme]').forEach(function(label){
       const labelIndex=themeToIndex(label.dataset.themeLabelTheme||'system');
       label.classList.toggle('landing-theme-label-hidden', labelIndex<=selectedIndex);
